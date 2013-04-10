@@ -1,15 +1,14 @@
 #ifndef __NOP_H__
 #define __NOP_H__
 
-#include "test_process_pingpong.h"
+#include "comms.h"
 
 
 //extern int sigsuspend (__const sigset_t *__set) __nonnull ((1));
 
 //#include <signal.h>
 #include <unistd.h>
-volatile int volatile *nop_var;
-sigset_t nop_sig_mask;
+//sigset_t nop_sig_mask;
 
 int make_nop_pair(int fd[2]);
 
@@ -19,7 +18,9 @@ int make_nop_pair(int fd[2]);
 * lazy, good-for-nothing threads
 */
 int do_send_nop(int fd);
-
 int do_recv_nop(int fd);
+int cleanup_nop();
+
+void comm_add_nop();
 
 #endif

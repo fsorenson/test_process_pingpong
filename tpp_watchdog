@@ -1,9 +1,0 @@
-#!/bin/bash
-
-KILL_TIMEOUT=60
-
-while [ 0 -eq 0 ] ; do
-	sleep $KILL_TIMEOUT
-
-	killall -9 test_process_pingpong >/dev/null 2>&1
-done

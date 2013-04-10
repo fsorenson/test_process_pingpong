@@ -9,6 +9,7 @@
 */
 
 #include "common.h"
+#include "comms.h"
 
 #include <unistd.h>
 #include <sys/types.h>
@@ -34,20 +35,10 @@
 #define DEFAULT_COMM_MODE	comm_mode_tcp
 #define DEFAULT_THREAD_MODE	thread_mode_thread
 #define DEFAULT_EXECUTION_TIME	30 /* max time to run the test (seconds) */
-#define DEFAULT_STATS_INTERVAL	1 /* output the stats every # seconds */
+#define DEFAULT_STATS_INTERVAL	5 /* output the stats every # seconds */
 #define DEFAULT_STATS_SUMMARY	true /* display a summary immediately prior to exit */
 
 
-typedef enum { comm_mode_tcp, comm_mode_udp, comm_mode_pipe, comm_mode_sockpair
-#ifdef HAVE_EVENTFD
-	, comm_mode_eventfd
-#endif
-	, comm_mode_sem, comm_mode_busy_sem
-	, comm_mode_futex
-	, comm_mode_spin
-	, comm_mode_nop
-	, comm_mode_mq
-} __PACKED comm_modes;
 
 typedef enum {
 	thread_mode_fork, thread_mode_thread, thread_mode_pthread, thread_mode_context
@@ -58,27 +49,24 @@ typedef enum {
 
 /* this doesn't need to be modified once it's set up, so doesn't need to be shared */
 struct config_struct {
-#pragma pack(1)
 	char verbosity;
 	thread_modes thread_mode;
-	comm_modes comm_mode;
 
 	bool stats_summary; /* summary prior to exit */
 	bool set_affinity;
 
-	char dummy1;
+//	char dummy1;
 	short num_cpus;
 	short num_online_cpus;
 	short cpu[2]; /* cpu affinity settings */
 
-	char dummy2[2];
+	int comm_mode_index;
+//	char dummy2[2];
 
 	uid_t uid;
 	gid_t gid;
 	uid_t euid;
 	gid_t egid;
-
-#pragma pack()
 
 
 	int *pair1;
@@ -109,13 +97,16 @@ struct config_struct {
 
 	void *stack[2];
 
+	COMM_MODE_OPS;
+/*
 	int (*comm_init)();
-	int (*make_pair)(int fd[2]);
-	int (*pre_comm)();
-	int (*do_send)(int s);
-	int (*do_recv)(int s);
+	int (*comm_make_pair)(int fd[2]);
+	int (*comm_pre)();
+	int (*comm_do_send)(int s);
+	int (*comm_do_recv)(int s);
 	int (*comm_interrupt)();
 	int (*comm_cleanup)();
+*/
 };
 
 extern struct config_struct config;
@@ -176,7 +167,7 @@ struct run_data_struct {
 
 	struct thread_info_struct thread_info[2];
 	struct thread_stats_struct thread_stats[2];
-	char really_big_dummy[10240];
+//	char really_big_dummy[10240];
 
 };
 

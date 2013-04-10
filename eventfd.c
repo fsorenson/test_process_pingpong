@@ -2,10 +2,12 @@
 
 #include <unistd.h>
 #include <sys/syscall.h>
-
+#include <string.h>
 
 #ifdef SYS_eventfd
-  #define HAVE_EVENTFD
+  #ifndef HAVE_EVENTFD
+    #define HAVE_EVENTFD
+  #endif
 #endif
 
 
@@ -28,6 +30,19 @@ inline int do_recv_eventfd(int fd) {
 
         return ! eventfd_read(fd, &dummy);
 }
+
+
+void __attribute__((constructor)) comm_add_eventfd() {
+	struct comm_mode_ops_struct ops;
+
+	memset(&ops, 0, sizeof(struct comm_mode_ops_struct));
+	ops.comm_make_pair = make_eventfd_pair;
+
+	comm_mode_do_initialization("eventfd", &ops);
+
+}
+
+ADD_COMM_MODE(eventfd, comm_add_eventfd);
 
 
 #endif /* HAVE_EVENTFD */

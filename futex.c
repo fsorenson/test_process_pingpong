@@ -1,12 +1,11 @@
 #include "futex.h"
-
-#ifndef _GNU_SOURCE
-#define _GNU_SOURCE
-#endif
+#include "comms.h"
+#include "test_process_pingpong.h"
 
 #include <unistd.h>
 #include <sys/syscall.h>
 #include <sched.h>
+#include <string.h>
 
 #include <linux/futex.h>
 #include <sys/ipc.h>
@@ -56,3 +55,16 @@ int cleanup_futex() {
 	return 0;
 }
 
+void __attribute__((constructor)) comm_add_futex() {
+	struct comm_mode_ops_struct ops;
+
+	memset(&ops, 0, sizeof(struct comm_mode_ops_struct));
+	ops.comm_make_pair = make_futex_pair;
+	ops.comm_do_send = do_send_futex;
+	ops.comm_do_recv = do_recv_futex;
+	ops.comm_cleanup = cleanup_futex;
+
+	comm_mode_do_initialization("futex", &ops);
+}
+
+ADD_COMM_MODE(futex, comm_add_futex);

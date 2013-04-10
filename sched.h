@@ -11,7 +11,10 @@ int get_sched_interval();
 
 int parse_sched(char *arg);
 
+#ifndef HAVE_SCHED_GETCPU
 int sched_getcpu();
+#endif
+
 int num_cpus();
 int num_online_cpus();
 

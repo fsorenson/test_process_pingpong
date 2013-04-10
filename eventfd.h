@@ -1,7 +1,17 @@
 #ifndef __EVENTFD_H__
 #define __EVENTFD_H__
 
-#include "test_process_pingpong.h"
+#include "comms.h"
+
+#include <sys/syscall.h>
+
+
+#ifdef SYS_eventfd
+  #ifndef HAVE_EVENTFD
+    #define HAVE_EVENTFD
+  #endif
+#endif
+
 
 #ifdef HAVE_EVENTFD
 
@@ -22,6 +32,8 @@ inline int do_recv_eventfd(int fd) {
 */
 int do_send_eventfd(int fd);
 int do_recv_eventfd(int fd);
+
+void comm_add_eventfd();
 
 #endif /* HAVE_EVENTFD */
 

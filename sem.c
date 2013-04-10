@@ -10,11 +10,15 @@
 
 sem_t *sems[2];
 const char *sem_names[] = { "ping", "pong" };
+static bool busy = false;
 
 int make_sem_pair(int fd[2]) {
 	static int sem_num = 0;
 	sem_t *ret;
-	/* need an _sems and _names */
+
+	if (!strncmp(get_comm_mode_name(config.comm_mode_index), "busysem", 7)) {
+		busy = true;
+	}
 
 
 	if ((ret = sem_open(sem_names[sem_num], O_CREAT, S_IRUSR | S_IWUSR, 0)) == SEM_FAILED) {
@@ -38,14 +42,17 @@ inline int do_send_sem(int fd) {
 inline int do_recv_sem(int fd) {
         int err;
 
-        if (config.comm_mode == comm_mode_sem) {
-                err = sem_wait(sems[fd]);
-        } else { /* comm_mode_busy_sem */
-                do {
-                        if ((err = sem_trywait(sems[fd])) == -1)
-                                err = errno;
-                } while (err == EAGAIN);
-        }
+	err = sem_wait(sems[fd]);
+        return ! err;
+}
+inline int do_recv_busy_sem(int fd) {
+        int err;
+
+       do {
+		if ((err = sem_trywait(sems[fd])) == -1)
+			err = errno;
+	} while (err == EAGAIN);
+
         return ! err;
 }
 int cleanup_sem() {
@@ -56,3 +63,33 @@ int cleanup_sem() {
 
 	return 0;
 }
+
+void __attribute__((constructor)) comm_add_sem() {
+	struct comm_mode_ops_struct ops;
+
+	memset(&ops, 0, sizeof(struct comm_mode_ops_struct));
+	ops.comm_make_pair = make_sem_pair;
+	ops.comm_do_send = do_send_sem;
+	ops.comm_do_recv = do_recv_sem;
+	ops.comm_cleanup = cleanup_sem;
+
+
+	comm_mode_do_initialization("sem", &ops);
+}
+
+void __attribute__((constructor)) comm_add_busy_sem() {
+	struct comm_mode_ops_struct ops;
+
+	memset(&ops, 0, sizeof(struct comm_mode_ops_struct));
+	ops.comm_make_pair = make_sem_pair;
+	ops.comm_do_send = do_send_sem;
+	ops.comm_do_recv = do_recv_busy_sem;
+	ops.comm_cleanup = cleanup_sem;
+
+
+	comm_mode_do_initialization("busysem", &ops);
+}
+
+ADD_COMM_MODE(sem, comm_add_sem);
+ADD_COMM_MODE(busysem, comm_add_busysem);
+

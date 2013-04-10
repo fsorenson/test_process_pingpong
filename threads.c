@@ -23,19 +23,6 @@
 
 /* thread startup, execution, handlers, etc */
 
-static inline uint64_t rdtsc(unsigned int *aux) {
-(void)aux;
-	uint32_t low, high;
-
-	__asm__ __volatile__(	\
-		"rdtsc"		\
-		: "=a"(low),	\
-		  "=d"(high));	\
-
-
-//	__asm__ __volatile__("rdtsc" : "=a" (lo), "=d" (hi));
-	return (uint64_t) high << 32 | low;
-}
 static inline unsigned long long native_read_tscp(unsigned int *aux)
 {
         unsigned long low, high;
@@ -44,26 +31,6 @@ static inline unsigned long long native_read_tscp(unsigned int *aux)
         return low | ((unsigned long long)high << 32);
 }
 
-
-void set_affinity(int cpu) {
-	cpu_set_t mask;
-	CPU_ZERO(&mask);
-	CPU_SET((size_t)cpu, &mask);
-	sched_setaffinity(0, sizeof(cpu_set_t), &mask);
-}
-
-int rename_thread(char *thread_name) {
-	char name[17];
-	int ret;
-
-	strncpy(name, thread_name, 16);
-	name[16] = 0;
-	if ((ret = prctl(PR_SET_NAME, (unsigned long)&name)) == -1) {
-		printf("Failed to set thread name to '%s': %m\n", name);
-		return -1;
-	}
-	return 0;
-}
 
 struct interval_stats_struct {
 	unsigned long long current_count;
@@ -78,10 +45,11 @@ struct interval_stats_struct {
 
 	long double iteration_time; /* time for each iteration */
 	long double cpi[2]; /* cycles-per-iteration per CPU */
+	long double mhz[2]; /* approximate speed of the CPU */
 };
 
 
-int gather_stats(struct interval_stats_struct *i_stats) {
+static int gather_stats(struct interval_stats_struct *i_stats) {
 
 	i_stats->current_count = run_data->ping_count;
 	i_stats->current_time = get_time();
@@ -89,7 +57,8 @@ int gather_stats(struct interval_stats_struct *i_stats) {
 	run_data->rusage_req_in_progress = true;
 	run_data->rusage_req[0] = true;
 	run_data->rusage_req[1] = true;
-
+	kill(run_data->thread_info[0].pid, SIGUSR1);
+	kill(run_data->thread_info[1].pid, SIGUSR2);
 
 	i_stats->run_time = i_stats->current_time - run_data->start_time;
 	i_stats->interval_time = i_stats->current_time - run_data->last_stats_time;
@@ -117,9 +86,15 @@ int gather_stats(struct interval_stats_struct *i_stats) {
 	if (config.set_affinity == true) {
 		i_stats->interval_tsc[0] = run_data->thread_stats[0].tsc - run_data->thread_stats[0].last_tsc;
 		i_stats->interval_tsc[1] = run_data->thread_stats[1].tsc - run_data->thread_stats[1].last_tsc;
+		i_stats->mhz[0] = i_stats->interval_tsc[0] / i_stats->interval_time / 1000 / 1000;
+		i_stats->mhz[1] = i_stats->interval_tsc[1] / i_stats->interval_time / 1000 / 1000;
 
 		i_stats->cpi[0] = (long double)i_stats->interval_tsc[0] / (long double)i_stats->interval_count;
 		i_stats->cpi[1] = (long double)i_stats->interval_tsc[1] / (long double)i_stats->interval_count;
+	} else {
+		i_stats->interval_tsc[0] = i_stats->interval_tsc[1] = 0;
+		i_stats->mhz[0] = i_stats->mhz[1] = 0;
+		i_stats->cpi[0] = i_stats->cpi[1] = 0;
 	}
 
 	i_stats->iteration_time = i_stats->interval_time / i_stats->interval_count;
@@ -128,15 +103,15 @@ int gather_stats(struct interval_stats_struct *i_stats) {
 }
 
 void show_stats(int signum) {
-	(void)signum;
-
 	static char output_buffer[400];
 	static char time_per_iteration_string[30];
 	static char cycles_per_iteration_string[2][30];
 	static char run_time_string[30];
 
-
 	struct interval_stats_struct i_stats;
+
+	(void)signum;
+
 
 	if (run_data->rusage_req_in_progress == true) /* already waiting for results */
 		return;
@@ -144,8 +119,12 @@ void show_stats(int signum) {
 
 	if (run_data->stop == true) /* don't worry about output...  let's just pack up and go home */
 		return;
-	if (i_stats.current_time >= run_data->timeout_time) /* let our children start to die off while we finish things up */
+	if (i_stats.current_time >= run_data->timeout_time) {/* let our children start to die off while we finish things up */
 		run_data->stop = true;
+
+		kill(run_data->thread_info[0].pid, SIGUSR1);
+		kill(run_data->thread_info[1].pid, SIGUSR2);
+	}
 
 	snprintf(output_buffer, 255, "%s - %llu iterations -> %s",
 		subsec_string(run_time_string, i_stats.run_time, 3),
@@ -157,21 +136,9 @@ void show_stats(int signum) {
 
 
 
-	snprintf(output_buffer, 256, "\t(ping %ld csw, %Lf cpi); (pong %ld csw, %Lf cpi)\n",
-		i_stats.csw[0], i_stats.cpi[0],
-		i_stats.csw[1], i_stats.cpi[1]);
-
-/*
-	snprintf(output_buffer, 256, "\tping %ldcsw, %s cpi; pong %ldcsw, %s cpi\n",
-		csw[0], subsec_string(cycles_per_iteration_string[0], cpi[0], 3),
-		csw[1], subsec_string(cycles_per_iteration_string[1], cpi[1], 3));
-*/
-
-/*
-	snprintf(output_buffer, 255, "\tping csw: vol=%ld, invol=%ld; pong csw: vol=%ld, invol=%ld\n",
-		i_stats.rusage[0].ru_nvcsw, i_stats.rusage[0].ru_nivcsw,
-		i_stats.rusage[1].ru_nvcsw, i_stats.rusage[1].ru_nivcsw);
-*/
+	snprintf(output_buffer, 256, "\t(ping %ld csw, %.2Lf cpi, %.3Lf GHz); (pong %ld csw, %.2Lf cpi, %.3Lf GHz)\n",
+		i_stats.csw[0], i_stats.cpi[0], i_stats.mhz[0] / 1000.0,
+		i_stats.csw[1], i_stats.cpi[1], i_stats.mhz[1] / 1000.0);
 
 
 //	snprintf(buffer, 255, "context switches: vol=%ld, invol=%ld\n", usage.ru_nvcsw, usage.ru_nivcsw);
@@ -197,9 +164,11 @@ void stop_handler(int signum) {
 }
 
 void child_handler(int signum) {
-	(void)signum;
 	pid_t pid;
 	int status;
+
+	(void)signum;
+
 
 	while ((pid = waitpid(-1, &status, WNOHANG)) != -1) {
 		if (pid == run_data->thread_info[0].pid) {
@@ -244,7 +213,7 @@ int do_monitor_work() {
 	while (run_data->stop != true) {
 		sigsuspend(&signal_mask);
 	}
-	config.comm_interrupt();
+	config.comm_interrupt(SIGINT);
 
 	printf("Waiting for child threads to die.  Die, kids!  Die!!!\n");
 	while ((run_data->thread_info[0].pid != -1) || (run_data->thread_info[1].pid != -1)) {
@@ -255,65 +224,75 @@ int do_monitor_work() {
 	return 0;
 }
 
-/* signal to receive if my parent process dies */
-void on_parent_death(int signum) {
-	int ret;
-
-	if ((ret = prctl(PR_SET_PDEATHSIG, signum)) == -1) {
-		perror("Failed to create message to be delivered upon my becoming an orphan: %m\n");
-	}
-}
-
-int send_thread_stats(int thread_num) {
-//printf("getting stats for %d\n", thread_num);
+static int send_thread_stats(int thread_num) {
 	if (getrusage(RUSAGE_THREAD, (struct rusage *)&run_data->thread_stats[thread_num].rusage) == -1) {
 		perror("getting rusage");
 	}
 
-	run_data->thread_stats[thread_num].tsc = rdtsc(NULL);
+	if (config.set_affinity == true)
+		run_data->thread_stats[thread_num].tsc = rdtsc(NULL);
 
 	run_data->rusage_req[thread_num] = false;
-//printf("Done getting stats for %d\n", thread_num);
 	return 0;
 }
 
-#define likely(x)       __builtin_expect((x),1)
-#define unlikely(x)     __builtin_expect((x),0)
+static void interrupt_thread(int signum) {
+	int thread_num;
 
-#define CHECK_NEED_STATS(thr_num) \
-	if (unlikely(run_data->rusage_req[thr_num] == true)) \
-		send_thread_stats(thr_num);
+	if (signum == SIGUSR1) {
+		thread_num = 0;
+	} else {
+		thread_num = 1;
+	}
 
-#define SEND_BLOCK(thr_num) \
-	while ((config.do_send(config.mouth[thr_num]) != 1) && unlikely(run_data->stop != true)) \
-		CHECK_NEED_STATS((thr_num))
-
-#define RECV_BLOCK(thr_num) \
-	while ((config.do_recv(config.ear[thr_num]) != 1) && unlikely(run_data->stop != true)) \
-		CHECK_NEED_STATS((thr_num))
-
-inline void do_ping_work(int thread_num) {
-		while (run_data->stop != true) {
-			run_data->ping_count ++;
-
-			SEND_BLOCK(thread_num);
-
-			RECV_BLOCK(thread_num);
-
-			CHECK_NEED_STATS(thread_num);
-
-		}
+	if (run_data->rusage_req[thread_num] == true)
+		send_thread_stats(thread_num);
+	if (run_data->stop == true) {
+		config.comm_cleanup();
+		exit(0);
+	}
 }
-void do_thread_work(int thread_num) {
+static int setup_interrupt_signal(int thread_num) {
+	struct sigaction sa;
+
+	sigemptyset(&sa.sa_mask);
+	sa.sa_flags = 0;
+	sa.sa_handler = interrupt_thread;
+	if (thread_num == 0)
+		sigaction(SIGUSR1, &sa, NULL);
+	else
+		sigaction(SIGUSR2, &sa, NULL);
+
+	return 0;
+}
+
+
+static inline void __attribute__((hot)) __attribute__((optimize("-Ofast"))) do_ping_work(int thread_num) {
+	while (1) {
+		run_data->ping_count ++;
+
+		while (config.comm_do_send(config.mouth[thread_num]) != 1);
+		while (config.comm_do_recv(config.ear[thread_num]) != 1);
+	}
+}
+static inline void __attribute__((hot)) __attribute__((optimize("-Ofast")))  do_pong_work(int thread_num) {
+	while (1) {
+		while (config.comm_do_recv(config.ear[thread_num]) != 1);
+		while (config.comm_do_send(config.mouth[thread_num]) != 1);
+	}
+}
+
+static void do_thread_work(int thread_num) {
 
 	rename_thread(run_data->thread_info[thread_num].thread_name);
 //write(1, "thread\n", 6);
 //printf("thread %d here, pid %d is my name\n", thread_num, run_data->thread_info[thread_num]->pid);
 //printf("tid = %ld\n", syscall(SYS_gettid));
 	on_parent_death(SIGINT);
+	setup_interrupt_signal(thread_num);
 	setup_crash_handler();
 
-	config.pre_comm();
+	config.comm_pre();
 
 	if (config.set_affinity == true) {
 		set_affinity(config.cpu[thread_num]);
@@ -326,19 +305,9 @@ void do_thread_work(int thread_num) {
 
 
 	if (thread_num == 0) {
-		while (run_data->stop != true) {
-			run_data->ping_count ++;
-
-			SEND_BLOCK(thread_num);
-			RECV_BLOCK(thread_num);
-			CHECK_NEED_STATS(thread_num);
-		}
+		do_ping_work(thread_num);
 	} else {
-		while (run_data->stop != true) {
-			RECV_BLOCK(thread_num);
-			SEND_BLOCK(thread_num);
-			CHECK_NEED_STATS(thread_num);
-		}
+		do_pong_work(thread_num);
 	} /* while run_data->stop != true */
 
 
@@ -346,7 +315,7 @@ void do_thread_work(int thread_num) {
 	exit(0);
 }
 
-int thread_function(void *argument) {
+static int thread_function(void *argument) {
 	struct thread_info_struct *t_info = (struct thread_info_struct *)argument;
 	int thread_num = t_info->thread_num;
 
@@ -364,7 +333,7 @@ int thread_function(void *argument) {
 	return 0;
 }
 
-void *pthread_function(void *argument) {
+static void *pthread_function(void *argument) {
 
 
 	thread_function(argument);
@@ -372,7 +341,7 @@ void *pthread_function(void *argument) {
 	return NULL;
 }
 
-int do_fork() {
+static int do_fork() {
 	int thread_num = 0;
 	int pid;
 
@@ -388,8 +357,6 @@ int do_fork() {
 	} else if (pid > 0) {
 		run_data->thread_info[thread_num].pid = pid;
 
-//printf("forked %d\n", thread_info[thread_num].pid);
-
 		thread_num ++;
 
 		run_data->thread_info[thread_num].thread_num = thread_num;
@@ -400,8 +367,6 @@ int do_fork() {
 			do_thread_work(thread_num);
 		} else if (pid > 0) {
 			run_data->thread_info[thread_num].pid = pid;
-
-//printf("forked %d\n", thread_info[thread_num].pid);
 
 			do_monitor_work();
 		} else {
@@ -415,7 +380,7 @@ int do_fork() {
 
 	return 0;
 }
-int do_clone() {
+static int do_clone() {
 	int thread_num = 0;
 	int clone_flags;
 
@@ -462,7 +427,7 @@ int do_clone() {
 	return 0;
 }
 
-int do_pthread() {
+static int do_pthread() {
 	int thread_num = 0;
 	pthread_attr_t attr;
 	int ret;

@@ -1,4 +1,5 @@
 #include "udp.h"
+#include "comms.h"
 
 #include <string.h>
 #include <sys/types.h>
@@ -46,3 +47,13 @@ int make_udp_pair(int fd[2]) {
         return 0;
 }
 
+void __attribute__((constructor)) comm_add_udp() {
+	struct comm_mode_ops_struct ops;
+
+	memset(&ops, 0, sizeof(struct comm_mode_ops_struct));
+	ops.comm_make_pair = make_udp_pair;
+
+	comm_mode_do_initialization("udp", &ops);
+}
+
+ADD_COMM_MODE(udp, comm_add_udp);

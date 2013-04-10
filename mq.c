@@ -1,13 +1,13 @@
 #include "mq.h"
-
-#ifndef __GNU_SOURCE
-#define __GNU_SOURCE
-#endif
+#include "comms.h"
+#include "test_process_pingpong.h"
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <libgen.h>
 #include <mqueue.h>
+#include <unistd.h>
 #include <sys/stat.h>
 
 static char *mqueue_path[2];
@@ -78,3 +78,17 @@ int cleanup_mq() {
 
 	return 0;
 }
+
+void __attribute__((constructor)) comm_add_mq() {
+	struct comm_mode_ops_struct ops;
+
+	memset(&ops, 0, sizeof(struct comm_mode_ops_struct));
+	ops.comm_make_pair = make_mq_pair;
+	ops.comm_do_send = do_send_mq;
+	ops.comm_do_recv = do_recv_mq;
+	ops.comm_cleanup = cleanup_mq;
+
+	comm_mode_do_initialization("mq", &ops);
+}
+
+ADD_COMM_MODE(mq, comm_add_mq);

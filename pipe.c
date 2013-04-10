@@ -1,14 +1,13 @@
 #include "pipe.h"
+#include "comms.h"
 
 #include <stdlib.h>
 #include <signal.h>
+#include <string.h>
 #include <unistd.h>
 
-#ifndef __GNU_SOURCE
-#define __GNU_SOURCE
-#endif
 
-int pre_comm_pipe() {
+int comm_pre_pipe() {
 	struct sigaction sa;
 
 write(1, "setup sigpipe\n", 14);
@@ -20,7 +19,7 @@ write(1, "setup sigpipe\n", 14);
 	return 0;
 }
 
-void sig_handler_pipe() {
+void __attribute__((noreturn)) sig_handler_pipe() {
 write(1, "sigpipe\n", 8);
 	comm_cleanup_pipe();
 }
@@ -33,7 +32,22 @@ write(1, "sent interrupts\n", 16);
 	return 0;
 }
 
-int comm_cleanup_pipe() {
+int __attribute__((noreturn)) comm_cleanup_pipe() {
 write(1, "bye\n", 4);
 	exit(0);
 }
+
+
+void __attribute__((constructor)) comm_add_pipe() {
+	struct comm_mode_ops_struct ops;
+
+	memset(&ops, 0, sizeof(struct comm_mode_ops_struct));
+	ops.comm_make_pair = pipe;
+	ops.comm_pre = comm_pre_pipe;
+	ops.comm_interrupt = comm_interrupt_pipe;
+	ops.comm_cleanup = comm_cleanup_pipe;
+
+	comm_mode_do_initialization("pipe", &ops);
+}
+
+ADD_COMM_MODE(pipe, comm_add_pipe);

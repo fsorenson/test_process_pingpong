@@ -1,5 +1,7 @@
 #include "nop.h"
+#include "comms.h"
 
+#include <string.h>
 #include <sys/mman.h>
 #include <unistd.h>
 #include <signal.h>
@@ -7,7 +9,7 @@
 #include <time.h>
 
 
-extern volatile int volatile *nop_var;
+volatile int volatile *nop_var;
 
 struct timespec nop_ts;
 
@@ -57,3 +59,17 @@ int cleanup_nop() {
 
 	return 0;
 }
+
+void __attribute__((constructor)) comm_add_nop() {
+	struct comm_mode_ops_struct ops;
+
+	memset(&ops, 0, sizeof(struct comm_mode_ops_struct));
+	ops.comm_make_pair = make_nop_pair;
+	ops.comm_do_send = do_send_nop;
+	ops.comm_do_recv = do_recv_nop;
+	ops.comm_cleanup = cleanup_nop;
+
+	comm_mode_do_initialization("nop", &ops);
+}
+
+ADD_COMM_MODE(nop, comm_add_nop);
