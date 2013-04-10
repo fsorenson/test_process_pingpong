@@ -23,9 +23,6 @@ int do_recv(int fd);
 int no_cleanup();
 
 
-void set_affinity(int cpu);
-int rename_thread(char *thread_name);
-
 
 int do_setup();
 

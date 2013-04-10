@@ -43,7 +43,7 @@ int old_make_tcp_pair(int fd[2]) {
 
 int tcp_fds[2];
 
-int make_tcp_pair(int fd[2]) {
+int new_make_tcp_pair(int fd[2]) {
 	static int tcp_num = 0;
 
 	int ret;
@@ -52,7 +52,7 @@ int make_tcp_pair(int fd[2]) {
 	struct sockaddr_storage remote_addr;
 	socklen_t addr_size;
 	int sockfd1;
-	int yes = 1;
+	int yes_flag = 1;
 
 	if (config.verbosity >= 1) printf("Setting up pair %d\n", tcp_num);
 
@@ -61,7 +61,7 @@ int make_tcp_pair(int fd[2]) {
 		hints.ai_family = AF_UNSPEC;
 		hints.ai_socktype = SOCK_STREAM;
 		hints.ai_flags = AI_PASSIVE;
-		if ((ret = getaddrinfo("127.0.0.1", "3491", &hints, &res)) != 0) {
+		if ((ret = getaddrinfo("127.0.0.1", "3490", &hints, &res)) != 0) {
 			printf("error with getaddrinfo(): %s\n", gai_strerror(ret));
 			exit(-1);
 		}
@@ -71,7 +71,7 @@ int make_tcp_pair(int fd[2]) {
 			printf("Error creating socket: %m\n");
 			exit(-1);
 		}
-		if (setsockopt(sockfd1, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int)) == -1) {
+		if (setsockopt(sockfd1, SOL_SOCKET, SO_REUSEADDR, &yes_flag, sizeof(int)) == -1) {
 			printf("Error with setsockopt: %m\n");
 			exit(-1);
 		}
@@ -103,9 +103,14 @@ int make_tcp_pair(int fd[2]) {
 		}
 	}
 
-	fd[0] = fd[1] = tcp_fds[tcp_num];
+	fd[0] = tcp_fds[tcp_num];
+	fd[1] = tcp_fds[tcp_num ^ 1];
 
 	tcp_num ++;
 
 	return 0;
+}
+
+int make_tcp_pair(int fd[2]) {
+	return new_make_tcp_pair(fd);
 }

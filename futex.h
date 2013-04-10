@@ -3,10 +3,6 @@
 
 #include "test_process_pingpong.h"
 
-#include <linux/futex.h>
-
-int *futex_id[2];
-int futex_vals[2];
 
 int make_futex_pair(int fd[2]);
 

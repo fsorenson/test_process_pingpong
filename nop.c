@@ -4,10 +4,12 @@
 #include <unistd.h>
 #include <signal.h>
 #include <sched.h>
+#include <time.h>
 
 
 extern volatile int volatile *nop_var;
-extern sigset_t nop_sig_mask;
+
+struct timespec nop_ts;
 
 int make_nop_pair(int fd[2]) {
 	static int nop_num = 0;
@@ -17,8 +19,8 @@ int make_nop_pair(int fd[2]) {
 			PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0);
 		*nop_var = 0;
 
-		sigfillset(&nop_sig_mask);
-		sigdelset(&nop_sig_mask, SIGINT);
+		nop_ts.tv_sec = 0;
+		nop_ts.tv_nsec = 1000000;
 	}
 
 	fd[0] = nop_num;
@@ -35,20 +37,15 @@ int make_nop_pair(int fd[2]) {
 * lazy, good-for-nothing threads
 */
 inline int do_send_nop(int fd) {
-	if (fd == 1) {
-		sigset_t signal_mask;
-
-		sigfillset(&signal_mask);
-		sigdelset(&signal_mask, SIGINT);
-
-		while (run_data->stop != true)
-			sigsuspend(&signal_mask);
-
-	} else {
+	if (fd == 0) {
 		*nop_var ^= 1;
 		__sync_synchronize();
+
+		return 1;
+	} else {
+		nanosleep(&nop_ts, NULL);
+		return 0;
 	}
-	return 1;
 }
 inline int do_recv_nop(int fd) {
 	(void)fd;

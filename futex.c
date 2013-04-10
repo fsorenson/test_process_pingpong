@@ -13,8 +13,8 @@
 #include <sys/shm.h>
 
 static int shm_id;
-extern int *futex_id[2];
-extern int futex_vals[2];
+int *futex_id[2];
+int futex_vals[2];
 
 int make_futex_pair(int fd[2]) {
 	static int futex_num = 0;
@@ -32,7 +32,6 @@ int make_futex_pair(int fd[2]) {
 	futex_num ++;
 	return 0;
 }
-
 
 inline int do_send_futex(int fd) {
 	*futex_id[fd] = futex_vals[fd];

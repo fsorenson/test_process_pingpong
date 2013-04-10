@@ -1,5 +1,9 @@
 #include "units.h"
 
+#include <stdio.h>
+#include <math.h>
+
+
 char *subsec_string(char *arg_buffer, long double size, int dec_pts) {
 	static char local_buffer[1024];
 	char *buffer;
@@ -26,10 +30,10 @@ char *subsec_string(char *arg_buffer, long double size, int dec_pts) {
 	}
 
 	if (size >= 100.0)
-		buffer[p++] = ((int)(size / 100.0) % 10) + '0';
+		buffer[p++] = (char)(((int)(size / 100.0) % 10) + '0');
 	if (size >= 10.0)
-		buffer[p++] = ((int)(size / 10.0) % 10) + '0';
-	buffer[p++] = ((int)(size) % 10) + '0';
+		buffer[p++] = (char)(((int)(size / 10.0) % 10) + '0');
+	buffer[p++] = (char)(((int)(size) % 10) + '0');
 
 	if (dec_pts > 0) {
 		buffer[p++] = '.';
@@ -37,7 +41,7 @@ char *subsec_string(char *arg_buffer, long double size, int dec_pts) {
 		size -= truncl(size);
 		while (dec_pts-- > 0) {
 			size *= 10.0;
-			buffer[p++] = (int)(size) + '0';
+			buffer[p++] = (char)(size + '0');
 			size -= truncl(size);
 		}
 	}
@@ -61,7 +65,7 @@ integer_fixed_point_t f_to_fp(int prec, double f) {
 
         int_fp.prec = prec;
         int_fp.i = (unsigned long int) f;
-        int_fp.dec = (unsigned long)((f - (int_fp.i * 1.0)) * prec);
+        int_fp.dec = (unsigned long)((f - (double)int_fp.i) * prec);
 
         return int_fp;
 }

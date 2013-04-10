@@ -3,6 +3,8 @@
 
 //typedef enum { no = 0, false = 0, yes = 1, true = 1 } bool;
 
+
+
 int main(int argc, char *argv[]) {
 	bool maybe = true;
 

@@ -20,17 +20,17 @@
 #include "eventfd.h"
 #endif
 
+
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
+#include <stdlib.h>
 #include <getopt.h>
 #include <sys/prctl.h>
 #include <sys/mman.h>
-#include <sys/ipc.h>
-#include <sys/shm.h>
 
 struct config_struct config;
 volatile struct run_data_struct *run_data;
+volatile struct control_struct *control_data;
 
 struct comm_mode_info_struct {
 	comm_modes comm_mode;
@@ -47,13 +47,13 @@ int no_setup() {
 	return 0;
 }
 inline int do_send(int fd) {
-	return write(fd, "X", 1);
+	return (int)write(fd, "X", 1);
 }
 //extern int do_send(int fd);
 int do_recv(int fd) {
 	char dummy;
 
-	return read(fd, &dummy, 1);
+	return (int)read(fd, &dummy, 1);
 }
 
 int no_cleanup() {
@@ -158,10 +158,10 @@ char *get_comm_mode_name(unsigned int mode) {
 }
 
 int parse_comm_mode(char *arg) {
-	unsigned int i;
+	int i;
 	int found = -1;
 
-	for (i = 0 ; i < sizeof(comm_mode_info) / sizeof(struct comm_mode_info_struct) ; i ++) {
+	for (i = 0 ; i < (int)(sizeof(comm_mode_info) / sizeof(struct comm_mode_info_struct)) ; i ++) {
 		if (! strcmp(arg, comm_mode_info[i].name)) {
 			found = i;
 			break;
@@ -178,13 +178,13 @@ int parse_comm_mode(char *arg) {
 }
 
 int min_stack_size() {
-	int minstack;
+	long int minstack;
 
 	if ((minstack = sysconf(_SC_THREAD_STACK_MIN)) == -1) {
 		perror("sysconf(_SC_THREAD_STACK_MIN)");
 		exit(1);
 	}
-	return minstack;
+	return (int)minstack;
 }
 
 int setup_defaults(char *argv0) {
@@ -226,18 +226,18 @@ int parse_opts(int argc, char *argv[]) {
 
 	static struct option long_options[] = {
 		{	"mode",		required_argument,	0,	'm'	}, /* communication mode */
-		{	"tcp",		no_argument,		&config.comm_mode_i, comm_mode_tcp },
-		{	"udp",		no_argument,		&config.comm_mode_i, comm_mode_udp },
-		{	"pipe",		no_argument,		&config.comm_mode_i, comm_mode_pipe },
-		{	"sockpair",	no_argument,		&config.comm_mode_i, comm_mode_sockpair },
+		{	"tcp",		no_argument,	(int *)	&config.comm_mode, comm_mode_tcp },
+		{	"udp",		no_argument,	(int *)	&config.comm_mode, comm_mode_udp },
+		{	"pipe",		no_argument,	(int *)	&config.comm_mode, comm_mode_pipe },
+		{	"sockpair",	no_argument,	(int *)	&config.comm_mode, comm_mode_sockpair },
 #ifdef HAVE_EVENTFD
-		{	"eventfd",	no_argument,		&config.comm_mode_i, comm_mode_eventfd },
+		{	"eventfd",	no_argument,	(int *)	&config.comm_mode, comm_mode_eventfd },
 #endif
-		{	"sem",		no_argument,		&config.comm_mode_i, comm_mode_sem },
-		{	"sema",		no_argument,		&config.comm_mode_i, comm_mode_sem },
-		{	"semaphore",	no_argument,		&config.comm_mode_i, comm_mode_sem },
-		{	"busy_sem",	no_argument,		&config.comm_mode_i, comm_mode_busy_sem },
-		{	"busy",		no_argument,		&config.comm_mode_i, comm_mode_busy_sem },
+		{	"sem",		no_argument,	(int *)	&config.comm_mode, comm_mode_sem },
+		{	"sema",		no_argument,	(int *)	&config.comm_mode, comm_mode_sem },
+		{	"semaphore",	no_argument,	(int *)	&config.comm_mode, comm_mode_sem },
+		{	"busy_sem",	no_argument,	(int *)	&config.comm_mode, comm_mode_busy_sem },
+		{	"busy",		no_argument,	(int *)	&config.comm_mode, comm_mode_busy_sem },
 
 		{	"thread",	required_argument,	0,	't'	},
 		{	"thread_mode",	required_argument,	0,	't'	},
@@ -267,8 +267,8 @@ int parse_opts(int argc, char *argv[]) {
 	}
 
 	if (optind == argc - 2) { /* should contain the cpu #s */
-		config.cpu[0] = strtol(argv[optind++], NULL, 10);
-		config.cpu[1] = strtol(argv[optind++], NULL, 10);
+		config.cpu[0] = (int)strtol(argv[optind++], NULL, 10);
+		config.cpu[1] = (int)strtol(argv[optind++], NULL, 10);
 		printf("Setting affinity to cpus %d and %d\n", config.cpu[0], config.cpu[1]);
 	}
 	return 0;
@@ -284,33 +284,14 @@ void make_pairs() {
 	config.ear[1] = config.pairs[0][0];
 }
 
-void set_affinity(int cpu) {
-	cpu_set_t mask;
-	CPU_ZERO(&mask);
-	CPU_SET(cpu, &mask);
-	sched_setaffinity(0, sizeof(cpu_set_t), &mask);
-}
-
 //static int run_data_shm_id;
 
-int rename_thread(char *thread_name) {
-	char name[17];
-	int ret;
-
-	strncpy(name, thread_name, 16);
-	name[16] = 0;
-	if ((ret = prctl(PR_SET_NAME, (unsigned long)&name)) == -1) {
-		printf("Failed to set thread name to '%s': %m\n", name);
-		return -1;
-	}
-	return 0;
-}
 
 int do_setup() {
-	unsigned int i;
+	int i;
 	int found = -1;
 
-	for (i = 0 ; i < sizeof(comm_mode_info) / sizeof(struct comm_mode_info_struct) ; i ++) {
+	for (i = 0 ; i < (int) (sizeof(comm_mode_info) / sizeof(struct comm_mode_info_struct)) ; i ++) {
 		if (config.comm_mode == comm_mode_info[i].comm_mode) {
 			found = i;
 			break;
@@ -339,10 +320,12 @@ int do_setup() {
 //	if (config.thread_mode == thread_mode_thread) {
 //		run_data = calloc(1, sizeof(struct run_data_struct));
 //	} else {
-		run_data = mmap(NULL, sizeof(struct run_data_struct),
-			PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0);
 //	}
+	run_data = mmap(NULL, sizeof(struct run_data_struct),
+		PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0);
 
+	control_data = mmap(NULL, sizeof(struct control_struct),
+		PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0);
 
 	make_pairs();
 

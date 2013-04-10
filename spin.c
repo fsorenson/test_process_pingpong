@@ -1,11 +1,9 @@
 #include "spin.h"
 
 #include <sys/mman.h>
-#include <unistd.h>
-#include <sched.h>
 
 int *spin[2];
-extern volatile int volatile *spin_var;
+volatile int volatile *spin_var;
 
 int make_spin_pair(int fd[2]) {
 	static int spin_num = 0;
@@ -32,10 +30,14 @@ inline int do_send_spin(int fd) {
 }
 inline int do_recv_spin(int fd) {
 
-	while (*spin_var != fd)
-		__sync_synchronize();
+	if (*spin_var == fd)
+		return 1;
+	__sync_synchronize();
+	return (*spin_var == fd);
+//	while (*spin_var != fd)
+//		__sync_synchronize();
 
-	return 1;
+//	return 1;
 }
 
 int cleanup_spin() {

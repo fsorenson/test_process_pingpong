@@ -1,12 +1,9 @@
 #include "sched.h"
 
-#include <sys/types.h>
-#include <unistd.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <errno.h>
-#include <string.h>
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 int get_priorities() {
 	struct sched_param param;
@@ -36,7 +33,7 @@ int get_sched_interval() {
 	if ((ret = sched_rr_get_interval(0, &tp)) == -1) {
 		perror("erro getting RR scheduling interval: %m\n");
 	} else {
-		config.sched_rr_quantum = (tp.tv_sec * 1.0) + (tp.tv_nsec * 1.0) / 1000000000;
+		config.sched_rr_quantum = ((double)tp.tv_sec + (double)tp.tv_nsec) / 1000000000.0;
 	}
 
 	return 0;
@@ -49,10 +46,10 @@ int parse_sched(char *arg) {
 	tok = strtok_r(arg_copy, ":", &saveptr);
 	if (! strcmp(tok, "fifo")) {
 		config.sched_policy = SCHED_FIFO;
-		config.sched_prio = strtol(saveptr, NULL, 10);
+		config.sched_prio = (int)strtol(saveptr, NULL, 10);
 	} else if (! strcmp(tok, "rr")) {
 		config.sched_policy = SCHED_RR;
-		config.sched_prio = strtol(saveptr, NULL, 10);
+		config.sched_prio = (int)strtol(saveptr, NULL, 10);
 	}
 
 	return 0;
@@ -66,7 +63,7 @@ int parse_sched(char *arg) {
 //#include <asm-i386/unistd.h>
 int sched_getcpu() {
         int c, s;
-        s = syscall(__NR_getcpu, &c, NULL, NULL);
+        s = (int)syscall(__NR_getcpu, &c, NULL, NULL);
         return (s == -1) ? s : c;
 }
 #endif
@@ -74,7 +71,7 @@ int sched_getcpu() {
 int num_cpus() {
 	int ncpu;
 
-	if ((ncpu = sysconf(_SC_NPROCESSORS_CONF)) == -1) {
+	if ((ncpu = (int)sysconf(_SC_NPROCESSORS_CONF)) == -1) {
 		perror("sysconf(_SC_NPROCESSORS_CONF)");
 		exit(1);
 	}
@@ -83,7 +80,7 @@ int num_cpus() {
 int num_online_cpus() {
 	int ncpu;
 
-	if ((ncpu = sysconf(_SC_NPROCESSORS_ONLN)) == -1) {
+	if ((ncpu = (int)sysconf(_SC_NPROCESSORS_ONLN)) == -1) {
 		perror("sysconf(_SC_NPROCESSORS_ONLN)");
 		exit(1);
 	}
