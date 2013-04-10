@@ -9,7 +9,7 @@
 #include <time.h>
 
 
-volatile int volatile *unconstrained_var;
+int *unconstrained_var;
 
 struct timespec unconstrained_ts;
 

@@ -48,6 +48,29 @@ struct interval_stats_struct {
 	long double mhz[2]; /* approximate speed of the CPU */
 };
 
+static int estimate_cpu_speed(int thread_num) {
+	long double start_time, end_time;
+	unsigned long long start_tsc, end_tsc;
+	long double interval_time;
+	unsigned long long interval_tsc;
+
+	start_tsc = rdtsc(NULL);
+	start_time = get_time();
+	do_sleep(1, 0);
+	end_tsc = rdtsc(NULL);
+	end_time = get_time();
+
+	interval_time = end_time - start_time;
+	interval_tsc = end_tsc - start_tsc;
+
+
+	run_data->thread_info[thread_num].cpu_mhz = interval_tsc / interval_time / 1000 / 1000;
+	run_data->thread_info[thread_num].cpu_cycle_time = interval_time / (long double)interval_tsc * 1000.0 * 1000.0 * 1000.0;
+
+	return 0;
+}
+
+
 
 static int gather_stats(struct interval_stats_struct *i_stats) {
 
@@ -105,7 +128,6 @@ static int gather_stats(struct interval_stats_struct *i_stats) {
 void show_stats(int signum) {
 	static char output_buffer[400];
 	static char time_per_iteration_string[30];
-	static char cycles_per_iteration_string[2][30];
 	static char run_time_string[30];
 
 	struct interval_stats_struct i_stats;
@@ -206,9 +228,14 @@ int do_monitor_work() {
 
 	setup_timer();
 	setup_stop_signal();
+
+	run_data->start = true; /* tell the child threads to begin */
+
+
 	run_data->start_time = run_data->last_stats_time = get_time();
 	run_data->timeout_time = (double)run_data->start_time + (double)config.max_execution_time;
 //	run_data->start_tsc = rdtsc(NULL);
+
 
 	while (run_data->stop != true) {
 		sigsuspend(&signal_mask);
@@ -285,9 +312,8 @@ static inline void __attribute__((hot)) __attribute__((optimize("-Ofast")))  do_
 static void do_thread_work(int thread_num) {
 
 	rename_thread(run_data->thread_info[thread_num].thread_name);
-//write(1, "thread\n", 6);
-//printf("thread %d here, pid %d is my name\n", thread_num, run_data->thread_info[thread_num]->pid);
-//printf("tid = %ld\n", syscall(SYS_gettid));
+
+
 	on_parent_death(SIGINT);
 	setup_interrupt_signal(thread_num);
 	setup_crash_handler();
@@ -297,12 +323,12 @@ static void do_thread_work(int thread_num) {
 	if (config.set_affinity == true) {
 		set_affinity(config.cpu[thread_num]);
 		sched_yield();
+
 		run_data->thread_stats[thread_num].start_tsc = rdtsc(NULL);
 		run_data->thread_stats[thread_num].last_tsc = run_data->thread_stats[thread_num].start_tsc;
 	} else {
 //		printf("Affinity not set, however pong *currently* running on cpu %d\n", sched_getcpu());
 	}
-
 
 	if (thread_num == 0) {
 		do_ping_work(thread_num);
@@ -318,6 +344,7 @@ static void do_thread_work(int thread_num) {
 static int thread_function(void *argument) {
 	struct thread_info_struct *t_info = (struct thread_info_struct *)argument;
 	int thread_num = t_info->thread_num;
+	char cpu_cycle_time_buffer[50];
 
 	char buf[100];
 
@@ -326,8 +353,17 @@ static int thread_function(void *argument) {
 	if (run_data->thread_info[thread_num].pid == 0)
 		run_data->thread_info[thread_num].pid = (int)syscall(SYS_getpid);
 
-	snprintf(buf, 99, "%d: %s - thread %d, pid %d, tid %d\n", thread_num, t_info->thread_name,  t_info->thread_num, t_info->pid, t_info->tid);
+	estimate_cpu_speed(thread_num);
+
+
+	snprintf(buf, 99, "%d: %s - thread %d, pid %d, tid %d, CPU estimated at %.2Lf MHz (%s cycle)\n",
+		thread_num, t_info->thread_name,  t_info->thread_num, t_info->pid, t_info->tid,
+		t_info->cpu_mhz, subsec_string(cpu_cycle_time_buffer, t_info->cpu_cycle_time, 3));
 	write(1, buf, strlen(buf));
+
+	run_data->ready[thread_num] = true;
+	while (run_data->start != true)
+		;
 
 	do_thread_work(t_info->thread_num);
 	return 0;

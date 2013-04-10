@@ -34,8 +34,9 @@
 
 #define DEFAULT_COMM_MODE	comm_mode_tcp
 #define DEFAULT_THREAD_MODE	thread_mode_thread
-#define DEFAULT_EXECUTION_TIME	30 /* max time to run the test (seconds) */
-#define DEFAULT_STATS_INTERVAL	5 /* output the stats every # seconds */
+#define DEFAULT_MONITOR_CHECK_FREQ	250 /* milliseconds between checks */
+#define DEFAULT_EXECUTION_TIME		30 /* max time to run the test (seconds) */
+#define DEFAULT_STATS_INTERVAL		5 /* output the stats every # seconds */
 #define DEFAULT_STATS_SUMMARY	true /* display a summary immediately prior to exit */
 
 
@@ -55,13 +56,12 @@ struct config_struct {
 	bool stats_summary; /* summary prior to exit */
 	bool set_affinity;
 
-//	char dummy1;
 	short num_cpus;
 	short num_online_cpus;
 	short cpu[2]; /* cpu affinity settings */
 
 	int comm_mode_index;
-//	char dummy2[2];
+
 
 	uid_t uid;
 	gid_t gid;
@@ -84,8 +84,9 @@ struct config_struct {
 	int sched_policy;
 	int sched_prio;
 
-	char dummy5[4];
+	char dummy1[4];
 
+	long monitor_check_frequency; /* milliseconds between 'check if there's a need to display stats or end */
 	long stats_interval; /* in seconds */
 	unsigned long max_execution_time; /* in seconds */
 
@@ -107,6 +108,7 @@ struct config_struct {
 	int (*comm_interrupt)();
 	int (*comm_cleanup)();
 */
+	char dummy2[8];
 };
 
 extern struct config_struct config;
@@ -117,7 +119,10 @@ struct thread_info_struct {
 	int thread_num;
 	int pid;
 	int tid;
+	long double cpu_mhz;
+	long double cpu_cycle_time;
 	char *thread_name;
+	char dummy[8];
 };
 
 struct thread_stats_struct {
@@ -132,9 +137,11 @@ struct thread_stats_struct {
 extern struct thread_info_struct *thread_info;
 
 struct run_data_struct {
-	unsigned long long volatile ping_count;  /* 8 bytes !?!? */
+	unsigned long long ping_count;  /* 8 bytes !?!? */
 #pragma pack(1)
-	volatile bool stop; /* stop request to the threads */
+	bool ready[2]; /* threads indicate they're ready to begin */
+	bool start; /* start the threads */
+	bool stop; /* stop request to the threads */
 
 	/*
 	 * monitor sets to 'true' prior to raising request_rusage flags
@@ -142,18 +149,18 @@ struct run_data_struct {
 	 * if ((rusage_req_in_progress == true) && (rusage_req[0] == false) && (rusage_req[1] == false))
 	 *
 	 */
-	volatile bool rusage_req_in_progress;
+	bool rusage_req_in_progress;
 
 	/*
 	 * set to 'true' to request the rusage stats from the threads
 	 * threads will provide stats to 'rusage' below, then
 	 * set their flag back to 'false'
 	 */
-	volatile bool rusage_req[2]; /* rusage request */
-	char dummy1[4];
+	bool rusage_req[2]; /* rusage request */
+	char dummy1[1];
+	unsigned long long last_ping_count;
 	char dummy2[8];
 #pragma pack()
-	unsigned long long last_ping_count;
 
 	long double start_time;
 	long double timeout_time; /* should stop by this time...  set to start_time + execution time */
@@ -167,12 +174,10 @@ struct run_data_struct {
 
 	struct thread_info_struct thread_info[2];
 	struct thread_stats_struct thread_stats[2];
-//	char really_big_dummy[10240];
-
 };
 
 
-extern volatile struct run_data_struct *run_data;
+extern struct run_data_struct *run_data;
 
 
 

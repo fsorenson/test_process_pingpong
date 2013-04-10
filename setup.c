@@ -18,8 +18,8 @@
 #include <sys/mman.h>
 
 struct config_struct config;
-volatile struct run_data_struct *run_data;
-volatile struct control_struct *control_data;
+struct run_data_struct *run_data;
+struct control_struct *control_data;
 
 
 /*
@@ -102,6 +102,7 @@ int setup_defaults(char *argv0) {
 /* default settings */
 	config.argv0 = argv0;
 
+	config.monitor_check_frequency	= DEFAULT_MONITOR_CHECK_FREQ;
 	config.max_execution_time	= DEFAULT_EXECUTION_TIME;
 	config.stats_interval	= DEFAULT_STATS_INTERVAL;
 	config.thread_mode	= DEFAULT_THREAD_MODE;
@@ -137,23 +138,6 @@ int parse_opts(int argc, char *argv[]) {
 
 	static struct option long_options[] = {
 		{	"mode",		required_argument,	0,	'm'	}, /* communication mode */
-
-// would be nice to add these back in later...
-/*
-		{	"tcp",		no_argument,	(int *)	&config.comm_mode, comm_mode_tcp },
-		{	"udp",		no_argument,	(int *)	&config.comm_mode, comm_mode_udp },
-		{	"pipe",		no_argument,	(int *)	&config.comm_mode, comm_mode_pipe },
-		{	"sockpair",	no_argument,	(int *)	&config.comm_mode, comm_mode_sockpair },
-#ifdef HAVE_EVENTFD
-		{	"eventfd",	no_argument,	(int *)	&config.comm_mode, comm_mode_eventfd },
-#endif
-		{	"sem",		no_argument,	(int *)	&config.comm_mode, comm_mode_sem },
-		{	"sema",		no_argument,	(int *)	&config.comm_mode, comm_mode_sem },
-		{	"semaphore",	no_argument,	(int *)	&config.comm_mode, comm_mode_sem },
-		{	"busy_sem",	no_argument,	(int *)	&config.comm_mode, comm_mode_busy_sem },
-		{	"busy",		no_argument,	(int *)	&config.comm_mode, comm_mode_busy_sem },
-*/
-
 
 		{	"thread",	required_argument,	0,	't'	},
 		{	"thread_mode",	required_argument,	0,	't'	},

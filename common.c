@@ -8,6 +8,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <sys/prctl.h>
+#include <time.h>
 
 
 inline int get_min_stack_size() {
@@ -33,6 +34,18 @@ inline uint64_t rdtsc(unsigned int *aux) {
 //	__asm__ __volatile__("rdtsc" : "=a" (lo), "=d" (hi));
 	return (uint64_t) high << 32 | low;
 }
+
+int do_sleep(long sec, long nsec) {
+	struct timespec ts;
+
+	ts.tv_sec = sec;
+	ts.tv_nsec = nsec;
+	clock_nanosleep(CLOCK_REALTIME, 0, &ts, NULL);
+
+	return 0;
+}
+
+
 
 inline void set_affinity(int cpu) {
 	cpu_set_t mask;

@@ -2,8 +2,9 @@ CC=gcc
 #CC=g++
 LIBS=-lpthread -lm -lrt
 
-OBJDIR=objs
-DEPDIR=deps
+objs_dir=objs
+deps_dir=deps
+stab_dir=stabs
 
 LDFLAGS=
 CPPFLAGS=
@@ -112,8 +113,9 @@ C_SRCS = $(addsuffix .c,$(f))
 H_SRCS = $(addsuffix .h,$(f))
 SRCS = $(C_SRCS) $(H_SRCS)
 
-OBJS = $(addprefix $(OBJDIR)/, $(addsuffix .o,$(f)))
-DEPS = $(addprefix $(DEPDIR)/, $(addsuffix .d,$(f)))
+OBJS = $(addprefix $(objs_dir)/, $(addsuffix .o,$(f)))
+DEPS = $(addprefix $(deps_dir)/, $(addsuffix .d,$(f)))
+stabs = $(addprefix $(stab_dir)/,$(addsuffix .s,$(f)))
 
 
 
@@ -122,13 +124,15 @@ comms = tcp udp pipe socket_pair sem futex mq eventfd spin nop yield unconstrain
 comms_c_srcs = $(addsuffix .c,$(comms))
 comms_h_srcs = $(addsuffix .h,$(comms))
 comms_srcs = $(comms_c_srcs) $(comms_h_srcs)
-comms_objs = $(addprefix $(OBJDIR)/, $(addsuffix .o,$(comms)))
-comms_deps = $(addprefix $(DEPDIR)/, $(addsuffix .d,$(comms)))
+comms_objs = $(addprefix $(objs_dir)/, $(addsuffix .o,$(comms)))
+comms_deps = $(addprefix $(deps_dir)/, $(addsuffix .d,$(comms)))
+comms_stabs += $(addprefix $(stab_dir)/,$(addsuffix .s,$(comms)))
+
 
 SRCS += $(comms_srcs)
 #OBJS += $(comms_objs)
 DEPS += $(comms_deps)
-
+stabs += $(comms_stabs)
 
 
 comms_glue = comms
@@ -136,25 +140,25 @@ comms_glue = comms
 comms_glue_c_srcs = $(addsuffix .c,$(comms_glue))
 comms_glue_h_srcs = $(addsuffix .h,$(comms_glue))
 comms_glue_srcs = $(comms_glue_c_srcs) $(comms_glue_h_srcs)
-comms_glue_objs = $(addprefix $(OBJDIR)/, $(addsuffix .o,$(comms_glue)))
-comms_glue_deps = $(addprefix $(DEPDIR)/, $(addsuffix .d,$(comms_glue)))
+comms_glue_objs = $(addprefix $(objs_dir)/, $(addsuffix .o,$(comms_glue)))
+comms_glue_deps = $(addprefix $(deps_dir)/, $(addsuffix .d,$(comms_glue)))
+comms_glue_stabs += $(addprefix $(stab_dir)/,$(addsuffix .s,$(comms_glue)))
 
 SRCS += $(comms_glue_srcs)
 #OBJS += $(comms_glue_objs)
 DEPS += $(comms_glue_deps)
-
-STABS = $(addsuffix .s,$(f))
+stabs += $(comms_glue_stabs)
 
 
 
 # build the deps files
-$(DEPDIR)/%.d: %.c %.h
+$(deps_dir)/%.d: %.c %.h
 	@$(SHELL) -ec '$(CC) -MM $(CPPFLAGS) $< | sed s@$*.o@objs/\&\ deps/$@@g > $@'
 
 # include the deps files
 -include $(DEPS)
 
-$(OBJDIR)/%.o: %.c $(DEPDIR)/%.d
+$(objs_dir)/%.o: %.c $(deps_dir)/%.d
 	@$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@
 
 
@@ -162,14 +166,14 @@ test_process_pingpong:	$(comms_glue_objs) $(comms_objs) $(OBJS)
 	$(CC) $(comms_glue_objs) $(comms_objs) $(OBJS) $(CPPFLAGS) $(CFLAGS) $(LIBS) -o $@
 
 
-%.s: %.c $(DEPDIR)/%.d
-	$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -gstabs -S
+$(stab_dir)/%.s: %.c $(deps_dir)/%.d
+	$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -gstabs -S -o $@
 
-stabs: $(STABS)
+stabs: $(stabs)
 
 
 .PHONY: cov clean
-.PRECIOUS: $(DEPDIR)/%.d
+.PRECIOUS: $(deps_dir)/%.d
 
 gprof: $(OBJS)
 	@$(CC) -o $@ $(OBJS) $(CFLAGS) $(CPPFLAGS) $(LIBS) -pg -O 

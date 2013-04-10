@@ -5,7 +5,7 @@
 #include <string.h>
 
 int *spin[2];
-volatile int volatile *spin_var;
+int *spin_var;
 
 int make_spin_pair(int fd[2]) {
 	static int spin_num = 0;
