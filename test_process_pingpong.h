@@ -7,9 +7,8 @@
 
         by Frank Sorenson (frank@tuxrocks.com) 2013
 */
-#ifndef _GNU_SOURCE
-#define _GNU_SOURCE
-#endif
+
+#include "common.h"
 
 #include <unistd.h>
 #include <sys/types.h>
@@ -38,10 +37,6 @@
 #define DEFAULT_STATS_INTERVAL	1 /* output the stats every # seconds */
 #define DEFAULT_STATS_SUMMARY	true /* display a summary immediately prior to exit */
 
-#define __PACKED __attribute__ ((packed))
-
-
-typedef enum { no = 0, false = 0, yes = 1, true = 1 } __PACKED bool;
 
 typedef enum { comm_mode_tcp, comm_mode_udp, comm_mode_pipe, comm_mode_sockpair
 #ifdef HAVE_EVENTFD
@@ -58,37 +53,34 @@ typedef enum {
 	thread_mode_fork, thread_mode_thread, thread_mode_pthread, thread_mode_context
 } __PACKED thread_modes;
 
+
+
+
 /* this doesn't need to be modified once it's set up, so doesn't need to be shared */
 struct config_struct {
-	int verbosity;
-	int num_cpus;
-	int num_online_cpus;
-	int min_stack;
-	char *argv0;
+#pragma pack(1)
+	char verbosity;
+	thread_modes thread_mode;
+	comm_modes comm_mode;
+
+	bool stats_summary; /* summary prior to exit */
+	bool set_affinity;
+
+	char dummy1;
+	short num_cpus;
+	short num_online_cpus;
+	short cpu[2]; /* cpu affinity settings */
+
+	char dummy2[2];
 
 	uid_t uid;
 	gid_t gid;
 	uid_t euid;
 	gid_t egid;
-	thread_modes thread_mode;
 
-	comm_modes comm_mode;
+#pragma pack()
 
-	bool stats_summary; /* summary prior to exit */
-	bool set_affinity;
-	int cur_sched_policy;
-	int cur_sched_prio;
 
-	int sched_policy;
-	int sched_prio;
-
-	double sched_rr_quantum;
-	char *sched_string;
-
-	unsigned long max_execution_time; /* in seconds */
-	long stats_interval; /* in seconds */
-
-	int cpu[2];
 	int *pair1;
 	int *pair2;
 
@@ -96,13 +88,34 @@ struct config_struct {
 	int mouth[2];
 	int ear[2];
 
+	int min_stack;
+	int cur_sched_policy;
+	int cur_sched_prio;
+
+
+	int sched_policy;
+	int sched_prio;
+
+	char dummy5[4];
+
+	long stats_interval; /* in seconds */
+	unsigned long max_execution_time; /* in seconds */
+
+	char *argv0;
+
+	char *sched_string;
+
+	double sched_rr_quantum;
+
 	void *stack[2];
 
-	int (*setup_comm)();
+	int (*comm_init)();
 	int (*make_pair)(int fd[2]);
+	int (*pre_comm)();
 	int (*do_send)(int s);
 	int (*do_recv)(int s);
-	int (*cleanup)();
+	int (*comm_interrupt)();
+	int (*comm_cleanup)();
 };
 
 extern struct config_struct config;
@@ -127,24 +140,9 @@ struct thread_stats_struct {
 
 extern struct thread_info_struct *thread_info;
 
-struct control_struct {
-/*
-	unsigned long long volatile ping_count;
-	union {
-		unsigned long a;
-		struct {
-			volatile bool stop;
-			volatile bool rusage_req_in_progress;
-			volatile bool rusage_req[2];
-		};
-	};
-*/
-};
-
-extern volatile struct control_struct *control_data;
-
 struct run_data_struct {
 	unsigned long long volatile ping_count;  /* 8 bytes !?!? */
+#pragma pack(1)
 	volatile bool stop; /* stop request to the threads */
 
 	/*
@@ -161,24 +159,24 @@ struct run_data_struct {
 	 * set their flag back to 'false'
 	 */
 	volatile bool rusage_req[2]; /* rusage request */
+	char dummy1[4];
+	char dummy2[8];
+#pragma pack()
+	unsigned long long last_ping_count;
 
 	long double start_time;
 	long double timeout_time; /* should stop by this time...  set to start_time + execution time */
 
-	struct thread_info_struct thread_info[2];
-	struct thread_stats_struct thread_stats[2];
-
-//	struct rusage rusage[2]; /* rusage stats return location */
-//	struct rusage last_rusage[2]; /* values at last report */
-//	unsigned long long start_tsc[2];
-
 	long double last_stats_time;
-	unsigned long long last_ping_count;
+
 
 	long double rusage_time; /* time of most recent rusage report */
 	long double last_rusage_time; /* time of last report */
 
 
+	struct thread_info_struct thread_info[2];
+	struct thread_stats_struct thread_stats[2];
+	char really_big_dummy[10240];
 
 };
 

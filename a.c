@@ -9,7 +9,10 @@ int main(int argc, char *argv[]) {
 	bool maybe = true;
 
 	printf("sizeof (unsigned long long) = %d\n", sizeof(unsigned long long));
+	printf("sizeof (unsigned long) = %d\n", sizeof(unsigned long));
 
+	printf("sizeof int = %d\n", sizeof(int));
+	printf("sizeof short = %d\n", sizeof(short));
 	printf("sizeof bool = %d\n", sizeof(maybe));
 
 }

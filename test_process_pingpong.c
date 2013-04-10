@@ -26,7 +26,7 @@ int main(int argc, char *argv[]) {
 
 	parse_opts(argc, argv);
 
-	do_setup();
+	do_comm_setup();
 
 	start_threads();
 

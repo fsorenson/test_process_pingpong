@@ -7,8 +7,9 @@
 #include "setup.h"
 #include "sched.h"
 
-#include "tcp.h"
+//#include "tcp.h"
 #include "udp.h"
+#include "pipe.h"
 #include "socket_pair.h"
 #include "sem.h"
 #include "futex.h"
@@ -36,55 +37,94 @@ struct comm_mode_info_struct {
 	comm_modes comm_mode;
 	char *name;
 
-	int (*setup_comm)();
+	int (*comm_init)();
 	int (*make_pair)(int fd[2]);
+	int (*pre_comm)();		/* after fork/clone, but before communication begins */
 	int (*do_send)(int s);
 	int (*do_recv)(int s);
-	int (*cleanup)();
+	int (*comm_interrupt)(int s);
+	int (*comm_cleanup)();
 };
 
-int no_setup() {
-	return 0;
-}
-inline int do_send(int fd) {
-	return (int)write(fd, "X", 1);
-}
-//extern int do_send(int fd);
-int do_recv(int fd) {
-	char dummy;
-
-	return (int)read(fd, &dummy, 1);
-}
-
-int no_cleanup() {
-	return 0;
-};
 
 
 struct comm_mode_info_struct comm_mode_info[] = {
-	{ comm_mode_tcp, "tcp", NULL, &make_tcp_pair, NULL, NULL, NULL }
-	, { comm_mode_tcp, "t", NULL, &make_tcp_pair, NULL, NULL, NULL }
-	, { comm_mode_udp, "udp", NULL, &make_udp_pair, NULL, NULL, NULL }
-	, { comm_mode_udp, "u", NULL, &make_udp_pair, NULL, NULL, NULL }
-	, { comm_mode_pipe, "pipe", NULL, &pipe, NULL, NULL, NULL }
-	, { comm_mode_pipe, "p", NULL, &pipe, NULL, NULL, NULL }
-	, { comm_mode_sockpair, "sockpair", NULL, &make_socket_pair, NULL, NULL, NULL }
-	, { comm_mode_sockpair, "s", NULL, &make_socket_pair, NULL, NULL, NULL }
+	{
+		.comm_mode	= comm_mode_tcp,
+		.name		= "tcp",
+		.make_pair	= make_tcp_pair,
+	}
+	, {
+		.comm_mode	= comm_mode_udp,
+		.name		= "udp",
+		.make_pair	= make_udp_pair
+	}
+	, {
+		.comm_mode	= comm_mode_pipe,
+		.name		= "pipe",
+		.pre_comm	= pre_comm_pipe,
+		.make_pair	= pipe,
+		.comm_cleanup	= comm_cleanup_pipe
+	}
+	, {
+		.comm_mode	= comm_mode_sockpair,
+		.name		= "sockpair",
+		.make_pair	= make_socket_pair
+	}
 #ifdef HAVE_EVENTFD
-	, { comm_mode_eventfd, "eventfd", NULL, &make_eventfd_pair, &do_send_eventfd, &do_recv_eventfd, NULL }
-	, { comm_mode_eventfd, "e", NULL, &make_eventfd_pair, &do_send_eventfd, &do_recv_eventfd, NULL }
+	, {
+		.comm_mode	= comm_mode_eventfd,
+		.name		= "eventfd",
+		.make_pair	= make_eventfd_pair,
+		.do_send	= do_send_eventfd,
+		.do_recv	= do_recv_eventfd
+	}
 #endif
-	, { comm_mode_sem, "sem", NULL, &make_sem_pair, &do_send_sem, &do_recv_sem, &cleanup_sem }
-	, { comm_mode_sem, "sema", NULL, &make_sem_pair, &do_send_sem, &do_recv_sem, &cleanup_sem }
-	, { comm_mode_sem, "semaphore", NULL, &make_sem_pair, &do_send_sem, &do_recv_sem, &cleanup_sem }
-	, { comm_mode_busy_sem, "busy", NULL, &make_sem_pair, &do_send_sem, &do_recv_sem, &cleanup_sem }
-	, { comm_mode_busy_sem, "busysem", NULL, &make_sem_pair, &do_send_sem, &do_recv_sem, &cleanup_sem }
-	, { comm_mode_busy_sem, "busy_sem", NULL, &make_sem_pair, &do_send_sem, &do_recv_sem, &cleanup_sem }
-	, { comm_mode_futex, "futex", NULL, &make_futex_pair, do_send_futex, do_recv_futex, NULL }
-	, { comm_mode_futex, "f", NULL, &make_futex_pair, do_send_futex, do_recv_futex, NULL }
-	, { comm_mode_spin, "spin", NULL, &make_spin_pair, do_send_spin, do_recv_spin, NULL }
-	, { comm_mode_nop, "nop", NULL, &make_nop_pair, &do_send_nop, &do_recv_nop, NULL }
-	, { comm_mode_mq, "mq", NULL, &make_mq_pair, &do_send_mq, &do_recv_mq, &cleanup_mq }
+	, {
+		.comm_mode	= comm_mode_sem,
+		.name		= "sem",
+		.make_pair	= make_sem_pair,
+		.do_send	= do_send_sem,
+		.do_recv	= do_recv_sem,
+		.comm_cleanup	= cleanup_sem
+	}
+	, {
+		.comm_mode	= comm_mode_busy_sem,
+		.name		= "busysem",
+		.make_pair	= make_sem_pair,
+		.do_send	= do_send_sem,
+		.do_recv	= do_recv_sem,
+		.comm_cleanup	= cleanup_sem
+	}
+	, {
+		.comm_mode	= comm_mode_futex,
+		.name		= "futex",
+		.make_pair	= make_futex_pair,
+		.do_send	= do_send_futex,
+		.do_recv	= do_recv_futex
+	}
+	, {
+		.comm_mode	= comm_mode_spin,
+		.name		= "spin",
+		.make_pair	= make_spin_pair,
+		.do_send	= do_send_spin,
+		.do_recv	= do_recv_spin
+	}
+	, {
+		.comm_mode	= comm_mode_nop,
+		.name		= "nop",
+		.make_pair	= make_nop_pair,
+		.do_send	= do_send_nop,
+		.do_recv	= do_recv_nop
+	}
+	, {
+		.comm_mode	= comm_mode_mq,
+		.name		= "mq",
+		.make_pair	= make_mq_pair,
+		.do_send	= do_send_mq,
+		.do_recv	= do_recv_mq,
+		.comm_cleanup	= cleanup_mq
+	}
 };
 
 /*
@@ -191,24 +231,24 @@ int setup_defaults(char *argv0) {
 /* default settings */
 	config.argv0 = argv0;
 
-	config.max_execution_time = DEFAULT_EXECUTION_TIME;
-	config.stats_interval = DEFAULT_STATS_INTERVAL;
-	config.thread_mode = DEFAULT_THREAD_MODE;
+	config.max_execution_time	= DEFAULT_EXECUTION_TIME;
+	config.stats_interval	= DEFAULT_STATS_INTERVAL;
+	config.thread_mode	= DEFAULT_THREAD_MODE;
 
-	config.comm_mode = DEFAULT_COMM_MODE;
-	config.do_send = &do_send;
-	config.do_recv = &do_recv;
-	config.cleanup = &no_cleanup;
+	config.comm_mode	= DEFAULT_COMM_MODE;
+	config.do_send		= do_send;
+	config.do_recv		= do_recv;
+	config.comm_cleanup	= no_comm_cleanup;
 
-	config.sched_policy = DEFAULT_SCHED;
-	config.sched_prio = DEFAULT_SCHED_PRIO;
+	config.sched_policy	= DEFAULT_SCHED;
+	config.sched_prio	= DEFAULT_SCHED_PRIO;
 
 	config.uid = getuid();
 	config.gid = getgid();
 	config.euid = geteuid();
 	config.egid = getegid();
-	config.num_cpus = num_cpus();
-	config.num_online_cpus = num_online_cpus();
+	config.num_cpus = (short)num_cpus();
+	config.num_online_cpus = (short)num_online_cpus();
 
 	config.min_stack = min_stack_size();
 
@@ -267,8 +307,9 @@ int parse_opts(int argc, char *argv[]) {
 	}
 
 	if (optind == argc - 2) { /* should contain the cpu #s */
-		config.cpu[0] = (int)strtol(argv[optind++], NULL, 10);
-		config.cpu[1] = (int)strtol(argv[optind++], NULL, 10);
+		config.set_affinity = true;
+		config.cpu[0] = (short)strtol(argv[optind++], NULL, 10);
+		config.cpu[1] = (short)strtol(argv[optind++], NULL, 10);
 		printf("Setting affinity to cpus %d and %d\n", config.cpu[0], config.cpu[1]);
 	}
 	return 0;
@@ -287,7 +328,7 @@ void make_pairs() {
 //static int run_data_shm_id;
 
 
-int do_setup() {
+int do_comm_setup() {
 	int i;
 	int found = -1;
 
@@ -302,29 +343,22 @@ int do_setup() {
 		exit(-1);
 	}
 
-	config.setup_comm = &no_setup;
+	config.comm_init = comm_mode_info[found].comm_init != NULL ?
+		comm_mode_info[found].comm_init : no_comm_init;
 	config.make_pair = comm_mode_info[found].make_pair;
-	config.do_send = comm_mode_info[found].do_send != NULL ? comm_mode_info[found].do_send : &do_send;
-	config.do_recv = comm_mode_info[found].do_recv != NULL ? comm_mode_info[found].do_recv : &do_recv;
-	config.cleanup = comm_mode_info[found].cleanup != NULL ? comm_mode_info[found].cleanup : &no_cleanup;
+	config.pre_comm = comm_mode_info[found].pre_comm != NULL ?
+		comm_mode_info[found].pre_comm : no_pre_comm;
+	config.do_send = comm_mode_info[found].do_send != NULL ?
+		comm_mode_info[found].do_send : do_send;
+	config.do_recv = comm_mode_info[found].do_recv != NULL ?
+		comm_mode_info[found].do_recv : do_recv;
+	config.comm_interrupt = comm_mode_info[found].comm_interrupt != NULL ?
+		comm_mode_info[found].comm_interrupt : no_comm_interrupt;
+	config.comm_cleanup = comm_mode_info[found].comm_cleanup != NULL ?
+		comm_mode_info[found].comm_cleanup : no_comm_cleanup;
 
 
-// sharing the 'run_data' struct...
-// if we use clone + CLONE_VM, we share an address space, so everything's shared
-// if we don't use CLONE_VM, we could use shared memory or a shared mmap...
-// don't know which is better
-//
-//	run_data_shm_id = shmget(IPC_PRIVATE, sizeof(struct run_data_struct), IPC_CREAT | 0600);
-//	run_data = shmat(run_data_shm_id, NULL, 0);
-
-//	if (config.thread_mode == thread_mode_thread) {
-//		run_data = calloc(1, sizeof(struct run_data_struct));
-//	} else {
-//	}
 	run_data = mmap(NULL, sizeof(struct run_data_struct),
-		PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0);
-
-	control_data = mmap(NULL, sizeof(struct control_struct),
 		PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0);
 
 	make_pairs();

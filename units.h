@@ -12,6 +12,7 @@ typedef struct integer_fixed_point {
 	unsigned long int i;
 	unsigned long int dec;
 	int prec;
+	char dummy[4];
 } integer_fixed_point_t;
 
 integer_fixed_point_t f_to_fp(int prec, double f);
