@@ -1,12 +1,15 @@
 #include "tcp.h"
 
+#include <stdio.h>
 #include <string.h>
 #include <unistd.h>
 #include <sys/socket.h>
 #include <netinet/ip.h>
 #include <arpa/inet.h>
+#include <netdb.h>
+#include <stdlib.h>
 
-int make_tcp_pair(int fd[2]) {
+int old_make_tcp_pair(int fd[2]) {
         int fds, fdc;
         socklen_t addr_len;
 
@@ -38,3 +41,71 @@ int make_tcp_pair(int fd[2]) {
         return 0;
 }
 
+int tcp_fds[2];
+
+int make_tcp_pair(int fd[2]) {
+	static int tcp_num = 0;
+
+	int ret;
+	struct addrinfo hints;
+	struct addrinfo *res;
+	struct sockaddr_storage remote_addr;
+	socklen_t addr_size;
+	int sockfd1;
+	int yes = 1;
+
+	if (config.verbosity >= 1) printf("Setting up pair %d\n", tcp_num);
+
+	if (tcp_num == 0) {
+		memset(&hints, 0, sizeof(hints));
+		hints.ai_family = AF_UNSPEC;
+		hints.ai_socktype = SOCK_STREAM;
+		hints.ai_flags = AI_PASSIVE;
+		if ((ret = getaddrinfo("127.0.0.1", "3491", &hints, &res)) != 0) {
+			printf("error with getaddrinfo(): %s\n", gai_strerror(ret));
+			exit(-1);
+		}
+
+
+		if ((sockfd1 = socket(res->ai_family, res->ai_socktype, res->ai_protocol)) == -1) {
+			printf("Error creating socket: %m\n");
+			exit(-1);
+		}
+		if (setsockopt(sockfd1, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int)) == -1) {
+			printf("Error with setsockopt: %m\n");
+			exit(-1);
+		}
+		if (bind(sockfd1, res->ai_addr, res->ai_addrlen) == -1) {
+			printf("Error with bind: %m\n");
+			exit(-1);
+		}
+		if (listen(sockfd1, 1) == -1) {
+			printf("Error with listen: %m\n");
+			exit(-1);
+		}
+
+
+
+		if ((tcp_fds[1] = socket(res->ai_family, res->ai_socktype, res->ai_protocol)) == -1) {
+			printf("Error creating socket: %m\n");
+			exit(-1);
+		}
+		if (connect(tcp_fds[1], res->ai_addr, res->ai_addrlen) == -1) {
+			printf("Error with connect: %m\n");
+			exit(-1);
+		}
+
+		/* */
+		addr_size = sizeof(remote_addr);
+		if ((tcp_fds[0] = accept(sockfd1, (struct sockaddr *)&remote_addr, &addr_size)) == -1) {
+			printf("Error with accept: %m\n");
+			exit(-1);
+		}
+	}
+
+	fd[0] = fd[1] = tcp_fds[tcp_num];
+
+	tcp_num ++;
+
+	return 0;
+}

@@ -7,7 +7,7 @@ char *subsec_string(char *arg_buffer, long double size, int dec_pts) {
 	int p = 0, unit_p = 0;
 
 	const char *unit_strings_sub[] = { "s", "ms", "us", "ns", "ps", "fs" };
-	int max_mult = sizeof(unit_strings_sub) / sizeof(unit_strings_sub[0]);
+	unsigned int max_mult = sizeof(unit_strings_sub) / sizeof(unit_strings_sub[0]);
 
 	buffer = (arg_buffer != NULL) ? arg_buffer : local_buffer;
 

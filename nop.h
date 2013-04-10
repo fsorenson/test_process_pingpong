@@ -4,7 +4,7 @@
 #include "test_process_pingpong.h"
 
 int make_nop_pair(int fd[2]);
-inline int do_send_nop(int fd);
-inline int do_recv_nop(int fd);
+extern inline int do_send_nop(int fd);
+extern inline int do_recv_nop(int fd);
 
 #endif

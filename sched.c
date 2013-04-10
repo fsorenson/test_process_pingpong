@@ -23,7 +23,7 @@ int set_priorities() {
 	if (config.euid == 0) {
 		param.sched_priority = config.sched_prio;
 		if (sched_setscheduler(getpid(), config.sched_policy, &param)){
-			printf("Error setting scheduler: %m\n");
+			perror("Error setting scheduler\n");
 		}
 	}
 
@@ -34,7 +34,7 @@ int get_sched_interval() {
 	int ret;
 
 	if ((ret = sched_rr_get_interval(0, &tp)) == -1) {
-		printf("erro getting RR scheduling interval: %m\n");
+		perror("erro getting RR scheduling interval: %m\n");
 	} else {
 		config.sched_rr_quantum = (tp.tv_sec * 1.0) + (tp.tv_nsec * 1.0) / 1000000000;
 	}

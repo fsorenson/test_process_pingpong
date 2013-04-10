@@ -14,9 +14,9 @@
 #include <unistd.h>
 #include <sys/types.h>
 
-#ifdef HAVE_EVENTFD
-#include "eventfd.h"
-#endif
+//#ifdef HAVE_EVENTFD
+//#include "eventfd.h"
+//#endif
 
 // 64 KB stack
 #define STACK_SIZE	1024*64
@@ -41,9 +41,11 @@ typedef enum { comm_mode_tcp = 0, comm_mode_udp = 1, comm_mode_pipe = 2, comm_mo
 typedef enum { thread_mode_fork, thread_mode_thread, thread_mode_pthread, thread_mode_context } thread_modes;
 
 struct config_struct {
+	int verbosity;
 	char *argv0;
 	int num_cpus;
 	int num_online_cpus;
+	int min_stack;
 
 	uid_t uid;
 	gid_t gid;
@@ -73,11 +75,11 @@ struct config_struct {
 	int pairs[2][2];
 	int *pair1;
 	int *pair2;
+	int mouth[2];
+	int ear[2];
 
-	int parent_mouth;
-	int parent_ear;
-	int child_mouth;
-	int child_ear;
+	void *stack[2];
+
 
 	int (*setup_comm)();
 	int (*make_pair)(int fd[2]);

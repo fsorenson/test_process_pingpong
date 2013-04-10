@@ -5,7 +5,7 @@
 
 int make_eventfd_pair(int fd[2]);
 
-inline int do_send_eventfd(int fd);
-inline int do_recv_eventfd(int fd);
+extern inline int do_send_eventfd(int fd);
+extern inline int do_recv_eventfd(int fd);
 
 #endif

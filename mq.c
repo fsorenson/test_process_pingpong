@@ -12,9 +12,9 @@
 #include <sys/stat.h>
 
 static char *mqueue_path[2];
-static mqd_t mqueue[2];
-static char mq_msg[2];
-static unsigned mq_prio[2];
+mqd_t mqueue[2];
+char mq_msg[2];
+unsigned mq_prio[2];
 //static timespec mq_timeout;
 
 int make_mq_pair(int fd[2]) {
