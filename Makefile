@@ -19,10 +19,10 @@ CFLAGS += -march=corei7 -mtune=corei7
 
 # optimizations
 # -O -OO -O1 -O2 -O3 -Os -Ofast
-CFLAGS += -Ofast
+CFLAGS += -Ofast -fshort-enums
 CFLAGS += -malign-double
 CFLAGS += -fif-conversion -fif-conversion2
-CFLAGS += -finline-functions -finline-functions-called-once -finline-small-functions
+#CFLAGS += -finline-functions -finline-functions-called-once -finline-small-functions
 CFLAGS += -fargument-alias
 
 # won't work if any debugging is enabled
@@ -53,9 +53,7 @@ CFLAGS += -flto-report
 #CFLAGS += -fprofile-use
 
 
-CFLAGS += -DHAVE_EVENTFD
-CFLAGS += -DHAVE_SCHED_GETCPU
-CFLAGS += -DSET_PRIORITIES
+#CFLAGS += -DHAVE_SCHED_GETCPU
 
 all: test_process_pingpong
 

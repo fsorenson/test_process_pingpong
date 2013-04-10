@@ -14,9 +14,14 @@ int parse_opts(int argc, char *argv[]);
 int setup_defaults(char *argv0);
 
 
-extern inline int do_send(int fd);
-extern inline int do_recv(int fd);
+int no_setup();
 void make_pairs();
+
+int do_send(int fd);
+int do_recv(int fd);
+
+int no_cleanup();
+
 
 void set_affinity(int cpu);
 int rename_thread(char *thread_name);

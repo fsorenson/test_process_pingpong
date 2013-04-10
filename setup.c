@@ -4,6 +4,7 @@
 
 #include "test_process_pingpong.h"
 
+#include "setup.h"
 #include "sched.h"
 
 #include "tcp.h"
@@ -14,7 +15,6 @@
 #include "spin.h"
 #include "nop.h"
 #include "mq.h"
-
 
 #ifdef HAVE_EVENTFD
 #include "eventfd.h"
@@ -30,9 +30,8 @@
 #include <sys/shm.h>
 
 struct config_struct config;
-volatile struct stats_struct *stats;
+volatile struct run_data_struct *run_data;
 
-//#define SET_PRIORITIES
 struct comm_mode_info_struct {
 	comm_modes comm_mode;
 	char *name;
@@ -44,6 +43,24 @@ struct comm_mode_info_struct {
 	int (*cleanup)();
 };
 
+int no_setup() {
+	return 0;
+}
+inline int do_send(int fd) {
+	return write(fd, "X", 1);
+}
+//extern int do_send(int fd);
+int do_recv(int fd) {
+	char dummy;
+
+	return read(fd, &dummy, 1);
+}
+
+int no_cleanup() {
+	return 0;
+};
+
+
 struct comm_mode_info_struct comm_mode_info[] = {
 	{ comm_mode_tcp, "tcp", NULL, &make_tcp_pair, NULL, NULL, NULL }
 	, { comm_mode_tcp, "t", NULL, &make_tcp_pair, NULL, NULL, NULL }
@@ -53,8 +70,10 @@ struct comm_mode_info_struct comm_mode_info[] = {
 	, { comm_mode_pipe, "p", NULL, &pipe, NULL, NULL, NULL }
 	, { comm_mode_sockpair, "sockpair", NULL, &make_socket_pair, NULL, NULL, NULL }
 	, { comm_mode_sockpair, "s", NULL, &make_socket_pair, NULL, NULL, NULL }
+#ifdef HAVE_EVENTFD
 	, { comm_mode_eventfd, "eventfd", NULL, &make_eventfd_pair, &do_send_eventfd, &do_recv_eventfd, NULL }
 	, { comm_mode_eventfd, "e", NULL, &make_eventfd_pair, &do_send_eventfd, &do_recv_eventfd, NULL }
+#endif
 	, { comm_mode_sem, "sem", NULL, &make_sem_pair, &do_send_sem, &do_recv_sem, &cleanup_sem }
 	, { comm_mode_sem, "sema", NULL, &make_sem_pair, &do_send_sem, &do_recv_sem, &cleanup_sem }
 	, { comm_mode_sem, "semaphore", NULL, &make_sem_pair, &do_send_sem, &do_recv_sem, &cleanup_sem }
@@ -75,15 +94,6 @@ const char * thread_mode_strings[] = {
 	[ thread_mode_fork ] = "fork"
 	, [ thread_mode_thread ] = "threads"
 	, [ thread_mode_pthread ] = "pthread"
-};
-
-int no_setup() {
-	return 0;
-}
-int do_send(int fd);
-int do_recv(int fd);
-int no_cleanup() {
-	return 0;
 };
 
 int usage() {
@@ -181,14 +191,17 @@ int setup_defaults(char *argv0) {
 /* default settings */
 	config.argv0 = argv0;
 
-	config.comm_mode = comm_mode_tcp;
+	config.max_execution_time = DEFAULT_EXECUTION_TIME;
+	config.stats_interval = DEFAULT_STATS_INTERVAL;
+	config.thread_mode = DEFAULT_THREAD_MODE;
+
+	config.comm_mode = DEFAULT_COMM_MODE;
 	config.do_send = &do_send;
 	config.do_recv = &do_recv;
 	config.cleanup = &no_cleanup;
-#ifdef SET_PRIORITIES
+
 	config.sched_policy = DEFAULT_SCHED;
 	config.sched_prio = DEFAULT_SCHED_PRIO;
-#endif
 
 	config.uid = getuid();
 	config.gid = getgid();
@@ -199,11 +212,9 @@ int setup_defaults(char *argv0) {
 
 	config.min_stack = min_stack_size();
 
-	config.max_execution_time = 30;
-	config.thread_mode = thread_mode_fork;
 
-	config.cpu1 = -1;
-	config.cpu2 = -1;
+	config.cpu[0] = -1;
+	config.cpu[1] = -1;
 	config.pair1 = config.pairs[0];
 	config.pair2 = config.pairs[1];
 
@@ -219,7 +230,9 @@ int parse_opts(int argc, char *argv[]) {
 		{	"udp",		no_argument,		&config.comm_mode_i, comm_mode_udp },
 		{	"pipe",		no_argument,		&config.comm_mode_i, comm_mode_pipe },
 		{	"sockpair",	no_argument,		&config.comm_mode_i, comm_mode_sockpair },
+#ifdef HAVE_EVENTFD
 		{	"eventfd",	no_argument,		&config.comm_mode_i, comm_mode_eventfd },
+#endif
 		{	"sem",		no_argument,		&config.comm_mode_i, comm_mode_sem },
 		{	"sema",		no_argument,		&config.comm_mode_i, comm_mode_sem },
 		{	"semaphore",	no_argument,		&config.comm_mode_i, comm_mode_sem },
@@ -228,9 +241,7 @@ int parse_opts(int argc, char *argv[]) {
 
 		{	"thread",	required_argument,	0,	't'	},
 		{	"thread_mode",	required_argument,	0,	't'	},
-#ifdef SET_PRIORITIES
 		{	"sched",	required_argument,	0,	'p'	},
-#endif
 		{	0,		0,			0,	0	}
 	};
 
@@ -256,21 +267,11 @@ int parse_opts(int argc, char *argv[]) {
 	}
 
 	if (optind == argc - 2) { /* should contain the cpu #s */
-		config.cpu1 = strtol(argv[optind++], NULL, 10);
-		config.cpu2 = strtol(argv[optind++], NULL, 10);
-		printf("Setting affinity to cpus %d and %d\n", config.cpu1, config.cpu2);
+		config.cpu[0] = strtol(argv[optind++], NULL, 10);
+		config.cpu[1] = strtol(argv[optind++], NULL, 10);
+		printf("Setting affinity to cpus %d and %d\n", config.cpu[0], config.cpu[1]);
 	}
 	return 0;
-}
-
-inline int do_send(int fd) {
-	return write(fd, "", 1);
-}
-
-inline int do_recv(int fd) {
-	char dummy;
-
-	return read(fd, &dummy, 1);
 }
 
 void make_pairs() {
@@ -290,7 +291,7 @@ void set_affinity(int cpu) {
 	sched_setaffinity(0, sizeof(cpu_set_t), &mask);
 }
 
-//static int stats_shm_id;
+//static int run_data_shm_id;
 
 int rename_thread(char *thread_name) {
 	char name[17];
@@ -327,30 +328,28 @@ int do_setup() {
 	config.cleanup = comm_mode_info[found].cleanup != NULL ? comm_mode_info[found].cleanup : &no_cleanup;
 
 
-// sharing the 'stats' struct...
+// sharing the 'run_data' struct...
 // if we use clone + CLONE_VM, we share an address space, so everything's shared
 // if we don't use CLONE_VM, we could use shared memory or a shared mmap...
 // don't know which is better
 //
-//	stats_shm_id = shmget(IPC_PRIVATE, sizeof(struct stats_struct), IPC_CREAT | 0600);
-//	stats = shmat(stats_shm_id, NULL, 0);
+//	run_data_shm_id = shmget(IPC_PRIVATE, sizeof(struct run_data_struct), IPC_CREAT | 0600);
+//	run_data = shmat(run_data_shm_id, NULL, 0);
 
 //	if (config.thread_mode == thread_mode_thread) {
-//		stats = calloc(1, sizeof(struct stats_struct));
+//		run_data = calloc(1, sizeof(struct run_data_struct));
 //	} else {
-		stats = mmap(NULL, sizeof(struct stats_struct),
+		run_data = mmap(NULL, sizeof(struct run_data_struct),
 			PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0);
 //	}
 
-//printf("mmapped stats\n");
+
 	make_pairs();
-//printf("made pairs\n");
+
 	if (config.verbosity >= 0)
 		printf("Will run for %lu seconds\n", config.max_execution_time);
 
-#ifdef SET_PRIORITIES
 	set_priorities();
-#endif
 
 	return 0;
 }

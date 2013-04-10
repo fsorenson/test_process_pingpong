@@ -3,8 +3,23 @@
 
 #include "test_process_pingpong.h"
 
+
+//extern int sigsuspend (__const sigset_t *__set) __nonnull ((1));
+
+//#include <signal.h>
+#include <unistd.h>
+volatile int volatile *nop_var;
+sigset_t nop_sig_mask;
+
 int make_nop_pair(int fd[2]);
-extern inline int do_send_nop(int fd);
-extern inline int do_recv_nop(int fd);
+
+/*
+* one thread just does nothing...
+* the other also does nothing, but sleeps too...
+* lazy, good-for-nothing threads
+*/
+int do_send_nop(int fd);
+
+int do_recv_nop(int fd);
 
 #endif

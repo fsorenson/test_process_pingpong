@@ -50,3 +50,19 @@ char *subsec_string(char *arg_buffer, long double size, int dec_pts) {
 
 	return buffer;
 }
+
+typedef struct integer_time {
+        int s;
+        int ms;
+} integer_time_t;
+
+integer_fixed_point_t f_to_fp(int prec, double f) {
+        integer_fixed_point_t int_fp;
+
+        int_fp.prec = prec;
+        int_fp.i = (unsigned long int) f;
+        int_fp.dec = (unsigned long)((f - (int_fp.i * 1.0)) * prec);
+
+        return int_fp;
+}
+

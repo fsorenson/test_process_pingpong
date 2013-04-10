@@ -7,7 +7,7 @@
 #include <errno.h>
 #include <string.h>
 
-#ifdef SET_PRIORITIES
+
 int get_priorities() {
 	struct sched_param param;
 
@@ -57,23 +57,20 @@ int parse_sched(char *arg) {
 
 	return 0;
 }
-#endif
+
 
 
 #ifndef HAVE_SCHED_GETCPU
 #include <syscall.h>
 #include <unistd.h>
-#include <asm-i386/unistd.h>
+//#include <asm-i386/unistd.h>
 int sched_getcpu() {
         int c, s;
         s = syscall(__NR_getcpu, &c, NULL, NULL);
         return (s == -1) ? s : c;
 }
-#else
-int sched_getcpu() {
-        return -1;
-}
 #endif
+
 int num_cpus() {
 	int ncpu;
 

@@ -1,11 +1,13 @@
 #include "nop.h"
+
 #include <sys/mman.h>
 #include <unistd.h>
 #include <signal.h>
 #include <sched.h>
 
 
-volatile int volatile *nop_var;
+extern volatile int volatile *nop_var;
+extern sigset_t nop_sig_mask;
 
 int make_nop_pair(int fd[2]) {
 	static int nop_num = 0;
@@ -14,6 +16,9 @@ int make_nop_pair(int fd[2]) {
 		nop_var = mmap(NULL, sizeof(int),
 			PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0);
 		*nop_var = 0;
+
+		sigfillset(&nop_sig_mask);
+		sigdelset(&nop_sig_mask, SIGINT);
 	}
 
 	fd[0] = nop_num;
@@ -23,18 +28,20 @@ int make_nop_pair(int fd[2]) {
 	return 0;
 }
 
-inline int do_send_nop(int fd) {
-	/* one thread just does nothing...
-	 * the other also does nothing, but sleeps too...
-	 * lazy, good-for-nothing threads */
 
+/*
+* one thread just does nothing...
+* the other also does nothing, but sleeps too...
+* lazy, good-for-nothing threads
+*/
+inline int do_send_nop(int fd) {
 	if (fd == 1) {
 		sigset_t signal_mask;
 
 		sigfillset(&signal_mask);
 		sigdelset(&signal_mask, SIGINT);
 
-		while (stats->stop != true)
+		while (run_data->stop != true)
 			sigsuspend(&signal_mask);
 
 	} else {

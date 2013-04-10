@@ -32,6 +32,7 @@ int make_sem_pair(int fd[2]) {
 }
 
 inline int do_send_sem(int fd) {
+
         return ! sem_post(sems[fd]);
 }
 inline int do_recv_sem(int fd) {

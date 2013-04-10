@@ -4,6 +4,8 @@
 #define __GNU_SOURCE
 #endif
 
+#include "test_process_pingpong.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -12,9 +14,9 @@
 #include <sys/stat.h>
 
 static char *mqueue_path[2];
-mqd_t mqueue[2];
-char mq_msg[2];
-unsigned mq_prio[2];
+extern mqd_t mqueue[2];
+extern char mq_msg[2];
+extern unsigned mq_prio[2];
 //static timespec mq_timeout;
 
 int make_mq_pair(int fd[2]) {
