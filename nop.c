@@ -9,7 +9,7 @@
 #include <time.h>
 
 
-volatile int volatile *nop_var;
+int *nop_var;
 
 struct timespec nop_ts;
 

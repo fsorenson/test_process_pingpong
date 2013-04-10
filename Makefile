@@ -18,7 +18,8 @@ CPPFLAGS += -std=gnu99
 #CFLAGS += ?????
 
 #CFLAGS += -march=native -mtune=native
-CFLAGS += -march=corei7 -mtune=corei7
+#CFLAGS += -march=corei7 -mtune=corei7
+#CFLAGS += -march=corei7 -mtune=corei7
 
 
 
@@ -28,8 +29,12 @@ CFLAGS += -Wunused-macros -Wunused -Wunused-parameter -Wunreachable-code
 #CFLAGS += -pedantic
 CFLAGS += -Wshadow -Wundef -Wendif-labels -Wconversion -Wmissing-format-attribute -Wpointer-arith -Wfloat-equal -Wpacked -Wpadded -Winline
 CFLAGS += -Wmissing-noreturn -Wmissing-format-attribute -Wmissing-field-initializers
-CFLAGS += -Wdeclaration-after-statement -Wbad-function-cast -Wlogical-op -Waddress
+CFLAGS += -Wdeclaration-after-statement -Wbad-function-cast
 CFLAGS += -Wmissing-declarations -Wredundant-decls -Wnested-externs -Wunreachable-code
+
+# doesn't seem to work on older gcc
+#-Wlogical-op -Waddress
+
 
 # too annoying to enable
 #CFLAGS += -Wstrict-prototypes -Wold-style-definition
@@ -38,7 +43,9 @@ CFLAGS += -Wmissing-declarations -Wredundant-decls -Wnested-externs -Wunreachabl
 
 # optimizations
 # -O -OO -O1 -O2 -O3 -Os -Ofast
-CFLAGS += -Ofast
+# older gcc doesn't understand '-Ofast'
+#CFLAGS += -Ofast
+CFLAGS += -O3
 CFLAGS += -fshort-enums
 CFLAGS += -malign-double
 CFLAGS += -fif-conversion -fif-conversion2
@@ -110,7 +117,7 @@ DEPS = $(addprefix $(DEPDIR)/, $(addsuffix .d,$(f)))
 
 
 
-comms = tcp udp pipe socket_pair sem futex mq eventfd spin nop
+comms = tcp udp pipe socket_pair sem futex mq eventfd spin nop yield unconstrained
 
 comms_c_srcs = $(addsuffix .c,$(comms))
 comms_h_srcs = $(addsuffix .h,$(comms))
