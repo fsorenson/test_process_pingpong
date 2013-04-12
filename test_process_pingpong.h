@@ -139,7 +139,7 @@ struct thread_stats_struct {
 extern struct thread_info_struct *thread_info;
 
 struct run_data_struct {
-	unsigned long long ping_count;  /* 8 bytes !?!? */
+	unsigned long long volatile ping_count;  /* 8 bytes !?!? */
 #pragma pack(1)
 	bool volatile ready[2]; /* threads indicate they're ready to begin */
 	bool volatile start; /* start the threads */

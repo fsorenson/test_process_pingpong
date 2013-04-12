@@ -17,6 +17,9 @@ int make_unconstrained_pair(int fd[2]);
 * the other also does nothing, but sleeps too...
 * lazy, good-for-nothing threads
 */
+int do_ping_unconstrained(int thread_num);
+int do_pong_unconstrained(int thread_num);
+
 int do_send_unconstrained(int fd);
 int do_recv_unconstrained(int fd);
 int cleanup_unconstrained();

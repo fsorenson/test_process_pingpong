@@ -68,8 +68,8 @@ OPTIMIZATIONS += -Wbad-function-cast
 
 # enable this to get debugging
 DEBUG_FLAGS=
-DEBUG_FLAGS += -g
-DEBUG_FLAGS += -ggdb -gdwarf-3
+#DEBUG_FLAGS += -g
+#DEBUG_FLAGS += -ggdb -gdwarf-3
 
 
 PROFILING_FLAGS=

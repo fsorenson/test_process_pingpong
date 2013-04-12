@@ -1,11 +1,12 @@
 #include "spin.h"
 #include "comms.h"
+#include "test_process_pingpong.h"
 
 #include <sys/mman.h>
 #include <string.h>
 
 int *spin[2];
-int *spin_var;
+int volatile *spin_var;
 
 int make_spin_pair(int fd[2]) {
 	static int spin_num = 0;
@@ -22,6 +23,44 @@ int make_spin_pair(int fd[2]) {
 	spin_num ++;
 	return 0;
 }
+
+inline int __attribute__((hot)) __attribute__((optimize("-Ofast"))) do_ping_spin(int thread_num) {
+	while (1) {
+		run_data->ping_count ++;
+
+		do {
+			*spin_var = 1;
+			__sync_synchronize();
+		} while (0);
+		while (*spin_var != 0) {
+			__sync_synchronize();
+		}
+
+/*
+		while (do_send_spin(thread_num) != 1);
+		while (do_recv_spin(thread_num) != 1);
+*/
+	}
+}
+
+inline int __attribute__((hot)) __attribute__((optimize("-Ofast")))  do_pong_spin(int thread_num) {
+	while (1) {
+
+		while (*spin_var != 1) {
+			__sync_synchronize();
+		}
+		do {
+			*spin_var = 0;
+			__sync_synchronize();
+		} while (0);
+
+/*
+		while (do_recv_spin(thread_num) != 1);
+		while (do_send_spin(thread_num) != 1);
+*/
+	}
+}
+
 
 inline int do_send_spin(int fd) {
 
@@ -52,6 +91,8 @@ void __attribute__((constructor)) comm_add_spin() {
 
 	memset(&ops, 0, sizeof(struct comm_mode_ops_struct));
 	ops.comm_make_pair = make_spin_pair;
+	ops.comm_do_ping = do_ping_spin;
+	ops.comm_do_pong = do_pong_spin;
 	ops.comm_do_send = do_send_spin;
 	ops.comm_do_recv = do_recv_spin;
 	ops.comm_cleanup = cleanup_spin;
