@@ -28,10 +28,9 @@
 int main(int argc, char *argv[]) {
 	int ret;
 
-	printf("looks like we've got %d comm modes\n", comm_mode_count);
+//	printf("looks like we've got %d comm modes\n", comm_mode_count);
 
 	ret = comm_mode_verify_all();
-
 	if (ret == false) {
 		printf("failed to initialize all modules\n");
 		exit(-1);

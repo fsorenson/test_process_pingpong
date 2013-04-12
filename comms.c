@@ -24,6 +24,17 @@ int parse_comm_mode(char *arg) {
 	return -1;
 }
 
+void cleanup_comm_mode_info() {
+	int i;
+
+	for (i = 0 ; i < comm_mode_count ; i ++) {
+		free(comm_mode_info[i].name);
+		free(comm_mode_info[i].comm_mode_init_function);
+	}
+	free(comm_mode_info);
+	comm_mode_count = 0;
+}
+
 void comm_mode_add(char *comm_name, char *add_function_name) {
 	void *ret;
 	unsigned long new_size;
@@ -37,7 +48,7 @@ void comm_mode_add(char *comm_name, char *add_function_name) {
 
 		new_size = (long unsigned int)(comm_mode_count + COMM_MODE_LIST_INCREMENT) *
 		                        sizeof(struct comm_mode_info_struct);
-		printf("realloc(%lu)\n", new_size);
+//		printf("realloc(%lu)\n", new_size);
 		ret = realloc(comm_mode_info,
 			(long unsigned int)(comm_mode_count + COMM_MODE_LIST_INCREMENT) *
 			sizeof(struct comm_mode_info_struct));

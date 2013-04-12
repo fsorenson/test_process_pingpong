@@ -42,6 +42,7 @@ struct comm_mode_info_struct {
 extern struct comm_mode_info_struct *comm_mode_info;
 extern int comm_mode_count;
 
+void cleanup_comm_mode_info();
 int parse_comm_mode(char *arg);
 char *get_comm_mode_name(int index);
 

@@ -71,6 +71,16 @@ static int estimate_cpu_speed(int thread_num) {
 	return 0;
 }
 
+static void monitor_cleanup() {
+
+	cleanup_comm_mode_info();
+	free(run_data->thread_info[0].stack);
+	free(run_data->thread_info[1].stack);
+
+//	munmap(run_data);
+}
+
+
 void stop_handler(int signum) {
 	static int visited = 0;
 	(void)signum;
@@ -93,6 +103,8 @@ void stop_handler(int signum) {
 	}
 
 	config.comm_cleanup();
+
+	monitor_cleanup();
 
 	exit(0);
 }
