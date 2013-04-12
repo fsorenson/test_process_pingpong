@@ -6,6 +6,7 @@
 #include "test_process_pingpong.h"
 #include "threads.h"
 #include "setup.h"
+#include "comms.h"
 
 
 #include "units.h"
@@ -65,9 +66,35 @@ static int estimate_cpu_speed(int thread_num) {
 
 
 	run_data->thread_info[thread_num].cpu_mhz = interval_tsc / interval_time / 1000 / 1000;
-	run_data->thread_info[thread_num].cpu_cycle_time = interval_time / (long double)interval_tsc * 1000.0 * 1000.0 * 1000.0;
+	run_data->thread_info[thread_num].cpu_cycle_time = interval_time / (long double)interval_tsc;
 
 	return 0;
+}
+
+void stop_handler(int signum) {
+	static int visited = 0;
+	(void)signum;
+
+	if (visited) {
+		printf("Trying to stop a second time?\n");
+		return;
+	}
+	visited++;
+
+	stop_timer();
+	run_data->stop = true;
+
+	kill(run_data->thread_info[0].pid, SIGUSR1);
+	kill(run_data->thread_info[1].pid, SIGUSR2);
+
+	printf("Waiting for child threads to die.  Die, kids!  Die!!!\n");
+	while ((run_data->thread_info[0].pid != -1) || (run_data->thread_info[1].pid != -1)) {
+		do_sleep(0, 500000);
+	}
+
+	config.comm_cleanup();
+
+	exit(0);
 }
 
 
@@ -134,6 +161,7 @@ void show_stats(int signum) {
 
 	(void)signum;
 
+	memset(&i_stats, 0, sizeof(struct interval_stats_struct));
 
 	if (run_data->rusage_req_in_progress == true) /* already waiting for results */
 		return;
@@ -141,12 +169,6 @@ void show_stats(int signum) {
 
 	if (run_data->stop == true) /* don't worry about output...  let's just pack up and go home */
 		return;
-	if (i_stats.current_time >= run_data->timeout_time) {/* let our children start to die off while we finish things up */
-		run_data->stop = true;
-
-		kill(run_data->thread_info[0].pid, SIGUSR1);
-		kill(run_data->thread_info[1].pid, SIGUSR2);
-	}
 
 	snprintf(output_buffer, 255, "%s - %llu iterations -> %s",
 		subsec_string(run_time_string, i_stats.run_time, 3),
@@ -176,13 +198,10 @@ void show_stats(int signum) {
 	run_data->thread_stats[0].last_tsc = run_data->thread_stats[0].tsc;
 	run_data->thread_stats[1].last_tsc = run_data->thread_stats[1].tsc;
 
-}
-
-void stop_handler(int signum) {
-	(void)signum;
-
-	stop_timer();
-	run_data->stop = true;
+	if (i_stats.current_time >= run_data->timeout_time) {
+		stop_handler(0);
+		return;
+	}
 }
 
 void child_handler(int signum) {
@@ -218,19 +237,24 @@ void child_handler(int signum) {
 int do_monitor_work() {
 	sigset_t signal_mask;
 
+
+	setup_child_signals();
+	setup_crash_handler();
+	setup_stop_signal();
+
 	sigfillset(&signal_mask);
 	sigdelset(&signal_mask, SIGCHLD);
 	sigdelset(&signal_mask, SIGALRM);
 	sigdelset(&signal_mask, SIGINT);
 
-	setup_child_signals();
-	setup_crash_handler();
+	while ((run_data->ready[0] != true) || (run_data->ready[1] != true)) {
+		do_sleep(0, 500000);
+	}
 
 	setup_timer();
-	setup_stop_signal();
-
+	__sync_synchronize();
 	run_data->start = true; /* tell the child threads to begin */
-
+	__sync_synchronize();
 
 	run_data->start_time = run_data->last_stats_time = get_time();
 	run_data->timeout_time = (double)run_data->start_time + (double)config.max_execution_time;
@@ -241,13 +265,8 @@ int do_monitor_work() {
 		sigsuspend(&signal_mask);
 	}
 	config.comm_interrupt(SIGINT);
+	stop_handler(1);
 
-	printf("Waiting for child threads to die.  Die, kids!  Die!!!\n");
-	while ((run_data->thread_info[0].pid != -1) || (run_data->thread_info[1].pid != -1)) {
-		sigsuspend(&signal_mask);
-	}
-
-	config.comm_cleanup();
 	return 0;
 }
 
@@ -294,6 +313,7 @@ static int setup_interrupt_signal(int thread_num) {
 }
 
 
+/*
 static inline void __attribute__((hot)) __attribute__((optimize("-Ofast"))) do_ping_work(int thread_num) {
 	while (1) {
 		run_data->ping_count ++;
@@ -308,10 +328,29 @@ static inline void __attribute__((hot)) __attribute__((optimize("-Ofast")))  do_
 		while (config.comm_do_send(config.mouth[thread_num]) != 1);
 	}
 }
+*/
 
 static void do_thread_work(int thread_num) {
+	char cpu_cycle_time_buffer[50];
+	char buf[100];
 
 	rename_thread(run_data->thread_info[thread_num].thread_name);
+
+	if (run_data->thread_info[thread_num].tid == 0)
+		run_data->thread_info[thread_num].tid = (int)syscall(SYS_gettid);
+	if (run_data->thread_info[thread_num].pid == 0)
+		run_data->thread_info[thread_num].pid = (int)syscall(SYS_getpid);
+
+	estimate_cpu_speed(thread_num);
+
+
+	snprintf(buf, 99, "%d: %s - thread %d, pid %d, tid %d, CPU estimated at %.2Lf MHz (%s cycle)\n",
+		thread_num, run_data->thread_info[thread_num].thread_name,
+		run_data->thread_info[thread_num].thread_num,
+		run_data->thread_info[thread_num].pid, run_data->thread_info[thread_num].tid,
+		run_data->thread_info[thread_num].cpu_mhz,
+		subsec_string(cpu_cycle_time_buffer, run_data->thread_info[thread_num].cpu_cycle_time, 3));
+	write(1, buf, strlen(buf));
 
 
 	on_parent_death(SIGINT);
@@ -330,11 +369,19 @@ static void do_thread_work(int thread_num) {
 //		printf("Affinity not set, however pong *currently* running on cpu %d\n", sched_getcpu());
 	}
 
+
+	/* signal to the main thread that we're ready when they are */
+	run_data->ready[thread_num] = true;
+
+	while (run_data->start != true)
+		;
+
+
 	if (thread_num == 0) {
-		do_ping_work(thread_num);
+		comm_do_ping(thread_num);
 	} else {
-		do_pong_work(thread_num);
-	} /* while run_data->stop != true */
+		comm_do_pong(thread_num);
+	}
 
 
 	config.comm_cleanup();
@@ -343,34 +390,12 @@ static void do_thread_work(int thread_num) {
 
 static int thread_function(void *argument) {
 	struct thread_info_struct *t_info = (struct thread_info_struct *)argument;
-	int thread_num = t_info->thread_num;
-	char cpu_cycle_time_buffer[50];
-
-	char buf[100];
-
-	if (run_data->thread_info[thread_num].tid == 0)
-		run_data->thread_info[thread_num].tid = (int)syscall(SYS_gettid);
-	if (run_data->thread_info[thread_num].pid == 0)
-		run_data->thread_info[thread_num].pid = (int)syscall(SYS_getpid);
-
-	estimate_cpu_speed(thread_num);
-
-
-	snprintf(buf, 99, "%d: %s - thread %d, pid %d, tid %d, CPU estimated at %.2Lf MHz (%s cycle)\n",
-		thread_num, t_info->thread_name,  t_info->thread_num, t_info->pid, t_info->tid,
-		t_info->cpu_mhz, subsec_string(cpu_cycle_time_buffer, t_info->cpu_cycle_time, 3));
-	write(1, buf, strlen(buf));
-
-	run_data->ready[thread_num] = true;
-	while (run_data->start != true)
-		;
 
 	do_thread_work(t_info->thread_num);
 	return 0;
 }
 
 static void *pthread_function(void *argument) {
-
 
 	thread_function(argument);
 
@@ -382,7 +407,7 @@ static int do_fork() {
 	int pid;
 
 	run_data->thread_info[thread_num].thread_num = thread_num;
-	run_data->thread_info[thread_num].thread_name = "ping_thread";
+	strncpy(run_data->thread_info[thread_num].thread_name, "ping_thread", 12);
 	run_data->stop = false;
 	run_data->rusage_req_in_progress = false;
 	run_data->rusage_req[0] = run_data->rusage_req[1] = false;
@@ -396,7 +421,7 @@ static int do_fork() {
 		thread_num ++;
 
 		run_data->thread_info[thread_num].thread_num = thread_num;
-		run_data->thread_info[thread_num].thread_name = "pong_thread";
+		strncpy(run_data->thread_info[thread_num].thread_name, "pong_thread", 12);
 
 		pid = fork();
 		if (pid == 0) { /* child proc */ /* pong */
@@ -420,33 +445,36 @@ static int do_clone() {
 	int thread_num = 0;
 	int clone_flags;
 
-	config.stack[0] = calloc(1, STACK_SIZE); /* ping thread */
-	config.stack[1] = calloc(1, STACK_SIZE); /* pong thread */
+	run_data->thread_info[0].stack = calloc(1, STACK_SIZE); /* ping thread */
+	run_data->thread_info[1].stack = calloc(1, STACK_SIZE); /* pong thread */
 
-	if ((config.stack[0] == 0) || (config.stack[1] == 0)) {
+	if ((run_data->thread_info[0].stack == 0) || (run_data->thread_info[1].stack == 0)) {
 		perror("calloc: could not allocate stack");
 		exit(1);
 	}
 
 
 	run_data->thread_info[thread_num].thread_num = thread_num;
-	run_data->thread_info[thread_num].thread_name = "ping_thread";
+	strncpy(run_data->thread_info[thread_num].thread_name, "ping_thread", 12);
 
 //	clone_flags = CLONE_FS | CLONE_FILES | CLONE_PARENT | CLONE_VM | SIGCHLD;
 	clone_flags = CLONE_FS | CLONE_FILES | SIGCHLD;
 
-	run_data->thread_info[thread_num].thread_id = clone(&thread_function,
-		(char *) config.stack[0] + STACK_SIZE, clone_flags,
-		(void *)&run_data->thread_info[thread_num]);
+	run_data->thread_info[thread_num].tid = clone(&thread_function,
+		(char *) run_data->thread_info[0].stack + STACK_SIZE, clone_flags,
+		(void *)&run_data->thread_info[thread_num],
+		&run_data->thread_info[thread_num].ptid, NULL, &run_data->thread_info[thread_num].ctid
+		);
+//		(void *)&run_data->thread_info[thread_num]);
 
 	thread_num++;
 
 	run_data->thread_info[thread_num].thread_num = thread_num;
-	run_data->thread_info[thread_num].thread_name = "pong_thread";
+	strncpy(run_data->thread_info[thread_num].thread_name, "pong_thread", 12);
 
 
-	run_data->thread_info[thread_num].thread_id = clone(&thread_function,
-		(char *) config.stack[1] + STACK_SIZE, clone_flags,
+	run_data->thread_info[thread_num].tid = clone(&thread_function,
+		(char *) run_data->thread_info[1].stack + STACK_SIZE, clone_flags,
 		(void *)&run_data->thread_info[thread_num]);
 	/* what about CLONE_SIGHAND and CLONE_VM ? */
 
@@ -476,14 +504,19 @@ static int do_pthread() {
 	}
 
 	run_data->thread_info[thread_num].thread_num = thread_num;
-	run_data->thread_info[thread_num].thread_name = "ping_thread";
+	strncpy(run_data->thread_info[thread_num].thread_name, "ping_thread", 12);
 
-	pthread_create((pthread_t *)&run_data->thread_info[thread_num].thread_id, &attr,
-		&pthread_function, (void *)&run_data->thread_info[thread_num]); thread_num ++;
+	if ((ret = pthread_create((pthread_t *)&run_data->thread_info[thread_num].thread_id, &attr,
+		&pthread_function, (void *)&run_data->thread_info[thread_num])) != 0) {
+		errno = ret;
+		printf("Error occurred while starting 'ping' thread: %m\n");
+		exit(-1);
+	}
 
+	thread_num ++;
 
 	run_data->thread_info[thread_num].thread_num = thread_num;
-	run_data->thread_info[thread_num].thread_name = "pong_thread";
+	strncpy(run_data->thread_info[thread_num].thread_name, "pong_thread", 12);
 
 	pthread_create((pthread_t *)&run_data->thread_info[thread_num].thread_id, &attr,
 		&pthread_function, (void *)&run_data->thread_info[thread_num]);

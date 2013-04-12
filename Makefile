@@ -26,12 +26,15 @@ CPPFLAGS += -std=gnu99
 
 # some warnings
 CFLAGS += -Wall -Wextra
-CFLAGS += -Wunused-macros -Wunused -Wunused-parameter -Wunreachable-code
 #CFLAGS += -pedantic
-CFLAGS += -Wshadow -Wundef -Wendif-labels -Wconversion -Wmissing-format-attribute -Wpointer-arith -Wfloat-equal -Wpacked -Wpadded -Winline
-CFLAGS += -Wmissing-noreturn -Wmissing-format-attribute -Wmissing-field-initializers
-CFLAGS += -Wdeclaration-after-statement -Wbad-function-cast
-CFLAGS += -Wmissing-declarations -Wredundant-decls -Wnested-externs -Wunreachable-code
+CFLAGS += -Wunused-macros -Wunused -Wunused-parameter -Wunreachable-code
+CFLAGS += -Wshadow -Wundef -Wconversion -Wbad-function-cast
+CFLAGS += -Wpointer-arith -Wfloat-equal
+CFLAGS += -Wpacked -Wpadded -Winline -Wnested-externs
+CFLAGS += -Wendif-labels
+CFLAGS += -Wmissing-noreturn
+CFLAGS += -Wmissing-format-attribute -Wmissing-field-initializers
+CFLAGS += -Wmissing-declarations -Wredundant-decls -Wdeclaration-after-statement
 
 # doesn't seem to work on older gcc
 #-Wlogical-op -Waddress
@@ -45,14 +48,15 @@ CFLAGS += -Wmissing-declarations -Wredundant-decls -Wnested-externs -Wunreachabl
 # optimizations
 # -O -OO -O1 -O2 -O3 -Os -Ofast
 # older gcc doesn't understand '-Ofast'
-#CFLAGS += -Ofast
-CFLAGS += -O3
-CFLAGS += -fshort-enums
-CFLAGS += -malign-double
-CFLAGS += -fif-conversion -fif-conversion2
-#CFLAGS += -finline-functions -finline-functions-called-once -finline-small-functions
-CFLAGS += -fargument-alias
-CFLAGS += -Wbad-function-cast
+OPTIMIZATIONS =
+#OPTIMIZATIONS += -Ofast
+OPTIMIZATIONS += -O3
+OPTIMIZATIONS += -fshort-enums
+OPTIMIZATIONS += -malign-double
+OPTIMIZATIONS += -fif-conversion -fif-conversion2
+#OPTIMIZATIONS += -finline-functions -finline-functions-called-once -finline-small-functions
+OPTIMIZATIONS += -fargument-alias
+OPTIMIZATIONS += -Wbad-function-cast
 
 
 #CFLAGS += -flto-report
@@ -61,10 +65,11 @@ CFLAGS += -Wbad-function-cast
 #LDFLAGS += -Wl,-S -Wl,-s
 
 
+
 # enable this to get debugging
 DEBUG_FLAGS=
 #DEBUG_FLAGS += -g
-#DEBUG_FLAGS += -ggdb
+#DEBUG_FLAGS += -ggdb -gdwarf-3
 
 
 PROFILING_FLAGS=
@@ -85,6 +90,10 @@ PROFILING_FLAGS=
 #PROFILING_FLAGS += -fprofile-use
 
 
+# only optimize if debuging is not enabled
+ifeq ($(strip $(DEBUG_FLAGS)),)
+  CFLAGS += $(OPTIMIZATIONS)
+endif
 # omit-frame-pointer is incompatible with debugging & profiing
 # flags, so only allow it if neither is in use
 ifeq ($(strip $(PROFILING_FLAGS)),)
@@ -113,8 +122,8 @@ C_SRCS = $(addsuffix .c,$(f))
 H_SRCS = $(addsuffix .h,$(f))
 SRCS = $(C_SRCS) $(H_SRCS)
 
-OBJS = $(addprefix $(objs_dir)/, $(addsuffix .o,$(f)))
-DEPS = $(addprefix $(deps_dir)/, $(addsuffix .d,$(f)))
+objs = $(addprefix $(objs_dir)/, $(addsuffix .o,$(f)))
+deps = $(addprefix $(deps_dir)/, $(addsuffix .d,$(f)))
 stabs = $(addprefix $(stab_dir)/,$(addsuffix .s,$(f)))
 
 
@@ -130,8 +139,8 @@ comms_stabs += $(addprefix $(stab_dir)/,$(addsuffix .s,$(comms)))
 
 
 SRCS += $(comms_srcs)
-#OBJS += $(comms_objs)
-DEPS += $(comms_deps)
+#objs += $(comms_objs)
+deps += $(comms_deps)
 stabs += $(comms_stabs)
 
 
@@ -145,29 +154,32 @@ comms_glue_deps = $(addprefix $(deps_dir)/, $(addsuffix .d,$(comms_glue)))
 comms_glue_stabs += $(addprefix $(stab_dir)/,$(addsuffix .s,$(comms_glue)))
 
 SRCS += $(comms_glue_srcs)
-#OBJS += $(comms_glue_objs)
-DEPS += $(comms_glue_deps)
+#objs += $(comms_glue_objs)
+deps += $(comms_glue_deps)
 stabs += $(comms_glue_stabs)
 
 
 
 # build the deps files
 $(deps_dir)/%.d: %.c %.h
-	@$(SHELL) -ec '$(CC) -MM $(CPPFLAGS) $< | sed s@$*.o@objs/\&\ deps/$@@g > $@'
+	@$(SHELL) -ec '$(CC) -MM $(CPPFLAGS) $< | sed s@$*.o@objs/\&\ $@@ > $@'
+#	$(SHELL) -ec '$(CC) -MM $(CPPFLAGS) $< | sed s@$*.o@objs/\&\ deps/$@@g > $@'
 
 # include the deps files
--include $(DEPS)
+-include $(deps)
 
 $(objs_dir)/%.o: %.c $(deps_dir)/%.d
 	@$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@
 
 
-test_process_pingpong:	$(comms_glue_objs) $(comms_objs) $(OBJS)
-	$(CC) $(comms_glue_objs) $(comms_objs) $(OBJS) $(CPPFLAGS) $(CFLAGS) $(LIBS) -o $@
+test_process_pingpong:	$(comms_glue_objs) $(comms_objs) $(objs)
+	@$(CC) $(comms_glue_objs) $(comms_objs) $(objs) $(CPPFLAGS) $(CFLAGS) $(LIBS) -o $@
 
 
 $(stab_dir)/%.s: %.c $(deps_dir)/%.d
-	$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -gstabs -S -o $@
+	@$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -g -Wa,-ahl=$@ -o /dev/null
+#	$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -gstabs -g -S -Wa,-ahl=$@
+#	$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -gstabs -g -S -asm -Wa,-ahl=$@
 
 stabs: $(stabs)
 
@@ -175,19 +187,19 @@ stabs: $(stabs)
 .PHONY: cov clean
 .PRECIOUS: $(deps_dir)/%.d
 
-gprof: $(OBJS)
-	@$(CC) -o $@ $(OBJS) $(CFLAGS) $(CPPFLAGS) $(LIBS) -pg -O 
+gprof: $(objs)
+	@$(CC) -o $@ $(objs) $(CFLAGS) $(CPPFLAGS) $(LIBS) -pg -O 
 
 cov:
 	lcov --directory=`pwd` --capture --output-file gcov/app.info
 	genhtml --output-directory gcov gcov/app.info
 
 clean:
-	#echo "objs=$(OBJS)"
-	#echo "deps=$(DEPS)"
-	#echo "stabs=$(STABS)"
+	#echo "objs=$(objs)"
+	#echo "deps=$(deps)"
+	#echo "stabs=$(stabs)"
 	#echo "comms_obs=$(comms_objs), comms_glue_objs=$(comms_glue_objs)"
-	@rm -f test_process_pingpong $(OBJS) $(DEPS) $(STABS) $(comms_objs) $(comms_glue_objs)
+	@rm -f test_process_pingpong $(objs) $(deps) $(stabs) $(comms_objs) $(comms_glue_objs)
 
 
 

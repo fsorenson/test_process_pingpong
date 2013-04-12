@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <errno.h>
 
 struct comm_mode_info_struct *comm_mode_info = NULL;
 int comm_mode_count = 0;
@@ -24,20 +25,55 @@ int parse_comm_mode(char *arg) {
 }
 
 void comm_mode_add(char *comm_name, char *add_function_name) {
+	void *ret;
+	unsigned long new_size;
+	unsigned long offset;
+	unsigned long zero_address;
+	unsigned long zero_size;
+
+//printf("adding '%s' '%s'\n", comm_name, add_function_name);
 
 	if ((comm_mode_count % COMM_MODE_LIST_INCREMENT) == 0) {
 
-		comm_mode_info = (struct comm_mode_info_struct *)realloc(comm_mode_info,
+		new_size = (long unsigned int)(comm_mode_count + COMM_MODE_LIST_INCREMENT) *
+		                        sizeof(struct comm_mode_info_struct);
+		printf("realloc(%lu)\n", new_size);
+		ret = realloc(comm_mode_info,
 			(long unsigned int)(comm_mode_count + COMM_MODE_LIST_INCREMENT) *
 			sizeof(struct comm_mode_info_struct));
+		if (ret == NULL) {
+			printf("Unable to reallocate memory\n");
+			exit(-1);
+
+		}
+		if (errno) {
+			printf("errno is nonzero, for some reason\n");
+		}
+		comm_mode_info = (struct comm_mode_info_struct *)ret;
+//printf("done with the realloc.  address is %p\n", comm_mode_info);
+
+		offset = sizeof(struct comm_mode_info_struct) * ((long unsigned int)comm_mode_count);
+		zero_address = (unsigned long)(char *)comm_mode_info + offset;
+		zero_size = sizeof(struct comm_mode_info_struct) * COMM_MODE_LIST_INCREMENT;
+
+//printf("about to zero %lu bytes, beginning %lu bytes after %p (0x%08lx)\n", zero_size,
+//			offset, comm_mode_info, (unsigned long)comm_mode_info + offset);
+		ret = memset((void *)zero_address, 0, zero_size);
+//printf("maybe 0x%08lx\n", (unsigned long)&comm_mode_info[comm_mode_count]);
+		if (ret != (void *)zero_address) {
+			printf("somethin' fishy...  expected 0x%08lx to equal 0x%08lx\n",
+				(unsigned long)ret, zero_address);
+		}
 
 
+/*
 		memset(comm_mode_info +
 			sizeof(struct comm_mode_info_struct) * ((long unsigned int)comm_mode_count),
 			0,
 			sizeof(struct comm_mode_info_struct) * COMM_MODE_LIST_INCREMENT);
+*/
 	}
-
+//printf("comm_mode_info[%d] is at address %p\n", comm_mode_count,  &comm_mode_info[comm_mode_count]);
 	comm_mode_info[comm_mode_count].name = strdup(comm_name);
 	comm_mode_info[comm_mode_count].comm_mode_init_function = strdup(add_function_name);
 	comm_mode_info[comm_mode_count].comm_mode_index = comm_mode_count;
@@ -79,6 +115,8 @@ void comm_mode_do_initialization(char *comm_mode_name, struct comm_mode_ops_stru
 			comm_mode_info[i].comm_init = ops->comm_init ? : comm_no_init;
 			comm_mode_info[i].comm_pre = ops->comm_pre != NULL ? ops->comm_pre : comm_no_pre;
 			comm_mode_info[i].comm_make_pair = ops->comm_make_pair;
+			comm_mode_info[i].comm_do_ping = ops->comm_do_ping ? : comm_do_ping;
+			comm_mode_info[i].comm_do_pong = ops->comm_do_ping ? : comm_do_pong;
 			comm_mode_info[i].comm_do_send = ops->comm_do_send ? : comm_do_send;
 			comm_mode_info[i].comm_do_recv = ops->comm_do_recv ? : comm_do_recv;
 			comm_mode_info[i].comm_interrupt = ops->comm_interrupt ? : comm_no_interrupt;
@@ -127,6 +165,21 @@ int comm_no_init() {
 
 int comm_no_pre() {
 	return 0;
+}
+
+inline int __attribute__((hot)) __attribute__((optimize("-Ofast")))  comm_do_ping(int thread_num) {
+	while (1) {
+		run_data->ping_count ++;
+
+		while (config.comm_do_send(config.mouth[thread_num]) != 1);
+		while (config.comm_do_recv(config.ear[thread_num]) != 1);
+	}
+}
+inline int __attribute__((hot)) __attribute__((optimize("-Ofast")))  comm_do_pong(int thread_num) {
+	while (1) {
+		while (config.comm_do_recv(config.ear[thread_num]) != 1);
+		while (config.comm_do_send(config.mouth[thread_num]) != 1);
+	}
 }
 
 inline int comm_do_send(int fd) {

@@ -96,7 +96,6 @@ struct config_struct {
 
 	double sched_rr_quantum;
 
-	void *stack[2];
 
 	COMM_MODE_OPS;
 /*
@@ -114,15 +113,18 @@ struct config_struct {
 extern struct config_struct config;
 
 struct thread_info_struct {
-	//pthread_t thread_id;
-	int thread_id;
+	long double cpu_mhz;
+	long double cpu_cycle_time;
+
+	pthread_t thread_id;
 	int thread_num;
 	int pid;
 	int tid;
-	long double cpu_mhz;
-	long double cpu_cycle_time;
-	char *thread_name;
-	char dummy[8];
+	pid_t ptid;
+	pid_t ctid;
+
+	char thread_name[28];
+	void *stack;
 };
 
 struct thread_stats_struct {
@@ -139,9 +141,9 @@ extern struct thread_info_struct *thread_info;
 struct run_data_struct {
 	unsigned long long ping_count;  /* 8 bytes !?!? */
 #pragma pack(1)
-	bool ready[2]; /* threads indicate they're ready to begin */
-	bool start; /* start the threads */
-	bool stop; /* stop request to the threads */
+	bool volatile ready[2]; /* threads indicate they're ready to begin */
+	bool volatile start; /* start the threads */
+	bool volatile stop; /* stop request to the threads */
 
 	/*
 	 * monitor sets to 'true' prior to raising request_rusage flags
@@ -149,16 +151,16 @@ struct run_data_struct {
 	 * if ((rusage_req_in_progress == true) && (rusage_req[0] == false) && (rusage_req[1] == false))
 	 *
 	 */
-	bool rusage_req_in_progress;
+	bool volatile rusage_req_in_progress;
 
 	/*
 	 * set to 'true' to request the rusage stats from the threads
 	 * threads will provide stats to 'rusage' below, then
 	 * set their flag back to 'false'
 	 */
-	bool rusage_req[2]; /* rusage request */
+	bool volatile rusage_req[2]; /* rusage request */
 	char dummy1[1];
-	unsigned long long last_ping_count;
+	unsigned long long volatile last_ping_count;
 	char dummy2[8];
 #pragma pack()
 
@@ -173,7 +175,7 @@ struct run_data_struct {
 
 
 	struct thread_info_struct thread_info[2];
-	struct thread_stats_struct thread_stats[2];
+	struct thread_stats_struct volatile thread_stats[2];
 };
 
 

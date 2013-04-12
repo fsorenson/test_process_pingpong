@@ -4,7 +4,7 @@
 #include "common.h"
 
 /* don't necessarily want to limit this... just need a starting point */
-#define COMM_MODE_LIST_INCREMENT	10
+#define COMM_MODE_LIST_INCREMENT	2
 
 #define COMM_MODE_OPS				\
 	char *comm_mode_init_function;		\
@@ -13,6 +13,8 @@
 	int (*comm_init)();			\
 	int (*comm_make_pair)(int fd[2]);	\
 	int (*comm_pre)();			\
+	int (*comm_do_ping)(int s);		\
+	int (*comm_do_pong)(int s);		\
 	int (*comm_do_send)(int s);		\
 	int (*comm_do_recv)(int s);		\
 	int (*comm_interrupt)(int s);		\
@@ -34,6 +36,7 @@ struct comm_mode_info_struct {
 
 	bool initialized;
 	char dummy3[7];
+	char dummy4[8];
 };
 
 extern struct comm_mode_info_struct *comm_mode_info;
@@ -57,6 +60,8 @@ void comm_mode_add1(char *add_function_name);
 int comm_no_init();
 int comm_no_pre();
 
+int comm_do_ping(int thread_num);
+int comm_do_pong(int thread_num);
 int comm_do_send(int fd);
 int comm_do_recv(int fd);
 
