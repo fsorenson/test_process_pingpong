@@ -13,6 +13,9 @@
 
 #include "sched.h"
 
+void do_thread_work(int thread_num);
+int thread_function(void *argument);
+void *pthread_function(void *argument);
 
 
 #endif
