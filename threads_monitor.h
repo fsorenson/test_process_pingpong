@@ -25,9 +25,6 @@ void child_handler(int signum);
 
 int do_monitor_work();
 
-int ping_thread_function(void *argument);
-void *ping_pthread_function(void *argument);
-
 int start_threads();
 
 #endif

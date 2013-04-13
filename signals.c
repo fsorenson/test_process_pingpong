@@ -1,6 +1,6 @@
 #include "signals.h"
 
-#include "threads.h"
+#include "threads_monitor.h"
 
 #include <stdlib.h>
 #include <stdio.h>

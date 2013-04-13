@@ -14,7 +14,5 @@
 #include "sched.h"
 
 
-int ping_thread_function(void *argument);
-void *ping_pthread_function(void *argument);
 
 #endif

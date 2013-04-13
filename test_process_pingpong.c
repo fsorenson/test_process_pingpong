@@ -11,7 +11,7 @@
 
 #include "test_process_pingpong.h"
 #include "setup.h"
-#include "threads.h"
+#include "threads_monitor.h"
 #include "signals.h"
 
 #include "units.h"
