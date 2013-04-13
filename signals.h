@@ -3,8 +3,6 @@
 
 #include "test_process_pingpong.h"
 
-long double get_time();
-
 void print_backtrace(int signum);
 void print_backtrace2(int signum);
 

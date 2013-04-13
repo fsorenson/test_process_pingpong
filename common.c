@@ -45,6 +45,18 @@ int do_sleep(long sec, long nsec) {
 	return 0;
 }
 
+long double estimate_cpu_mhz() {
+	long double start_time, end_time;
+	unsigned long long start_tsc, end_tsc;
+
+	start_tsc = rdtsc(NULL);
+	start_time = get_time();
+	do_sleep(1, 0);
+	end_tsc = rdtsc(NULL);
+	end_time = get_time();
+
+	return	((long double)(end_tsc - start_tsc) / (long double)(end_time - start_time) / 1000.0 / 1000.0);
+}
 
 
 inline void set_affinity(int cpu) {
@@ -54,6 +66,13 @@ inline void set_affinity(int cpu) {
 	sched_setaffinity(0, sizeof(cpu_set_t), &mask);
 }
 
+long double get_time() {
+	struct timespec ts;
+
+	clock_gettime(CLOCK_REALTIME, &ts);
+
+	return ((double) ts.tv_sec) + ((double)ts.tv_nsec / 1000000000.0);
+}
 
 inline int rename_thread(char *thread_name) {
 	char name[17];

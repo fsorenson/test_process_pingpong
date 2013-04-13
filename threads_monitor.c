@@ -51,23 +51,9 @@ struct interval_stats_struct {
 };
 
 static int estimate_cpu_speed(int thread_num) {
-	long double start_time, end_time;
-	unsigned long long start_tsc, end_tsc;
-	long double interval_time;
-	unsigned long long interval_tsc;
 
-	start_tsc = rdtsc(NULL);
-	start_time = get_time();
-	do_sleep(1, 0);
-	end_tsc = rdtsc(NULL);
-	end_time = get_time();
-
-	interval_time = end_time - start_time;
-	interval_tsc = end_tsc - start_tsc;
-
-
-	run_data->thread_info[thread_num].cpu_mhz = interval_tsc / interval_time / 1000 / 1000;
-	run_data->thread_info[thread_num].cpu_cycle_time = interval_time / (long double)interval_tsc;
+	run_data->thread_info[thread_num].cpu_mhz = estimate_cpu_mhz();
+	run_data->thread_info[thread_num].cpu_cycle_time = 1 / run_data->thread_info[thread_num].cpu_mhz;
 
 	return 0;
 }

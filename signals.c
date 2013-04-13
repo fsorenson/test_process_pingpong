@@ -9,14 +9,6 @@
 #include <execinfo.h>
 #include <sys/wait.h>
 
-long double get_time() {
-	struct timespec ts;
-
-	clock_gettime(CLOCK_REALTIME, &ts);
-
-	return ((double) ts.tv_sec) + ((double)ts.tv_nsec / 1000000000.0);
-}
-
 void __attribute__ ((noreturn)) print_backtrace(int signum) {
 	void *array[32];	/* Array to store backtrace symbols */
 	int size;		/* To store the exact no of values stored */

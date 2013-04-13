@@ -19,7 +19,9 @@ typedef enum { no = 0, false = 0, yes = 1, true = 1 } __PACKED bool;
 
 int get_min_stack_size();
 uint64_t rdtsc();
+long double get_time();
 int do_sleep(long sec, long nsec);
+long double estimate_cpu_mhz();
 void set_affinity(int cpu);
 int rename_thread(char *thread_name);
 void on_parent_death(int signum);
