@@ -2,12 +2,13 @@ CC=gcc
 #CC=g++
 LIBS=-lpthread -lm -lrt
 
-objs_dir=objs
-deps_dir=deps
-stab_dir=stabs
+comms_dir = comms
+objs_dir = objs
+deps_dir = deps
+stab_dir = stabs
 
 LDFLAGS=
-CPPFLAGS=
+CPPFLAGS= -iquote .
 CFLAGS=
 
 CPPFLAGS += -std=gnu99
@@ -129,14 +130,15 @@ stabs = $(addprefix $(stab_dir)/,$(addsuffix .s,$(f)))
 
 
 
-comms = tcp udp pipe socket_pair sem futex mq eventfd spin nop yield unconstrained
+#comms = tcp udp pipe socket_pair sem futex mq eventfd spin nop yield unconstrained
+comms = nop
 
-comms_c_srcs = $(addsuffix .c,$(comms))
-comms_h_srcs = $(addsuffix .h,$(comms))
+comms_c_srcs = $(addprefix $(comms_dir)/, $(addsuffix .c,$(comms)))
+comms_h_srcs = $(addprefix $(comms_dir)/, $(addsuffix .h,$(comms)))
 comms_srcs = $(comms_c_srcs) $(comms_h_srcs)
 comms_objs = $(addprefix $(objs_dir)/, $(addsuffix .o,$(comms)))
 comms_deps = $(addprefix $(deps_dir)/, $(addsuffix .d,$(comms)))
-comms_stabs += $(addprefix $(stab_dir)/,$(addsuffix .s,$(comms)))
+comms_stabs += $(addprefix $(stab_dir)/, $(addsuffix .s,$(comms)))
 
 
 SRCS += $(comms_srcs)
@@ -161,19 +163,31 @@ stabs += $(comms_glue_stabs)
 
 
 
+
 # build the deps files
 $(deps_dir)/%.d: %.c %.h
-	@$(SHELL) -ec '$(CC) -MM $(CPPFLAGS) $< | sed s@$*.o@objs/\&\ $@@ > $@'
-#	$(SHELL) -ec '$(CC) -MM $(CPPFLAGS) $< | sed s@$*.o@objs/\&\ deps/$@@g > $@'
+	$(SHELL) -ec '$(CC) -MM $(CPPFLAGS) $< | sed s@$*.o@objs/\&\ $@@ > $@'
+
+$(deps_dir)/%.d: $(comms_dir)/%.c $(comms_dir)/%.h
+	$(SHELL) -ec '$(CC) -MM $(CPPFLAGS) $< | sed s@$*.o@objs/\&\ $@@ > $@'
+
+
 
 # include the deps files
 -include $(deps)
 
-$(objs_dir)/%.o: %.c $(deps_dir)/%.d
-	@$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@
 
 
-test_process_pingpong:	$(comms_glue_objs) $(comms_objs) $(objs)
+$(objs_dir)/%.o: %.c  $(deps_dir)/%.d
+	$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@
+
+$(objs_dir)/%.o: $(comms_dir)/%.c $(deps_dir)/%.d
+	$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@
+
+
+
+
+test_process_pingpong:	$(comms_glue_objs) $(comms_objs) $(objs) $(deps)
 	@$(CC) $(comms_glue_objs) $(comms_objs) $(objs) $(CPPFLAGS) $(CFLAGS) $(LIBS) -o $@
 
 
