@@ -5,7 +5,6 @@
 #include <sys/mman.h>
 #include <string.h>
 
-int *spin[2];
 int volatile *spin_var;
 
 int make_spin_pair(int fd[2]) {
@@ -25,6 +24,7 @@ int make_spin_pair(int fd[2]) {
 }
 
 inline int __attribute__((hot)) __attribute__((optimize("-Ofast"))) do_ping_spin(int thread_num) {
+	(void)thread_num;
 	while (1) {
 		run_data->ping_count ++;
 
@@ -35,15 +35,11 @@ inline int __attribute__((hot)) __attribute__((optimize("-Ofast"))) do_ping_spin
 		while (*spin_var != 0) {
 			__sync_synchronize();
 		}
-
-/*
-		while (do_send_spin(thread_num) != 1);
-		while (do_recv_spin(thread_num) != 1);
-*/
 	}
 }
 
-inline int __attribute__((hot)) __attribute__((optimize("-Ofast")))  do_pong_spin(int thread_num) {
+inline int __attribute__((hot)) __attribute__((optimize("-Ofast"))) do_pong_spin(int thread_num) {
+	(void)thread_num;
 	while (1) {
 
 		while (*spin_var != 1) {
@@ -53,11 +49,6 @@ inline int __attribute__((hot)) __attribute__((optimize("-Ofast")))  do_pong_spi
 			*spin_var = 0;
 			__sync_synchronize();
 		} while (0);
-
-/*
-		while (do_recv_spin(thread_num) != 1);
-		while (do_send_spin(thread_num) != 1);
-*/
 	}
 }
 

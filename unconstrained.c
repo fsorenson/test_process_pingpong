@@ -33,25 +33,21 @@ int make_unconstrained_pair(int fd[2]) {
 }
 
 inline int __attribute__((hot)) __attribute__((optimize("-Ofast"))) do_ping_unconstrained(int thread_num) {
+	(void)thread_num;
 	while (1) {
 		run_data->ping_count ++;
 
 		while (1 != 1);
 		while (1 != 1);
-/*
-		while (do_send_unconstrained(thread_num) != 1);
-		while (do_recv_unconstrained(thread_num) != 1);
-*/
 	}
 }
 
 inline int __attribute__((hot)) __attribute__((optimize("-Ofast")))  do_pong_unconstrained(int thread_num) {
+	(void)thread_num;
 	while (1) {
 		nanosleep(&unconstrained_ts, NULL);
 	}
 }
-
-
 
 inline int do_send_unconstrained(int fd) {
 	if (fd == 0) {
