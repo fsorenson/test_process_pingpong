@@ -130,8 +130,7 @@ stabs = $(addprefix $(stab_dir)/,$(addsuffix .s,$(f)))
 
 
 
-#comms = tcp udp pipe socket_pair sem futex mq eventfd spin nop yield unconstrained
-comms = nop
+comms = tcp udp pipe socket_pair sem futex mq eventfd spin nop yield unconstrained
 
 comms_c_srcs = $(addprefix $(comms_dir)/, $(addsuffix .c,$(comms)))
 comms_h_srcs = $(addprefix $(comms_dir)/, $(addsuffix .h,$(comms)))
