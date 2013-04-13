@@ -1,5 +1,5 @@
-#ifndef __THREADS_H__
-#define __THREADS_H__
+#ifndef __THREADS_MONITOR_H__
+#define __THREADS_MONITOR_H__
 
 
 #ifndef _GNU_SOURCE
@@ -7,7 +7,6 @@
 #endif
 
 #include "test_process_pingpong.h"
-#include "threads.h"
 #include "signals.h"
 #include "setup.h"
 

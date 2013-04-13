@@ -4,7 +4,8 @@
 #endif
 
 #include "test_process_pingpong.h"
-#include "threads.h"
+#include "threads_monitor.h"
+#include "threads_children.h"
 #include "setup.h"
 #include "comms.h"
 

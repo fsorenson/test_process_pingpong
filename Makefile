@@ -113,7 +113,8 @@ f = test_process_pingpong
 f += common
 f += units
 f += sched
-f += threads signals
+f += threads_monitor threads_children
+f += signals
 f += setup
 #f += tcp udp pipe socket_pair sem eventfd futex spin nop mq
 
