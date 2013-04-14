@@ -73,12 +73,12 @@ void stop_handler(int signum) {
 	stop_timer();
 	run_data->stop = true;
 
-	kill(run_data->thread_info[0].pid, SIGUSR1);
-	kill(run_data->thread_info[1].pid, SIGUSR2);
+	send_sig(run_data->thread_info[0].pid, SIGUSR1);
+	send_sig(run_data->thread_info[1].pid, SIGUSR2);
 
 	printf("Waiting for child threads to die.  Die, kids!  Die!!!\n");
 	while ((run_data->thread_info[0].pid != -1) || (run_data->thread_info[1].pid != -1)) {
-		do_sleep(0, 500000);
+		do_sleep(0, 5000000);
 	}
 
 	config.comm_cleanup();
@@ -98,8 +98,8 @@ static int gather_stats(struct interval_stats_struct *i_stats) {
 	run_data->rusage_req_in_progress = true;
 	run_data->rusage_req[0] = true;
 	run_data->rusage_req[1] = true;
-	kill(run_data->thread_info[0].pid, SIGUSR1);
-	kill(run_data->thread_info[1].pid, SIGUSR2);
+	send_sig(run_data->thread_info[0].pid, SIGUSR1);
+	send_sig(run_data->thread_info[1].pid, SIGUSR2);
 
 	i_stats->run_time = i_stats->current_time - run_data->start_time;
 	i_stats->interval_time = i_stats->current_time - run_data->last_stats_time;
@@ -239,12 +239,13 @@ int do_monitor_work() {
 	sigdelset(&signal_mask, SIGINT);
 
 	while ((run_data->ready[0] != true) || (run_data->ready[1] != true)) {
-		do_sleep(0, 500000);
+		do_sleep(0, 5000000);
 	}
 
 	setup_timer();
 	__sync_synchronize();
 	run_data->start = true; /* tell the child threads to begin */
+	config.comm_begin();
 	__sync_synchronize();
 
 	run_data->start_time = run_data->last_stats_time = get_time();

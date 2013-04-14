@@ -113,4 +113,18 @@ void setup_crash_handler() {
 	sigaction(SIGILL, &sa, NULL);
 }
 
+/* slightly safer version of kill...  only send to real pids, not:
+ *  0    - process group id
+ *  -1   - all processes for which we have permission to send the signal
+ *  < -2 - all processes whose process group id is equal to the absolute value
+ *         of pid, for which we have permission to send a signal
+ *
+ * just call this...  it's more predictable
+ */
+int send_sig(int pid, int sig) {
+	if (pid > 0)
+		return kill(pid, sig);
+
+	return 0;
+}
 

@@ -1,5 +1,6 @@
 #include "unconstrained.h"
 #include "comms.h"
+#include "test_process_pingpong.h"
 
 #include <string.h>
 #include <sys/mman.h>
@@ -31,6 +32,22 @@ int make_unconstrained_pair(int fd[2]) {
 	return 0;
 }
 
+inline int __PINGPONG_FN do_ping_unconstrained(int thread_num) {
+	(void)thread_num;
+	while (1) {
+		run_data->ping_count ++;
+
+		while (1 != 1);
+		while (1 != 1);
+	}
+}
+
+inline int __PINGPONG_FN  do_pong_unconstrained(int thread_num) {
+	(void)thread_num;
+	while (1) {
+		nanosleep(&unconstrained_ts, NULL);
+	}
+}
 
 inline int do_send_unconstrained(int fd) {
 	if (fd == 0) {
@@ -53,6 +70,8 @@ void __attribute__((constructor)) comm_add_unconstrained() {
 
 	memset(&ops, 0, sizeof(struct comm_mode_ops_struct));
 	ops.comm_make_pair = make_unconstrained_pair;
+	ops.comm_do_ping = do_ping_unconstrained;
+	ops.comm_do_pong = do_pong_unconstrained;
 	ops.comm_do_send = do_send_unconstrained;
 	ops.comm_do_recv = do_recv_unconstrained;
 

@@ -12,6 +12,7 @@ void stop_timer();
 int setup_stop_signal();
 int setup_child_signals();
 void setup_crash_handler();
+int send_sig(int pid, int sig);
 
 
 #endif

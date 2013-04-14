@@ -10,6 +10,8 @@
 #define __PACKED	__attribute__ ((packed))
 #define __NORETURN	__attribute__ ((noreturn))
 
+#define __PINGPONG_FN  __attribute__((noreturn)) __attribute__((hot)) __attribute__((optimize("-Ofast")))
+
 typedef enum { no = 0, false = 0, yes = 1, true = 1 } __PACKED bool;
 
 #define likely(x)       __builtin_expect((x),1)

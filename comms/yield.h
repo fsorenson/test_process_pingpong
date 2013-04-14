@@ -5,6 +5,9 @@
 
 int make_yield_pair(int fd[2]);
 
+int do_ping_yield(int thread_num);
+int do_pong_yield(int thread_num);
+
 int do_send_yield(int fd);
 int do_recv_yield(int fd);
 

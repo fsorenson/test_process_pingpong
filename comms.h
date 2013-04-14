@@ -13,6 +13,7 @@
 	int (*comm_init)();			\
 	int (*comm_make_pair)(int fd[2]);	\
 	int (*comm_pre)();			\
+	int (*comm_begin)();			\
 	int (*comm_do_ping)(int s);		\
 	int (*comm_do_pong)(int s);		\
 	int (*comm_do_send)(int s);		\
@@ -60,6 +61,7 @@ void comm_mode_add1(char *add_function_name);
 
 int comm_no_init();
 int comm_no_pre();
+int comm_no_begin();
 
 int comm_do_ping(int thread_num);
 int comm_do_pong(int thread_num);

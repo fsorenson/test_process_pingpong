@@ -19,17 +19,9 @@
 
 int make_eventfd_pair(int fd[2]);
 
-/*
-inline int do_send_eventfd(int fd) {
-	return ! eventfd_write(fd, 1);
-}
+int do_ping_eventfd(int thread_num);
+int do_pong_eventfd(int thread_num);
 
-inline int do_recv_eventfd(int fd) {
-	eventfd_t dummy;
-
-	return ! eventfd_read(fd, &dummy);
-}
-*/
 int do_send_eventfd(int fd);
 int do_recv_eventfd(int fd);
 
