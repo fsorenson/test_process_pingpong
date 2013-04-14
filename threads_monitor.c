@@ -167,16 +167,16 @@ void show_stats(int signum) {
 	output_buffer[255] = 0;
 	write(1, output_buffer, strlen(output_buffer));
 
+	if (config.set_affinity == true) {
+		snprintf(output_buffer, 255, ", ping: %d.%d cycles, pong: %d.%d cycles",
+			(int)i_stats.cpi[0], (int)(i_stats.cpi[0] * 100.0) % 100,
+			(int)i_stats.cpi[1], (int)(i_stats.cpi[1] * 100.0) & 100);
+		write(1, output_buffer, strlen(output_buffer));
+	}
 
+	// for now, let's ignore the context switches (i_stats.csw[ * ]) and calculated mhz (i_stats.mhz[ * ])
 
-	snprintf(output_buffer, 256, "\t(ping %ld csw, %.2Lf cpi, %.3Lf GHz); (pong %ld csw, %.2Lf cpi, %.3Lf GHz)\n",
-		i_stats.csw[0], i_stats.cpi[0], i_stats.mhz[0] / 1000.0,
-		i_stats.csw[1], i_stats.cpi[1], i_stats.mhz[1] / 1000.0);
-
-
-//	snprintf(buffer, 255, "context switches: vol=%ld, invol=%ld\n", usage.ru_nvcsw, usage.ru_nivcsw);
-	output_buffer[255] = 0;
-	write(1, output_buffer, strlen(output_buffer));
+	write(1, "\n", 1);
 
 	/* cleanup things for the next time we come back */
 	memcpy((void *)&run_data->thread_stats[0].last_rusage, (void *)&run_data->thread_stats[0].rusage, sizeof(struct rusage));
