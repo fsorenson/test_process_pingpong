@@ -1,5 +1,6 @@
 #include "yield.h"
 #include "comms.h"
+#include "test_process_pingpong.h"
 
 #include <sched.h>
 #include <sys/mman.h>
@@ -21,6 +22,23 @@ int make_yield_pair(int fd[2]) {
 
 	yield_num ++;
 	return 0;
+}
+
+int __PINGPONG_FN do_ping_yield(int thread_num) {
+	(void)thread_num;
+
+	while (1) {
+		run_data->ping_count ++;
+		sched_yield();
+	}
+}
+
+int __PINGPONG_FN do_pong_yield(int thread_num) {
+	(void)thread_num;
+
+	while (1) {
+		nanosleep(&yield_ts, NULL);
+	}
 }
 
 inline int do_send_yield(int fd) {
@@ -45,6 +63,8 @@ void __attribute__((constructor)) comm_add_yield() {
 
 	memset(&ops, 0, sizeof(struct comm_mode_ops_struct));
 	ops.comm_make_pair = make_yield_pair;
+	ops.comm_do_ping = do_ping_yield;
+	ops.comm_do_pong = do_pong_yield;
 	ops.comm_do_send = do_send_yield;
 	ops.comm_do_recv = do_recv_yield;
 

@@ -1,4 +1,5 @@
 #include "eventfd.h"
+#include "test_process_pingpong.h"
 
 #include <unistd.h>
 #include <sys/syscall.h>
@@ -21,6 +22,40 @@ int make_eventfd_pair(int fd[2]) {
         return 0;
 }
 
+int __PINGPONG_FN do_ping_eventfd(int thread_num) {
+	int mouth;
+	int ear;
+	eventfd_t efd_value;
+
+	mouth = config.mouth[thread_num];
+	ear = config.ear[thread_num];
+
+	efd_value = 1;
+
+	while (1) {
+		run_data->ping_count ++;
+
+		while (eventfd_write(mouth, 1) != 0);
+		while (eventfd_read(ear, &efd_value) != 0);
+	}
+}
+
+int __PINGPONG_FN do_pong_eventfd(int thread_num) {
+	int mouth;
+	int ear;
+	eventfd_t efd_value;
+
+	mouth = config.mouth[thread_num];
+	ear = config.ear[thread_num];
+
+	efd_value = 1;
+
+	while (1) {
+		while (eventfd_read(ear, &efd_value) != 0);
+		while (eventfd_write(mouth, 1) != 0);
+	}
+}
+
 
 inline int do_send_eventfd(int fd) {
         return ! eventfd_write(fd, 1);
@@ -37,6 +72,8 @@ void __attribute__((constructor)) comm_add_eventfd() {
 
 	memset(&ops, 0, sizeof(struct comm_mode_ops_struct));
 	ops.comm_make_pair = make_eventfd_pair;
+	ops.comm_do_ping = do_ping_eventfd;
+	ops.comm_do_pong = do_pong_eventfd;
 
 	comm_mode_do_initialization("eventfd", &ops);
 
