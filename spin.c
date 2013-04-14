@@ -52,26 +52,6 @@ inline int __PINGPONG_FN do_pong_spin(int thread_num) {
 	}
 }
 
-
-inline int do_send_spin(int fd) {
-
-	*spin_var = fd;
-	__sync_synchronize();
-
-	return 1;
-}
-inline int do_recv_spin(int fd) {
-
-	if (*spin_var == fd)
-		return 1;
-	__sync_synchronize();
-	return (*spin_var == fd);
-//	while (*spin_var != fd)
-//		__sync_synchronize();
-
-//	return 1;
-}
-
 int cleanup_spin() {
 
 	return 0;
@@ -84,8 +64,6 @@ void __attribute__((constructor)) comm_add_spin() {
 	ops.comm_make_pair = make_spin_pair;
 	ops.comm_do_ping = do_ping_spin;
 	ops.comm_do_pong = do_pong_spin;
-	ops.comm_do_send = do_send_spin;
-	ops.comm_do_recv = do_recv_spin;
 	ops.comm_cleanup = cleanup_spin;
 
 	comm_mode_do_initialization("spin", &ops);
