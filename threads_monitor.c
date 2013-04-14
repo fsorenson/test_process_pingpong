@@ -143,14 +143,17 @@ static int gather_stats(struct interval_stats_struct *i_stats) {
 
 void show_stats(int signum) {
 	static char output_buffer[400];
-	static char time_per_iteration_string[30];
-	static char run_time_string[30];
+	static char temp_string1[30];
+	static char temp_string2[30];
 
 	struct interval_stats_struct i_stats;
 
 	(void)signum;
 
 	memset(&i_stats, 0, sizeof(struct interval_stats_struct));
+	memset(output_buffer, 0, 400);
+	memset(temp_string1, 0, 30);
+	memset(temp_string2, 0, 30);
 
 	if (run_data->rusage_req_in_progress == true) /* already waiting for results */
 		return;
@@ -160,9 +163,9 @@ void show_stats(int signum) {
 		return;
 
 	snprintf(output_buffer, 255, "%s - %llu iterations -> %s",
-		subsec_string(run_time_string, i_stats.run_time, 3),
+		subsec_string(temp_string1, i_stats.run_time, 3),
 		i_stats.interval_count,
-		subsec_string(time_per_iteration_string, i_stats.iteration_time, 3));
+		subsec_string(temp_string2, i_stats.iteration_time, 3));
 
 	output_buffer[255] = 0;
 	write(1, output_buffer, strlen(output_buffer));
