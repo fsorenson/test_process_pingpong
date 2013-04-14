@@ -183,7 +183,7 @@ int comm_no_begin() {
 	return 0;
 }
 
-inline int __attribute__((hot)) __attribute__((optimize("-Ofast")))  comm_do_ping_generic(int thread_num) {
+inline int __PINGPONG_FN comm_do_ping_generic(int thread_num) {
 	while (1) {
 		run_data->ping_count ++;
 
@@ -191,7 +191,7 @@ inline int __attribute__((hot)) __attribute__((optimize("-Ofast")))  comm_do_pin
 		while (config.comm_do_recv(config.ear[thread_num]) != 1);
 	}
 }
-inline int __attribute__((hot)) __attribute__((optimize("-Ofast")))  comm_do_pong_generic(int thread_num) {
+inline int __PINGPONG_FN comm_do_pong_generic(int thread_num) {
 	while (1) {
 		while (config.comm_do_recv(config.ear[thread_num]) != 1);
 		while (config.comm_do_send(config.mouth[thread_num]) != 1);

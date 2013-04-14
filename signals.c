@@ -9,7 +9,7 @@
 #include <execinfo.h>
 #include <sys/wait.h>
 
-void __attribute__ ((noreturn)) print_backtrace(int signum) {
+void __NORETURN print_backtrace(int signum) {
 	void *array[32];	/* Array to store backtrace symbols */
 	int size;		/* To store the exact no of values stored */
 	char **strings;		/* To store functions from the backtrace list in ARRAY */
@@ -27,7 +27,7 @@ void __attribute__ ((noreturn)) print_backtrace(int signum) {
 	exit(-1);
 }
 
-void __attribute__ ((noreturn)) print_backtrace2(int signum) {
+void __NORETURN print_backtrace2(int signum) {
 	char buf[1024];
 
 	pid_t dying_pid = getpid();

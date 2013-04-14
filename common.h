@@ -9,8 +9,14 @@
 
 #define __PACKED	__attribute__ ((packed))
 #define __NORETURN	__attribute__ ((noreturn))
+#define __HOT		__attribute__((hot))
 
-#define __PINGPONG_FN  __attribute__((noreturn)) __attribute__((hot)) __attribute__((optimize("-Ofast")))
+#define __OPTIMIZED0
+#define __OPTIMIZED1	__attribute__((optimize("-Ofast")))
+#define __OPTIMIZED	__OPTIMIZED1
+
+#define __PINGPONG_FN  __NORETURN __HOT __OPTIMIZED
+
 
 typedef enum { no = 0, false = 0, yes = 1, true = 1 } __PACKED bool;
 

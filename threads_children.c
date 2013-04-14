@@ -59,7 +59,7 @@ static int setup_interrupt_signal(int thread_num) {
 	return 0;
 }
 
-void __attribute__((noreturn)) do_thread_work(int thread_num) {
+void __NORETURN do_thread_work(int thread_num) {
 	char cpu_cycle_time_buffer[50];
 	char buf[100];
 
@@ -117,13 +117,13 @@ void __attribute__((noreturn)) do_thread_work(int thread_num) {
 	exit(0);
 }
 
-int __attribute__((noreturn)) thread_function(void *argument) {
+int __NORETURN thread_function(void *argument) {
 	struct thread_info_struct *t_info = (struct thread_info_struct *)argument;
 
 	do_thread_work(t_info->thread_num);
 }
 
-void * __attribute__((noreturn)) pthread_function(void *argument) {
+void * __NORETURN pthread_function(void *argument) {
 
 	thread_function(argument);
 }
