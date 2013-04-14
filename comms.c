@@ -24,7 +24,7 @@ int parse_comm_mode(char *arg) {
 	return -1;
 }
 
-void cleanup_comm_mode_info() {
+void __attribute__((destructor)) cleanup_comm_mode_info() {
 	int i;
 
 	for (i = 0 ; i < comm_mode_count ; i ++) {

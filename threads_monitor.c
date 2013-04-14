@@ -51,12 +51,10 @@ struct interval_stats_struct {
 };
 
 static void monitor_cleanup() {
-
-	cleanup_comm_mode_info();
 	free(run_data->thread_info[0].stack);
 	free(run_data->thread_info[1].stack);
 
-//	munmap(run_data);
+	munmap(run_data);
 }
 
 
