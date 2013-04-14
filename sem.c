@@ -39,7 +39,7 @@ int do_begin_sem() {
 	return sem_post(sems[0]);
 }
 
-inline int __attribute__((noreturn)) __attribute__((hot)) __attribute__((optimize("-Ofast"))) do_ping_sem(int thread_num) {
+inline int __PINGPONG_FN do_ping_sem(int thread_num) {
 	(void)thread_num;
 
 	while (1) {
@@ -50,7 +50,7 @@ inline int __attribute__((noreturn)) __attribute__((hot)) __attribute__((optimiz
 	}
 }
 
-inline int __attribute__((noreturn)) __attribute__((hot)) __attribute__((optimize("-Ofast"))) do_pong_sem(int thread_num) {
+inline int __PINGPONG_FN do_pong_sem(int thread_num) {
 	(void)thread_num;
 
 	while (1) {
@@ -59,7 +59,7 @@ inline int __attribute__((noreturn)) __attribute__((hot)) __attribute__((optimiz
 	}
 }
 
-inline int __attribute__((hot)) __attribute__((optimize("-Ofast"))) do_ping_busysem(int thread_num) {
+inline int __PINGPONG_FN do_ping_busysem(int thread_num) {
 	(void)thread_num;
 
 	while (1) {
@@ -70,7 +70,7 @@ inline int __attribute__((hot)) __attribute__((optimize("-Ofast"))) do_ping_busy
 	}
 }
 
-inline int __attribute__((hot)) __attribute__((optimize("-Ofast"))) do_pong_busysem(int thread_num) {
+inline int __PINGPONG_FN do_pong_busysem(int thread_num) {
 	(void)thread_num;
 
 	while (1) {
