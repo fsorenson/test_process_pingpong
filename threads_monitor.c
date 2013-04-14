@@ -248,8 +248,6 @@ int do_monitor_work() {
 
 	run_data->start_time = run_data->last_stats_time = get_time();
 	run_data->timeout_time = (double)run_data->start_time + (double)config.max_execution_time;
-//	run_data->start_tsc = rdtsc(NULL);
-
 
 	while (run_data->stop != true) {
 		sigsuspend(&signal_mask);
@@ -259,24 +257,6 @@ int do_monitor_work() {
 
 	return 0;
 }
-
-
-/*
-static inline void __attribute__((hot)) __attribute__((optimize("-Ofast"))) do_ping_work(int thread_num) {
-	while (1) {
-		run_data->ping_count ++;
-
-		while (config.comm_do_send(config.mouth[thread_num]) != 1);
-		while (config.comm_do_recv(config.ear[thread_num]) != 1);
-	}
-}
-static inline void __attribute__((hot)) __attribute__((optimize("-Ofast")))  do_pong_work(int thread_num) {
-	while (1) {
-		while (config.comm_do_recv(config.ear[thread_num]) != 1);
-		while (config.comm_do_send(config.mouth[thread_num]) != 1);
-	}
-}
-*/
 
 static int do_fork() {
 	int thread_num = 0;
@@ -341,7 +321,6 @@ static int do_clone() {
 		(void *)&run_data->thread_info[thread_num],
 		&run_data->thread_info[thread_num].ptid, NULL, &run_data->thread_info[thread_num].ctid
 		);
-//		(void *)&run_data->thread_info[thread_num]);
 
 	thread_num++;
 
@@ -355,14 +334,11 @@ static int do_clone() {
 	/* what about CLONE_SIGHAND and CLONE_VM ? */
 
 
-
 	if ((run_data->thread_info[0].pid == -1) || (run_data->thread_info[1].pid == -1)) {
 		perror("clone");
 		exit(2);
 	}
 	do_monitor_work();
-//	free(config.stack[1]);
-//	thread_info->pid = syscall(SYS_getpid);
 
 	return 0;
 }
