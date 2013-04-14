@@ -192,6 +192,7 @@ int do_comm_setup() {
 	config.comm_init = comm_mode_info[config.comm_mode_index].comm_init;
 	config.comm_make_pair = comm_mode_info[config.comm_mode_index].comm_make_pair;
 	config.comm_pre = comm_mode_info[config.comm_mode_index].comm_pre;
+	config.comm_begin = comm_mode_info[config.comm_mode_index].comm_begin;
 	config.comm_do_ping = comm_mode_info[config.comm_mode_index].comm_do_ping;
 	config.comm_do_pong = comm_mode_info[config.comm_mode_index].comm_do_pong;
 	config.comm_do_send = comm_mode_info[config.comm_mode_index].comm_do_send;
