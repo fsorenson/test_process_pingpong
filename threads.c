@@ -266,6 +266,7 @@ int do_monitor_work() {
 	setup_timer();
 	__sync_synchronize();
 	run_data->start = true; /* tell the child threads to begin */
+	config.comm_begin();
 	__sync_synchronize();
 
 	run_data->start_time = run_data->last_stats_time = get_time();
