@@ -36,6 +36,7 @@ CFLAGS += -Wendif-labels
 CFLAGS += -Wmissing-noreturn
 CFLAGS += -Wmissing-format-attribute -Wmissing-field-initializers
 CFLAGS += -Wmissing-declarations -Wredundant-decls -Wdeclaration-after-statement
+CFLAGS += -Wbad-function-cast
 
 # doesn't seem to work on older gcc
 #-Wlogical-op -Waddress
@@ -57,10 +58,13 @@ OPTIMIZATIONS += -malign-double
 OPTIMIZATIONS += -fif-conversion -fif-conversion2
 #OPTIMIZATIONS += -finline-functions -finline-functions-called-once -finline-small-functions
 OPTIMIZATIONS += -fargument-alias
-OPTIMIZATIONS += -Wbad-function-cast
+#OPTIMIZATIONS += 
+#OPTIMIZATIONS += 
 
 
-#CFLAGS += -flto-report
+#OPTIMIZATIONS += -fwhole-program
+
+#CFLAGS += -fweb -flto
 
 # remove symbols for ultra-small binaries--or use strip
 #LDFLAGS += -Wl,-S -Wl,-s
