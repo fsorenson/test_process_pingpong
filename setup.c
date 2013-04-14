@@ -108,8 +108,10 @@ int setup_defaults(char *argv0) {
 	config.thread_mode	= DEFAULT_THREAD_MODE;
 
 	config.comm_mode_index	= 0; /* default to whatever is first */
-	config.comm_do_send	= comm_do_send;
-	config.comm_do_recv	= comm_do_recv;
+	config.comm_do_ping	= comm_do_ping_generic;
+	config.comm_do_pong	= comm_do_pong_generic;
+	config.comm_do_send	= comm_do_send_generic;
+	config.comm_do_recv	= comm_do_recv_generic;
 	config.comm_cleanup	= comm_no_cleanup;
 
 	config.sched_policy	= DEFAULT_SCHED;

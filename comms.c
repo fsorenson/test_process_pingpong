@@ -127,10 +127,10 @@ void comm_mode_do_initialization(char *comm_mode_name, struct comm_mode_ops_stru
 			comm_mode_info[i].comm_pre = ops->comm_pre != NULL ? ops->comm_pre : comm_no_pre;
 			comm_mode_info[i].comm_begin = ops->comm_begin != NULL ? ops->comm_begin : comm_no_begin;
 			comm_mode_info[i].comm_make_pair = ops->comm_make_pair;
-			comm_mode_info[i].comm_do_ping = ops->comm_do_ping ? : comm_do_ping;
-			comm_mode_info[i].comm_do_pong = ops->comm_do_pong ? : comm_do_pong;
-			comm_mode_info[i].comm_do_send = ops->comm_do_send ? : comm_do_send;
-			comm_mode_info[i].comm_do_recv = ops->comm_do_recv ? : comm_do_recv;
+			comm_mode_info[i].comm_do_ping = ops->comm_do_ping ? : comm_do_ping_generic;
+			comm_mode_info[i].comm_do_pong = ops->comm_do_pong ? : comm_do_pong_generic;
+			comm_mode_info[i].comm_do_send = ops->comm_do_send ? : comm_do_send_generic;
+			comm_mode_info[i].comm_do_recv = ops->comm_do_recv ? : comm_do_recv_generic;
 			comm_mode_info[i].comm_interrupt = ops->comm_interrupt ? : comm_no_interrupt;
 			comm_mode_info[i].comm_cleanup = ops->comm_cleanup ? : comm_no_cleanup;
 
@@ -183,7 +183,7 @@ int comm_no_begin() {
 	return 0;
 }
 
-inline int __attribute__((hot)) __attribute__((optimize("-Ofast")))  comm_do_ping(int thread_num) {
+inline int __attribute__((hot)) __attribute__((optimize("-Ofast")))  comm_do_ping_generic(int thread_num) {
 	while (1) {
 		run_data->ping_count ++;
 
@@ -191,18 +191,18 @@ inline int __attribute__((hot)) __attribute__((optimize("-Ofast")))  comm_do_pin
 		while (config.comm_do_recv(config.ear[thread_num]) != 1);
 	}
 }
-inline int __attribute__((hot)) __attribute__((optimize("-Ofast")))  comm_do_pong(int thread_num) {
+inline int __attribute__((hot)) __attribute__((optimize("-Ofast")))  comm_do_pong_generic(int thread_num) {
 	while (1) {
 		while (config.comm_do_recv(config.ear[thread_num]) != 1);
 		while (config.comm_do_send(config.mouth[thread_num]) != 1);
 	}
 }
 
-inline int comm_do_send(int fd) {
+inline int comm_do_send_generic(int fd) {
 	return (int)write(fd, "X", 1);
 }
 
-inline int comm_do_recv(int fd) {
+inline int comm_do_recv_generic(int fd) {
 	char dummy;
 
 	return (int)read(fd, &dummy, 1);

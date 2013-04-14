@@ -63,10 +63,10 @@ int comm_no_init();
 int comm_no_pre();
 int comm_no_begin();
 
-int comm_do_ping(int thread_num);
-int comm_do_pong(int thread_num);
-int comm_do_send(int fd);
-int comm_do_recv(int fd);
+int comm_do_ping_generic(int thread_num);
+int comm_do_pong_generic(int thread_num);
+int comm_do_send_generic(int fd);
+int comm_do_recv_generic(int fd);
 
 int comm_no_interrupt();
 int comm_no_cleanup();
