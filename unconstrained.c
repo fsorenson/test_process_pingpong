@@ -32,7 +32,7 @@ int make_unconstrained_pair(int fd[2]) {
 	return 0;
 }
 
-inline int __attribute__((hot)) __attribute__((optimize("-Ofast"))) do_ping_unconstrained(int thread_num) {
+inline int __PINGPONG_FN do_ping_unconstrained(int thread_num) {
 	(void)thread_num;
 	while (1) {
 		run_data->ping_count ++;
@@ -42,7 +42,7 @@ inline int __attribute__((hot)) __attribute__((optimize("-Ofast"))) do_ping_unco
 	}
 }
 
-inline int __attribute__((hot)) __attribute__((optimize("-Ofast")))  do_pong_unconstrained(int thread_num) {
+inline int __PINGPONG_FN  do_pong_unconstrained(int thread_num) {
 	(void)thread_num;
 	while (1) {
 		nanosleep(&unconstrained_ts, NULL);
