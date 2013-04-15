@@ -22,6 +22,7 @@
 #include <sys/wait.h>
 #include <sys/prctl.h>
 #include <sys/types.h>
+#include <sys/mman.h>
 
 /* thread startup, execution, handlers, etc */
 
@@ -54,7 +55,7 @@ static void monitor_cleanup() {
 	free(run_data->thread_info[0].stack);
 	free(run_data->thread_info[1].stack);
 
-	munmap(run_data);
+	munmap(run_data, sizeof(struct run_data_struct));
 }
 
 
