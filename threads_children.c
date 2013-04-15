@@ -99,7 +99,6 @@ void __NORETURN do_thread_work(int thread_num) {
 	}
 
 	/* signal to the main thread that we're ready when they are */
-	/* signal to the main thread that we're ready when they are */
 	run_data->ready[thread_num] = true;
 
 	while (run_data->start != true)

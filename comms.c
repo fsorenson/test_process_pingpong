@@ -42,13 +42,8 @@ void comm_mode_add(char *comm_name, char *add_function_name) {
 	unsigned long zero_address;
 	unsigned long zero_size;
 
-//printf("adding '%s' '%s'\n", comm_name, add_function_name);
-
 	if ((comm_mode_count % COMM_MODE_LIST_INCREMENT) == 0) {
 
-		new_size = (long unsigned int)(comm_mode_count + COMM_MODE_LIST_INCREMENT) *
-		                        sizeof(struct comm_mode_info_struct);
-//		printf("realloc(%lu)\n", new_size);
 		ret = realloc(comm_mode_info,
 			(long unsigned int)(comm_mode_count + COMM_MODE_LIST_INCREMENT) *
 			sizeof(struct comm_mode_info_struct));
@@ -61,16 +56,12 @@ void comm_mode_add(char *comm_name, char *add_function_name) {
 			printf("errno is nonzero, for some reason\n");
 		}
 		comm_mode_info = (struct comm_mode_info_struct *)ret;
-//printf("done with the realloc.  address is %p\n", comm_mode_info);
 
 		offset = sizeof(struct comm_mode_info_struct) * ((long unsigned int)comm_mode_count);
 		zero_address = (unsigned long)(char *)comm_mode_info + offset;
 		zero_size = sizeof(struct comm_mode_info_struct) * COMM_MODE_LIST_INCREMENT;
 
-//printf("about to zero %lu bytes, beginning %lu bytes after %p (0x%08lx)\n", zero_size,
-//			offset, comm_mode_info, (unsigned long)comm_mode_info + offset);
 		ret = memset((void *)zero_address, 0, zero_size);
-//printf("maybe 0x%08lx\n", (unsigned long)&comm_mode_info[comm_mode_count]);
 		if (ret != (void *)zero_address) {
 			printf("somethin' fishy...  expected 0x%08lx to equal 0x%08lx\n",
 				(unsigned long)ret, zero_address);
@@ -84,7 +75,6 @@ void comm_mode_add(char *comm_name, char *add_function_name) {
 			sizeof(struct comm_mode_info_struct) * COMM_MODE_LIST_INCREMENT);
 */
 	}
-//printf("comm_mode_info[%d] is at address %p\n", comm_mode_count,  &comm_mode_info[comm_mode_count]);
 	comm_mode_info[comm_mode_count].name = strdup(comm_name);
 	comm_mode_info[comm_mode_count].comm_mode_init_function = strdup(add_function_name);
 	comm_mode_info[comm_mode_count].comm_mode_index = comm_mode_count;
@@ -215,5 +205,3 @@ int comm_no_interrupt() {
 int comm_no_cleanup() {
 	return 0;
 }
-
-

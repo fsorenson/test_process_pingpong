@@ -327,6 +327,7 @@ static int do_clone() {
 
 	thread_num++;
 
+
 	run_data->thread_info[thread_num].thread_num = thread_num;
 	strncpy(run_data->thread_info[thread_num].thread_name, "pong_thread", 12);
 
