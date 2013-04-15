@@ -321,7 +321,7 @@ static int do_clone() {
 	clone_flags = CLONE_FS | CLONE_FILES | SIGCHLD;
 
 	run_data->thread_info[thread_num].tid = clone(&thread_function,
-		(char *) run_data->thread_info[0].stack + STACK_SIZE, clone_flags,
+		(char *) run_data->thread_info[thread_num].stack + STACK_SIZE, clone_flags,
 		(void *)&run_data->thread_info[thread_num],
 		&run_data->thread_info[thread_num].ptid, NULL, &run_data->thread_info[thread_num].ctid
 		);
@@ -332,10 +332,11 @@ static int do_clone() {
 	run_data->thread_info[thread_num].thread_num = thread_num;
 	strncpy(run_data->thread_info[thread_num].thread_name, "pong_thread", 12);
 
-
 	run_data->thread_info[thread_num].tid = clone(&thread_function,
-		(char *) run_data->thread_info[1].stack + STACK_SIZE, clone_flags,
-		(void *)&run_data->thread_info[thread_num]);
+		(char *) run_data->thread_info[thread_num].stack + STACK_SIZE, clone_flags,
+		(void *)&run_data->thread_info[thread_num],
+		&run_data->thread_info[thread_num].ptid, NULL, &run_data->thread_info[thread_num].ctid
+		);
 	/* what about CLONE_SIGHAND and CLONE_VM ? */
 
 
