@@ -37,13 +37,15 @@ void __attribute__((destructor)) cleanup_comm_mode_info() {
 
 void comm_mode_add(char *comm_name, char *add_function_name) {
 	void *ret;
-	unsigned long new_size;
+//	unsigned long new_size;
 	unsigned long offset;
 	unsigned long zero_address;
 	unsigned long zero_size;
 
 	if ((comm_mode_count % COMM_MODE_LIST_INCREMENT) == 0) {
 
+//		new_size = (long unsigned int)(comm_mode_count + COMM_MODE_LIST_INCREMENT) *
+//		                        sizeof(struct comm_mode_info_struct);
 		ret = realloc(comm_mode_info,
 			(long unsigned int)(comm_mode_count + COMM_MODE_LIST_INCREMENT) *
 			sizeof(struct comm_mode_info_struct));
