@@ -184,10 +184,10 @@ gcovs += $(addprefix $(objs_dir)/, $(addsuffix .gcno,$(comms_glue)))
 
 # build the deps files
 $(deps_dir)/%.d: %.c %.h
-	$(SHELL) -ec '$(CC) -MM $(CPPFLAGS) $< | sed s@$*.o@objs/\&\ $@@ > $@'
+	@$(SHELL) -ec '$(CC) -MM $(CPPFLAGS) $< | sed s@$*.o@objs/\&\ $@@ > $@'
 
 $(deps_dir)/%.d: $(comms_dir)/%.c $(comms_dir)/%.h
-	$(SHELL) -ec '$(CC) -MM $(CPPFLAGS) $< | sed s@$*.o@objs/\&\ $@@ > $@'
+	@$(SHELL) -ec '$(CC) -MM $(CPPFLAGS) $< | sed s@$*.o@objs/\&\ $@@ > $@'
 
 
 
@@ -197,10 +197,10 @@ $(deps_dir)/%.d: $(comms_dir)/%.c $(comms_dir)/%.h
 
 
 $(objs_dir)/%.o: %.c  $(deps_dir)/%.d
-	$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@
+	@$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@
 
 $(objs_dir)/%.o: $(comms_dir)/%.c $(deps_dir)/%.d
-	$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@
+	@$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@
 
 
 
