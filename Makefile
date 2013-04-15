@@ -24,6 +24,16 @@ CPPFLAGS += -std=gnu99
 #CFLAGS += -march=corei7 -mtune=corei7
 
 
+# begin with empty lists
+C_SRCS =
+H_SRCS =
+SRCS =
+
+objs =
+deps =
+stabs =
+gcovs =
+
 
 # some warnings
 CFLAGS += -Wall -Wextra
@@ -124,14 +134,15 @@ f += setup
 #f += tcp udp pipe socket_pair sem eventfd futex spin nop mq
 
 #SRCS = test_process_pingpong.c
-C_SRCS = $(addsuffix .c,$(f))
-H_SRCS = $(addsuffix .h,$(f))
-SRCS = $(C_SRCS) $(H_SRCS)
+C_SRCS += $(addsuffix .c,$(f))
+H_SRCS += $(addsuffix .h,$(f))
+SRCS += $(C_SRCS) $(H_SRCS)
 
-objs = $(addprefix $(objs_dir)/, $(addsuffix .o,$(f)))
-deps = $(addprefix $(deps_dir)/, $(addsuffix .d,$(f)))
-stabs = $(addprefix $(stab_dir)/,$(addsuffix .s,$(f)))
-
+objs += $(addprefix $(objs_dir)/, $(addsuffix .o,$(f)))
+deps += $(addprefix $(deps_dir)/, $(addsuffix .d,$(f)))
+stabs += $(addprefix $(stab_dir)/, $(addsuffix .s,$(f)))
+gcovs += $(addprefix $(objs_dir)/, $(addsuffix .gcda,$(f)))
+gcovs += $(addprefix $(objs_dir)/, $(addsuffix .gcno,$(f)))
 
 
 comms = tcp udp pipe socket_pair sem futex mq eventfd spin nop yield unconstrained
@@ -148,6 +159,8 @@ SRCS += $(comms_srcs)
 #objs += $(comms_objs)
 deps += $(comms_deps)
 stabs += $(comms_stabs)
+gcovs += $(addprefix $(objs_dir)/, $(addsuffix .gcda,$(comms)))
+gcovs += $(addprefix $(objs_dir)/, $(addsuffix .gcno,$(comms)))
 
 
 comms_glue = comms
@@ -163,6 +176,8 @@ SRCS += $(comms_glue_srcs)
 #objs += $(comms_glue_objs)
 deps += $(comms_glue_deps)
 stabs += $(comms_glue_stabs)
+gcovs += $(addprefix $(objs_dir)/, $(addsuffix .gcda,$(comms_glue)))
+gcovs += $(addprefix $(objs_dir)/, $(addsuffix .gcno,$(comms_glue)))
 
 
 
@@ -209,15 +224,25 @@ gprof: $(objs)
 	@$(CC) -o $@ $(objs) $(CFLAGS) $(CPPFLAGS) $(LIBS) -pg -O 
 
 cov:
-	lcov --directory=`pwd` --capture --output-file gcov/app.info
+	lcov --directory=`pwd` --capture --ignore-errors source --base-directory `pwd` \
+		--output-file gcov/app.info
 	genhtml --output-directory gcov gcov/app.info
+	genpng --output-filename gcov/calls.png gcov/app.info
+#	rm -rf gcov && mkdir gcov
+#	lcov --directory=`pwd` --add-tracefile gcov/comms.info --output-file gcov/app.info
+#	lcov --directory=`pwd`/comms --capture --ignore-errors source --base-directory `pwd` \
+#		--no-recursion --output-file gcov/comms.info
+#	lcov --directory=`pwd` --capture --ignore-errors source --base-directory `pwd` \
+#		--no-recursion --output-file gcov/base.info
+#	lcov --directory=`pwd` --add-tracefile gcov/comms.info --add-tracefile gcov/base.info --output-file gcov/app.info
 
 clean:
 	#echo "objs=$(objs)"
 	#echo "deps=$(deps)"
 	#echo "stabs=$(stabs)"
 	#echo "comms_obs=$(comms_objs), comms_glue_objs=$(comms_glue_objs)"
-	@rm -f test_process_pingpong $(objs) $(deps) $(stabs) $(comms_objs) $(comms_glue_objs)
+	#echo "gcovs=$(gcovs)"
+	@rm -f test_process_pingpong $(objs) $(deps) $(stabs) $(comms_objs) $(comms_glue_objs) $(gcovs)
 
 
 
