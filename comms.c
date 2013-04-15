@@ -66,14 +66,6 @@ void comm_mode_add(char *comm_name, char *add_function_name) {
 			printf("somethin' fishy...  expected 0x%08lx to equal 0x%08lx\n",
 				(unsigned long)ret, zero_address);
 		}
-
-
-/*
-		memset(comm_mode_info +
-			sizeof(struct comm_mode_info_struct) * ((long unsigned int)comm_mode_count),
-			0,
-			sizeof(struct comm_mode_info_struct) * COMM_MODE_LIST_INCREMENT);
-*/
 	}
 	comm_mode_info[comm_mode_count].name = strdup(comm_name);
 	comm_mode_info[comm_mode_count].comm_mode_init_function = strdup(add_function_name);
