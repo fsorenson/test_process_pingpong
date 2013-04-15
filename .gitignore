@@ -1,4 +1,5 @@
 /objs/
 /deps/
 /stabs/
+/gcov/*
 test_process_pingpong
