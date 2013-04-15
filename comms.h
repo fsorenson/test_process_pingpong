@@ -4,7 +4,7 @@
 #include "common.h"
 
 /* don't necessarily want to limit this... just need a starting point */
-#define COMM_MODE_LIST_INCREMENT	2
+#define COMM_MODE_LIST_INCREMENT	5
 
 #define COMM_MODE_OPS				\
 	char *comm_mode_init_function;		\

@@ -35,8 +35,8 @@
 #define DEFAULT_COMM_MODE	comm_mode_tcp
 #define DEFAULT_THREAD_MODE	thread_mode_thread
 #define DEFAULT_MONITOR_CHECK_FREQ	250 /* milliseconds between checks */
-#define DEFAULT_EXECUTION_TIME		30 /* max time to run the test (seconds) */
-#define DEFAULT_STATS_INTERVAL		5 /* output the stats every # seconds */
+#define DEFAULT_EXECUTION_TIME		10 /* max time to run the test (seconds) */
+#define DEFAULT_STATS_INTERVAL		1 /* output the stats every # seconds */
 #define DEFAULT_STATS_SUMMARY	true /* display a summary immediately prior to exit */
 
 
