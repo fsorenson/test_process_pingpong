@@ -68,14 +68,18 @@ inline int do_recv_eventfd(int fd) {
 
 
 void __attribute__((constructor)) comm_add_eventfd() {
+	struct comm_mode_init_info_struct init_info;
 	struct comm_mode_ops_struct ops;
+
+	memset(&init_info, 0, sizeof(struct comm_mode_init_info_struct));
+	init_info.name = "eventfd";
 
 	memset(&ops, 0, sizeof(struct comm_mode_ops_struct));
 	ops.comm_make_pair = make_eventfd_pair;
 	ops.comm_do_ping = do_ping_eventfd;
 	ops.comm_do_pong = do_pong_eventfd;
 
-	comm_mode_do_initialization("eventfd", &ops);
+	comm_mode_do_initialization(&init_info, &ops);
 
 }
 
