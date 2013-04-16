@@ -37,9 +37,8 @@ static int usage() {
 	printf("Usage: %s [options] [ <cpu #> <cpu #> ]\n", config.argv0);
 	printf("\n");
 	printf("Options:\n");
-	printf("\t-m, --mode=MODE\n");
+	printf("    -m, --mode=MODE\n");
 //	printf("\t\tcommunication modes: tcp, udp, pipe, sockpair"
-	printf("\t\tcommunication modes:\n");
 
 /*	printf("\t\tcommunication modes: tcp, udp, pipe, sockpair"
 #ifdef HAVE_EVENTFD
@@ -53,9 +52,10 @@ static int usage() {
 	"\n\t\t\tnop (no synchronization...one thread just sched_yields(), the other sleeps"
 	"\n");
 */
+	printf("        communication modes:\n");
 
 	for (i = 0 ; i < comm_mode_count ; i ++) {
-		printf("\t\t\t%s\t%s\n", comm_mode_info[i].name, comm_mode_info[i].help_text ? : "");
+		printf("            %20s  -  %s\n", comm_mode_info[i].name, comm_mode_info[i].help_text ? : "");
 	}
 
 	printf("\n");
