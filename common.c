@@ -35,6 +35,13 @@ inline uint64_t rdtsc(unsigned int *aux) {
 	return (uint64_t) high << 32 | low;
 }
 
+static __inline__ __attribute__((always_inline)) unsigned long long __rdtsc(void)
+{
+	unsigned long long retval;
+	__asm__ __volatile__("rdtsc" : "=A"(retval));
+	return retval;
+}
+
 int do_sleep(long sec, long nsec) {
 	struct timespec ts;
 
