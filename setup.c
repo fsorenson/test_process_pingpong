@@ -38,20 +38,6 @@ static int usage() {
 	printf("\n");
 	printf("Options:\n");
 	printf("    -m, --mode=MODE\n");
-//	printf("\t\tcommunication modes: tcp, udp, pipe, sockpair"
-
-/*	printf("\t\tcommunication modes: tcp, udp, pipe, sockpair"
-#ifdef HAVE_EVENTFD
-	", eventfd"
-#endif
-	",\n\t\t\tsem | semaphore"
-	",\n\t\t\tbusy | busysem | busy_sem | busy_semaphore"
-	"\n\t\t\tfutex"
-	"\n\t\t\tmq"
-	"\n\t\t\tspin (be very careful)"
-	"\n\t\t\tnop (no synchronization...one thread just sched_yields(), the other sleeps"
-	"\n");
-*/
 	printf("        communication modes:\n");
 
 	for (i = 0 ; i < comm_mode_count ; i ++) {
@@ -59,8 +45,6 @@ static int usage() {
 	}
 
 	printf("\n");
-
-
 
 	printf("\n");
 	printf("\t-t, --thread=MODE, --thread_mode=MODE\n");
