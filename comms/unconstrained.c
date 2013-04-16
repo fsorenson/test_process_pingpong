@@ -36,7 +36,7 @@ inline int __PINGPONG_FN do_ping_unconstrained(int thread_num) {
 	(void)thread_num;
 	while (1) {
 		run_data->ping_count ++;
-//__asm__ __volatile__("lock; incl %0;" : "=m"(run_data->ping_count) : );
+
 		while (1 != 1);
 		while (1 != 1);
 	}
