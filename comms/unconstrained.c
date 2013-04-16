@@ -42,27 +42,11 @@ inline int __PINGPONG_FN do_ping_unconstrained(int thread_num) {
 	}
 }
 
-inline int __PINGPONG_FN  do_pong_unconstrained(int thread_num) {
+inline int __PINGPONG_FN do_pong_unconstrained(int thread_num) {
 	(void)thread_num;
 	while (1) {
 		nanosleep(&unconstrained_ts, NULL);
 	}
-}
-
-inline int do_send_unconstrained(int fd) {
-	if (fd == 0) {
-//		*unconstrained_var ^= 1;
-
-		return 1;
-	} else {
-		nanosleep(&unconstrained_ts, NULL);
-		return 0;
-	}
-}
-inline int do_recv_unconstrained(int fd) {
-	(void)fd;
-
-	return 1;
 }
 
 void __attribute__((constructor)) comm_add_unconstrained() {
@@ -76,8 +60,6 @@ void __attribute__((constructor)) comm_add_unconstrained() {
 	ops.comm_make_pair = make_unconstrained_pair;
 	ops.comm_do_ping = do_ping_unconstrained;
 	ops.comm_do_pong = do_pong_unconstrained;
-	ops.comm_do_send = do_send_unconstrained;
-	ops.comm_do_recv = do_recv_unconstrained;
 
 	comm_mode_do_initialization(&init_info, &ops);
 }
