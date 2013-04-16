@@ -59,6 +59,7 @@ inline int __PINGPONG_FN do_pong_nop(int thread_num) {
 		nanosleep(&nop_ts, NULL);
 	}
 }
+/*
 inline int do_send_nop(int fd) {
 	if (fd == 0) {
 		*nop_var ^= 1;
@@ -75,7 +76,7 @@ inline int do_recv_nop(int fd) {
 
 	return 1;
 }
-
+*/
 int cleanup_nop() {
 
 	return 0;
@@ -92,8 +93,8 @@ void __attribute__((constructor)) comm_add_nop() {
 	ops.comm_make_pair = make_nop_pair;
 	ops.comm_do_ping = do_ping_nop;
 	ops.comm_do_pong = do_pong_nop;
-	ops.comm_do_send = do_send_nop;
-	ops.comm_do_recv = do_recv_nop;
+//	ops.comm_do_send = do_send_nop;
+//	ops.comm_do_recv = do_recv_nop;
 	ops.comm_cleanup = cleanup_nop;
 
 	comm_mode_do_initialization(&init_info, &ops);
