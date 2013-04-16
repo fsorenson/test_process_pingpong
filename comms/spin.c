@@ -23,6 +23,7 @@ int make_spin_pair(int fd[2]) {
 	return 0;
 }
 
+
 inline int __PINGPONG_FN do_ping_spin(int thread_num) {
 	(void)thread_num;
 
@@ -69,6 +70,5 @@ void __attribute__((constructor)) comm_add_spin() {
 	ops.comm_cleanup = cleanup_spin;
 
 	comm_mode_do_initialization(&init_info, &ops);
-
 }
 ADD_COMM_MODE(spin, comm_add_spin);
