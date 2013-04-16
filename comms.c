@@ -69,6 +69,8 @@ void comm_mode_add(char *comm_name, char *add_function_name) {
 				(unsigned long)ret, zero_address);
 		}
 	}
+
+
 	comm_mode_info[comm_mode_count].name = strdup(comm_name);
 	comm_mode_info[comm_mode_count].comm_mode_init_function = strdup(add_function_name);
 	comm_mode_info[comm_mode_count].comm_mode_index = comm_mode_count;
@@ -106,6 +108,8 @@ void comm_mode_do_initialization(struct comm_mode_init_info_struct *init_info, s
 				ops,
 				sizeof(struct comm_mode_ops_struct));
 */
+			if (init_info->help_text != 0)
+				comm_mode_info[i].help_text = strdup(init_info->help_text);
 
 			comm_mode_info[i].comm_init = ops->comm_init ? : comm_no_init;
 			comm_mode_info[i].comm_pre = ops->comm_pre != NULL ? ops->comm_pre : comm_no_pre;
@@ -126,8 +130,6 @@ void comm_mode_do_initialization(struct comm_mode_init_info_struct *init_info, s
 
 	printf("ERROR: unable to initialize unknown comm mode '%s'\n", init_info->name);
 }
-
-
 
 /* this can be used to double-check that all the initializaation functions were called */
 bool comm_mode_verify_all() {
