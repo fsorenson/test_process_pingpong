@@ -59,7 +59,11 @@ int cleanup_spin() {
 }
 
 void __attribute__((constructor)) comm_add_spin() {
+        struct comm_mode_init_info_struct init_info;
 	struct comm_mode_ops_struct ops;
+
+	memset(&init_info, 0, sizeof(struct comm_mode_init_info_struct));
+	init_info.name = "spin";
 
 	memset(&ops, 0, sizeof(struct comm_mode_ops_struct));
 	ops.comm_make_pair = make_spin_pair;
@@ -67,7 +71,7 @@ void __attribute__((constructor)) comm_add_spin() {
 	ops.comm_do_pong = do_pong_spin;
 	ops.comm_cleanup = cleanup_spin;
 
-	comm_mode_do_initialization("spin", &ops);
+	comm_mode_do_initialization(&init_info, &ops);
 
 }
 ADD_COMM_MODE(spin, comm_add_spin);
