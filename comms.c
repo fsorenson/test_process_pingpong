@@ -101,6 +101,8 @@ void comm_mode_do_initialization(struct comm_mode_init_info_struct *init_info, s
 	int i;
 
 	for (i = 0 ; i < comm_mode_count ; i ++) {
+		if (strlen(comm_mode_info[i].name) != strlen(init_info->name))
+			continue;
 		if (!strncmp(comm_mode_info[i].name, init_info->name, strlen(comm_mode_info[i].name))) {
 //			memcpy(&comm_mode_info[i] + offsetof(struct comm_mode_info_struct, op_placeholder),
 /*
