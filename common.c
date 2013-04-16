@@ -8,6 +8,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <sys/prctl.h>
+#include <sys/mman.h>
 #include <time.h>
 
 
@@ -102,3 +103,12 @@ inline void on_parent_death(int signum) {
 	}
 }
 
+int init_mlockall(void) {
+
+	if (mlockall(MCL_CURRENT | MCL_FUTURE)) {
+		printf("Failed to lock memory...paging latencies may occur.  Error was '%m'\n");
+		return 1;
+	}
+
+	return 0;
+}

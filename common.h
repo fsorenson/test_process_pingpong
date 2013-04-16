@@ -33,5 +33,6 @@ long double estimate_cpu_mhz();
 void set_affinity(int cpu);
 int rename_thread(char *thread_name);
 void on_parent_death(int signum);
+int init_mlockall(void);
 
 #endif
