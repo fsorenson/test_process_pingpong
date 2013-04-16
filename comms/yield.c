@@ -8,12 +8,17 @@
 #include <time.h>
 
 
+static int volatile *yield_var;
+
 struct timespec yield_ts;
 
 int make_yield_pair(int fd[2]) {
 	static int yield_num = 0;
 
 	if (yield_num == 0) {
+			yield_var = mmap(NULL, sizeof(int),
+				PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0);
+			*yield_var = 0;
 		yield_ts.tv_sec = 0;
 		yield_ts.tv_nsec = 1000000;
 	}
@@ -24,16 +29,32 @@ int make_yield_pair(int fd[2]) {
 	return 0;
 }
 
-int __PINGPONG_FN do_ping_yield(int thread_num) {
+inline int __PINGPONG_FN do_ping_yield(int thread_num) {
 	(void)thread_num;
 
 	while (1) {
 		run_data->ping_count ++;
+
+		*yield_var = 1;
+		sched_yield();
+
+		while (*yield_var != 0)
+			sched_yield();
+	}
+}
+
+inline int __PINGPONG_FN do_pong_yield(int thread_num) {
+	(void)thread_num;
+
+	while (1) {
+		while (*yield_var != 1)
+			sched_yield();
+
+		*yield_var = 0;
 		sched_yield();
 	}
 }
 
-int __PINGPONG_FN do_pong_yield(int thread_num) {
 	(void)thread_num;
 
 	while (1) {
