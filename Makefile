@@ -1,4 +1,6 @@
+#CC=color-gcc
 CC=gcc
+#CC=gcc
 #CC=g++
 LIBS=-lpthread -lm -lrt
 
@@ -83,7 +85,7 @@ OPTIMIZATIONS += -fargument-alias
 
 # enable this to get debugging
 DEBUG_FLAGS=
-#DEBUG_FLAGS += -g
+DEBUG_FLAGS += -g
 #DEBUG_FLAGS += -ggdb -gdwarf-3
 
 
@@ -113,7 +115,7 @@ endif
 # flags, so only allow it if neither is in use
 ifeq ($(strip $(PROFILING_FLAGS)),)
   ifeq ($(strip $(DEBUG_FLAGS)),)
-    CFLAGS += -fomit-frame-pointer -fstrict-aliasing 
+    CFLAGS += -fomit-frame-pointer -fstrict-aliasing
   endif
 endif
 
