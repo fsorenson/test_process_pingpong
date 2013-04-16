@@ -128,5 +128,5 @@ void __attribute__((constructor)) comm_add_yield_nop() {
 
 	comm_mode_do_initialization(&init_info, &ops);
 }
-ADD_COMM_MODE(yield, comm_add_yield);
 ADD_COMM_MODE(yield_nop, comm_add_yield_nop);
+ADD_COMM_MODE(yield, comm_add_yield);
