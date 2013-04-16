@@ -39,7 +39,11 @@ write(1, "bye\n", 4);
 
 
 void __attribute__((constructor)) comm_add_pipe() {
+	struct comm_mode_init_info_struct init_info;
 	struct comm_mode_ops_struct ops;
+
+	memset(&init_info, 0, sizeof(struct comm_mode_init_info_struct));
+	init_info.name = "pipe";
 
 	memset(&ops, 0, sizeof(struct comm_mode_ops_struct));
 	ops.comm_make_pair = pipe;
@@ -47,7 +51,7 @@ void __attribute__((constructor)) comm_add_pipe() {
 	ops.comm_interrupt = comm_interrupt_pipe;
 	ops.comm_cleanup = comm_cleanup_pipe;
 
-	comm_mode_do_initialization("pipe", &ops);
+	comm_mode_do_initialization(&init_info, &ops);
 }
 
 ADD_COMM_MODE(pipe, comm_add_pipe);
