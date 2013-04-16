@@ -88,13 +88,16 @@ int make_tcp_pair(int fd[2]) {
 //ADD_COMM_MODE(comm_add_tcp);
 
 void __attribute__((constructor)) comm_add_tcp() {
+	struct comm_mode_init_info_struct init_info;
 	struct comm_mode_ops_struct ops;
+
+	memset(&init_info, 0, sizeof(struct comm_mode_init_info_struct));
+	init_info.name = "tcp";
 
 	memset(&ops, 0, sizeof(struct comm_mode_ops_struct));
 	ops.comm_make_pair = make_tcp_pair;
 
-	comm_mode_do_initialization("tcp", &ops);
-
+	comm_mode_do_initialization(&init_info, &ops);
 }
 
 ADD_COMM_MODE(tcp, comm_add_tcp);
