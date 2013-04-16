@@ -80,24 +80,6 @@ inline int __PINGPONG_FN do_pong_yield_nop(int thread_num) {
 	}
 }
 
-/*
-inline int do_send_yield(int fd) {
-	if (fd == 0) {
-		sched_yield();
-		return 1;
-	} else {
-		 nanosleep(&yield_ts, NULL);
-		 return 0;
-	}
-
-	return 1;
-}
-inline int do_recv_yield(int fd) {
-	(void) fd;
-
-	return 1;
-}
-*/
 void __attribute__((constructor)) comm_add_yield() {
         struct comm_mode_init_info_struct init_info;
 	struct comm_mode_ops_struct ops;
@@ -109,8 +91,6 @@ void __attribute__((constructor)) comm_add_yield() {
 	ops.comm_make_pair = make_yield_pair;
 	ops.comm_do_ping = do_ping_yield;
 	ops.comm_do_pong = do_pong_yield;
-//	ops.comm_do_send = do_send_yield;
-//	ops.comm_do_recv = do_recv_yield;
 
 	comm_mode_do_initialization(&init_info, &ops);
 }
