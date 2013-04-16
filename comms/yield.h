@@ -10,8 +10,8 @@ int do_pong_yield(int thread_num);
 int do_ping_yield_nop(int thread_num);
 int do_pong_yield_nop(int thread_num);
 
-int do_send_yield(int fd);
-int do_recv_yield(int fd);
+//int do_send_yield(int fd);
+//int do_recv_yield(int fd);
 
 
 void comm_add_yield();
