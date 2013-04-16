@@ -59,8 +59,11 @@ inline int do_recv_yield(int fd) {
 }
 
 void __attribute__((constructor)) comm_add_yield() {
+        struct comm_mode_init_info_struct init_info;
 	struct comm_mode_ops_struct ops;
 
+	memset(&init_info, 0, sizeof(struct comm_mode_init_info_struct));
+	init_info.name = "yield";
 	memset(&ops, 0, sizeof(struct comm_mode_ops_struct));
 	ops.comm_make_pair = make_yield_pair;
 	ops.comm_do_ping = do_ping_yield;
@@ -68,7 +71,7 @@ void __attribute__((constructor)) comm_add_yield() {
 	ops.comm_do_send = do_send_yield;
 	ops.comm_do_recv = do_recv_yield;
 
-	comm_mode_do_initialization("yield", &ops);
+	comm_mode_do_initialization(&init_info, &ops);
 
 }
 ADD_COMM_MODE(yield, comm_add_yield);
