@@ -23,29 +23,11 @@ int make_spin_pair(int fd[2]) {
 	return 0;
 }
 
-
 inline int __PINGPONG_FN do_ping_spin(int thread_num) {
 	(void)thread_num;
 
 	while (1) {
 		run_data->ping_count ++;
-
-		do {
-			*spin_var = 1;
-		} while (0);
-		while (*spin_var != 0) {
-		}
-	}
-}
-
-inline int __PINGPONG_FN do_ping_spin2(int thread_num) {
-	volatile unsigned long long volatile *ping_count;
-	(void)thread_num;
-
-	ping_count = &run_data->ping_count;
-	while (1) {
-		*ping_count ++;
-//		run_data->ping_count ++;
 
 		do {
 			*spin_var = 1;
@@ -87,21 +69,4 @@ void __attribute__((constructor)) comm_add_spin() {
 
 	comm_mode_do_initialization(&init_info, &ops);
 }
-void __attribute__((constructor)) comm_add_spin2() {
-	struct comm_mode_init_info_struct init_info;
-	struct comm_mode_ops_struct ops;
-
-	memset(&init_info, 0, sizeof(struct comm_mode_init_info_struct));
-	init_info.name = "spin2";
-
-	memset(&ops, 0, sizeof(struct comm_mode_ops_struct));
-	ops.comm_make_pair = make_spin_pair;
-	ops.comm_do_ping = do_ping_spin2;
-	ops.comm_do_pong = do_pong_spin;
-	ops.comm_cleanup = cleanup_spin;
-
-	comm_mode_do_initialization(&init_info, &ops);
-
-}
 ADD_COMM_MODE(spin, comm_add_spin);
-ADD_COMM_MODE(spin2, comm_add_spin2);
