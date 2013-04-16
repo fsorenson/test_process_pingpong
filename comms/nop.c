@@ -63,7 +63,6 @@ inline int __PINGPONG_FN do_pong_nop(int thread_num) {
 inline int do_send_nop(int fd) {
 	if (fd == 0) {
 		*nop_var ^= 1;
-		__sync_synchronize();
 
 		return 1;
 	} else {
