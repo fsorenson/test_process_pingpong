@@ -108,6 +108,8 @@ void comm_mode_do_initialization(struct comm_mode_init_info_struct *init_info, s
 				ops,
 				sizeof(struct comm_mode_ops_struct));
 */
+			if (init_info->help_text != 0)
+				comm_mode_info[i].help_text = strdup(init_info->help_text);
 
 			comm_mode_info[i].comm_init = ops->comm_init ? : comm_no_init;
 			comm_mode_info[i].comm_pre = ops->comm_pre != NULL ? ops->comm_pre : comm_no_pre;
