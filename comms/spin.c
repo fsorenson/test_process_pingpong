@@ -60,6 +60,7 @@ void __attribute__((constructor)) comm_add_spin() {
 
 	memset(&init_info, 0, sizeof(struct comm_mode_init_info_struct));
 	init_info.name = "spin";
+	init_info.help_text = "busy-wait on a shared variable";
 
 	memset(&ops, 0, sizeof(struct comm_mode_ops_struct));
 	ops.comm_make_pair = make_spin_pair;
