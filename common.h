@@ -13,7 +13,7 @@
 
 #define __OPTIMIZED0
 #define __OPTIMIZED1	__attribute__((optimize("-Ofast")))
-#define __OPTIMIZED	__OPTIMIZED1
+#define __OPTIMIZED	__OPTIMIZED0
 
 #define __PINGPONG_FN  __NORETURN __HOT __OPTIMIZED
 
