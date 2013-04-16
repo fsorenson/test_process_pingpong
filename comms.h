@@ -21,10 +21,17 @@
 	int (*comm_interrupt)(int s);		\
 	int (*comm_cleanup)();
 
+#define COMM_MODE_INIT_INFO \
+	char *name;				\
+	char *help_text;
+
 struct comm_mode_ops_struct {
 	COMM_MODE_OPS;
 };
 
+struct comm_mode_init_info_struct {
+	COMM_MODE_INIT_INFO;
+};
 
 struct comm_mode_info_struct {
 	COMM_MODE_OPS;
