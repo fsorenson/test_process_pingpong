@@ -36,15 +36,15 @@ struct comm_mode_init_info_struct {
 struct comm_mode_info_struct {
 	COMM_MODE_OPS;
 
-	char *name;
+	COMM_MODE_INIT_INFO;
+
 	int comm_mode_index;
 
-	char dummy1[4];
-	char *help_text;
-
 	bool initialized;
-	char dummy3[7];
-	char dummy4[8];
+
+	char dummy1[4];
+	char dummy2[7];
+	char dummy3[8];
 };
 
 extern struct comm_mode_info_struct *comm_mode_info;
@@ -78,7 +78,7 @@ int comm_do_recv_generic(int fd);
 int comm_no_interrupt();
 int comm_no_cleanup();
 
-void comm_mode_do_initialization(char *comm_mode_name, struct comm_mode_ops_struct *ops);
+void comm_mode_do_initialization(struct comm_mode_init_info_struct *init_info, struct comm_mode_ops_struct *ops);
 void comm_mode_mark_initialized(char *comm_mode_name);
 bool comm_mode_verify_all();
 

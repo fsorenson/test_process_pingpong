@@ -95,11 +95,11 @@ void comm_mode_mark_initialized(char *comm_mode_name) {
 	printf("ERROR: unable to initialize unknown comm mode '%s'\n", comm_mode_name);
 }
 
-void comm_mode_do_initialization(char *comm_mode_name, struct comm_mode_ops_struct *ops) {
+void comm_mode_do_initialization(struct comm_mode_init_info_struct *init_info, struct comm_mode_ops_struct *ops) {
 	int i;
 
 	for (i = 0 ; i < comm_mode_count ; i ++) {
-		if (!strncmp(comm_mode_info[i].name, comm_mode_name, strlen(comm_mode_info[i].name))) {
+		if (!strncmp(comm_mode_info[i].name, init_info->name, strlen(comm_mode_info[i].name))) {
 //			memcpy(&comm_mode_info[i] + offsetof(struct comm_mode_info_struct, op_placeholder),
 /*
 			memcpy(&comm_mode_info[i].op_placeholder,
@@ -124,8 +124,7 @@ void comm_mode_do_initialization(char *comm_mode_name, struct comm_mode_ops_stru
 		}
 	}
 
-	printf("ERROR: unable to initialize unknown comm mode '%s'\n", comm_mode_name);
-
+	printf("ERROR: unable to initialize unknown comm mode '%s'\n", init_info->name);
 }
 
 
