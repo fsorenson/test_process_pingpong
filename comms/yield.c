@@ -86,6 +86,7 @@ void __attribute__((constructor)) comm_add_yield() {
 
 	memset(&init_info, 0, sizeof(struct comm_mode_init_info_struct));
 	init_info.name = "yield";
+	init_info.help_text = "each thread calls sched_yield() until their turn to pingpong";
 
 	memset(&ops, 0, sizeof(struct comm_mode_ops_struct));
 	ops.comm_make_pair = make_yield_pair;
@@ -100,6 +101,7 @@ void __attribute__((constructor)) comm_add_yield_nop() {
 
 	memset(&init_info, 0, sizeof(struct comm_mode_init_info_struct));
 	init_info.name = "yield_nop";
+	init_info.help_text = "only tests rate at which sched_yield() re-schedules--no pingpong";
 
 	memset(&ops, 0, sizeof(struct comm_mode_ops_struct));
 	ops.comm_make_pair = make_yield_pair;
@@ -108,5 +110,5 @@ void __attribute__((constructor)) comm_add_yield_nop() {
 
 	comm_mode_do_initialization(&init_info, &ops);
 }
-ADD_COMM_MODE(yield, comm_add_yield);
 ADD_COMM_MODE(yield_nop, comm_add_yield_nop);
+ADD_COMM_MODE(yield, comm_add_yield);
