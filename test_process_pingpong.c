@@ -45,7 +45,7 @@ int main(int argc, char *argv[]) {
 
 	do_comm_setup();
 
-	init_mlockall();
+//	init_mlockall();
 
 	start_threads();
 
