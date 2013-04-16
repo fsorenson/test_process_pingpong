@@ -17,6 +17,9 @@ int make_nop_pair(int fd[2]);
 * the other also does nothing, but sleeps too...
 * lazy, good-for-nothing threads
 */
+int do_ping_nop(int thread_num);
+int do_pong_nop(int thread_num);
+
 int do_send_nop(int fd);
 int do_recv_nop(int fd);
 int cleanup_nop();

@@ -1,5 +1,6 @@
 #include "nop.h"
 #include "comms.h"
+#include "test_process_pingpong.h"
 
 #include <string.h>
 #include <sys/mman.h>
@@ -7,7 +8,6 @@
 #include <signal.h>
 #include <sched.h>
 #include <time.h>
-
 
 int *nop_var;
 
@@ -38,6 +38,27 @@ int make_nop_pair(int fd[2]) {
 * the other also does nothing, but sleeps too...
 * lazy, good-for-nothing threads
 */
+inline int __PINGPONG_FN do_ping_nop(int thread_num) {
+	(void) thread_num;
+
+	while (1) {
+		run_data->ping_count ++;
+
+		do {
+			*nop_var ^= 1;
+		} while (0);
+		do {
+
+		} while (0);
+	}
+}
+inline int __PINGPONG_FN do_pong_nop(int thread_num) {
+	(void) thread_num;
+
+	while (1) {
+		nanosleep(&nop_ts, NULL);
+	}
+}
 inline int do_send_nop(int fd) {
 	if (fd == 0) {
 		*nop_var ^= 1;
@@ -69,6 +90,8 @@ void __attribute__((constructor)) comm_add_nop() {
 
 	memset(&ops, 0, sizeof(struct comm_mode_ops_struct));
 	ops.comm_make_pair = make_nop_pair;
+	ops.comm_do_ping = do_ping_nop;
+	ops.comm_do_pong = do_pong_nop;
 	ops.comm_do_send = do_send_nop;
 	ops.comm_do_recv = do_recv_nop;
 	ops.comm_cleanup = cleanup_nop;
