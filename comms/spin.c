@@ -31,10 +31,8 @@ inline int __PINGPONG_FN do_ping_spin(int thread_num) {
 
 		do {
 			*spin_var = 1;
-//			__sync_synchronize();
 		} while (0);
 		while (*spin_var != 0) {
-//			__sync_synchronize();
 		}
 	}
 }
@@ -44,11 +42,9 @@ inline int __PINGPONG_FN do_pong_spin(int thread_num) {
 	while (1) {
 
 		while (*spin_var != 1) {
-//			__sync_synchronize();
 		}
 		do {
 			*spin_var = 0;
-//			__sync_synchronize();
 		} while (0);
 	}
 }
