@@ -61,7 +61,11 @@ int cleanup_nop() {
 }
 
 void __attribute__((constructor)) comm_add_nop() {
+        struct comm_mode_init_info_struct init_info;
 	struct comm_mode_ops_struct ops;
+
+	memset(&init_info, 0, sizeof(struct comm_mode_init_info_struct));
+	init_info.name = "nop";
 
 	memset(&ops, 0, sizeof(struct comm_mode_ops_struct));
 	ops.comm_make_pair = make_nop_pair;
@@ -69,7 +73,7 @@ void __attribute__((constructor)) comm_add_nop() {
 	ops.comm_do_recv = do_recv_nop;
 	ops.comm_cleanup = cleanup_nop;
 
-	comm_mode_do_initialization("nop", &ops);
+	comm_mode_do_initialization(&init_info, &ops);
 }
 
 ADD_COMM_MODE(nop, comm_add_nop);
