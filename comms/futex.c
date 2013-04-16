@@ -56,7 +56,11 @@ int cleanup_futex() {
 }
 
 void __attribute__((constructor)) comm_add_futex() {
+        struct comm_mode_init_info_struct init_info;
 	struct comm_mode_ops_struct ops;
+
+	memset(&init_info, 0, sizeof(struct comm_mode_init_info_struct));
+	init_info.name = "futex";
 
 	memset(&ops, 0, sizeof(struct comm_mode_ops_struct));
 	ops.comm_make_pair = make_futex_pair;
@@ -64,7 +68,7 @@ void __attribute__((constructor)) comm_add_futex() {
 	ops.comm_do_recv = do_recv_futex;
 	ops.comm_cleanup = cleanup_futex;
 
-	comm_mode_do_initialization("futex", &ops);
+	comm_mode_do_initialization(&init_info, &ops);
 }
 
 ADD_COMM_MODE(futex, comm_add_futex);
