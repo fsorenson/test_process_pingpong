@@ -208,7 +208,7 @@ $(objs_dir)/%.o: $(comms_dir)/%.c $(deps_dir)/%.d
 
 
 test_process_pingpong:	$(comms_glue_objs) $(comms_objs) $(objs) $(deps)
-	@$(CC) $(comms_glue_objs) $(comms_objs) $(objs) $(CPPFLAGS) $(CFLAGS) $(LIBS) -o $@
+	$(CC) $(comms_glue_objs) $(comms_objs) $(objs) $(CPPFLAGS) $(CFLAGS) $(LIBS) -o $@
 
 
 $(stab_dir)/%.s: $(comms_dir)/%.c $(deps_dir)/%.d
@@ -216,7 +216,8 @@ $(stab_dir)/%.s: $(comms_dir)/%.c $(deps_dir)/%.d
 
 
 $(stab_dir)/%.s: %.c $(deps_dir)/%.d
-	@$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -g -Wa,-ahl=$@ -o /dev/null
+	@$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -g -Wa,-ahl=$@ -o /tmp/gcc_out.log
+#	@$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -g -Wa,-ahl=$@ -o /dev/null
 #	$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -gstabs -g -S -Wa,-ahl=$@
 #	$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -gstabs -g -S -asm -Wa,-ahl=$@
 
