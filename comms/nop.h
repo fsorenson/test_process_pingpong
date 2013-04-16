@@ -11,13 +11,15 @@
 
 int make_nop_pair(int fd[2]);
 
-int do_ping_nop(int thread_num);
+int do_ping_nop1(int thread_num);
+int do_ping_nop2(int thread_num);
+int do_ping_nop3(int thread_num);
 int do_pong_nop(int thread_num);
 
-int do_send_nop(int fd);
-int do_recv_nop(int fd);
 int cleanup_nop();
 
-void comm_add_nop();
+void comm_add_nop1();
+void comm_add_nop2();
+void comm_add_nop3();
 
 #endif
