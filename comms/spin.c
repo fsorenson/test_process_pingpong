@@ -23,6 +23,7 @@ int make_spin_pair(int fd[2]) {
 	return 0;
 }
 
+
 inline int __PINGPONG_FN do_ping_spin(int thread_num) {
 	(void)thread_num;
 
@@ -60,6 +61,7 @@ void __attribute__((constructor)) comm_add_spin() {
 
 	memset(&init_info, 0, sizeof(struct comm_mode_init_info_struct));
 	init_info.name = "spin";
+	init_info.help_text = "busy-wait on a shared variable";
 
 	memset(&ops, 0, sizeof(struct comm_mode_ops_struct));
 	ops.comm_make_pair = make_spin_pair;

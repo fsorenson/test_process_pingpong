@@ -61,6 +61,7 @@ void __attribute__((constructor)) comm_add_futex() {
 
 	memset(&init_info, 0, sizeof(struct comm_mode_init_info_struct));
 	init_info.name = "futex";
+	init_info.help_text = "use futex wait/wake to benefit from kernel-arbitrated lock contention";
 
 	memset(&ops, 0, sizeof(struct comm_mode_ops_struct));
 	ops.comm_make_pair = make_futex_pair;
