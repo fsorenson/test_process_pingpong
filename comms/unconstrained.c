@@ -66,7 +66,11 @@ inline int do_recv_unconstrained(int fd) {
 }
 
 void __attribute__((constructor)) comm_add_unconstrained() {
+	struct comm_mode_init_info_struct init_info;
 	struct comm_mode_ops_struct ops;
+
+	memset(&init_info, 0, sizeof(struct comm_mode_init_info_struct));
+	init_info.name = "unconstrained";
 
 	memset(&ops, 0, sizeof(struct comm_mode_ops_struct));
 	ops.comm_make_pair = make_unconstrained_pair;
@@ -75,7 +79,7 @@ void __attribute__((constructor)) comm_add_unconstrained() {
 	ops.comm_do_send = do_send_unconstrained;
 	ops.comm_do_recv = do_recv_unconstrained;
 
-	comm_mode_do_initialization("unconstrained", &ops);
+	comm_mode_do_initialization(&init_info, &ops);
 }
 
 ADD_COMM_MODE(unconstrained, comm_add_unconstrained);
