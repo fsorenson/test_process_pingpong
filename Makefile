@@ -1,4 +1,6 @@
+#CC=color-gcc
 CC=gcc
+#CC=gcc
 #CC=g++
 LIBS=-lpthread -lm -lrt
 
@@ -83,7 +85,7 @@ OPTIMIZATIONS += -fargument-alias
 
 # enable this to get debugging
 DEBUG_FLAGS=
-#DEBUG_FLAGS += -g
+DEBUG_FLAGS += -g
 #DEBUG_FLAGS += -ggdb -gdwarf-3
 
 
@@ -113,7 +115,7 @@ endif
 # flags, so only allow it if neither is in use
 ifeq ($(strip $(PROFILING_FLAGS)),)
   ifeq ($(strip $(DEBUG_FLAGS)),)
-    CFLAGS += -fomit-frame-pointer -fstrict-aliasing 
+    CFLAGS += -fomit-frame-pointer -fstrict-aliasing
   endif
 endif
 
@@ -206,11 +208,16 @@ $(objs_dir)/%.o: $(comms_dir)/%.c $(deps_dir)/%.d
 
 
 test_process_pingpong:	$(comms_glue_objs) $(comms_objs) $(objs) $(deps)
-	@$(CC) $(comms_glue_objs) $(comms_objs) $(objs) $(CPPFLAGS) $(CFLAGS) $(LIBS) -o $@
+	$(CC) $(comms_glue_objs) $(comms_objs) $(objs) $(CPPFLAGS) $(CFLAGS) $(LIBS) -o $@
+
+
+$(stab_dir)/%.s: $(comms_dir)/%.c $(deps_dir)/%.d
+	@$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -g -Wa,-ahl=$@ -o /tmp/gcc_out.log
 
 
 $(stab_dir)/%.s: %.c $(deps_dir)/%.d
-	@$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -g -Wa,-ahl=$@ -o /dev/null
+	@$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -g -Wa,-ahl=$@ -o /tmp/gcc_out.log
+#	@$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -g -Wa,-ahl=$@ -o /dev/null
 #	$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -gstabs -g -S -Wa,-ahl=$@
 #	$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -gstabs -g -S -asm -Wa,-ahl=$@
 
