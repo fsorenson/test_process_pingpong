@@ -110,7 +110,11 @@ int cleanup_sem() {
 }
 
 void __attribute__((constructor)) comm_add_sem() {
+        struct comm_mode_init_info_struct init_info;
 	struct comm_mode_ops_struct ops;
+
+	memset(&init_info, 0, sizeof(struct comm_mode_init_info_struct));
+	init_info.name = "sem";
 
 	memset(&ops, 0, sizeof(struct comm_mode_ops_struct));
 	ops.comm_make_pair = make_sem_pair;
@@ -122,7 +126,7 @@ void __attribute__((constructor)) comm_add_sem() {
 	ops.comm_cleanup = cleanup_sem;
 
 
-	comm_mode_do_initialization("sem", &ops);
+	comm_mode_do_initialization(&init_info, &ops);
 }
 
 void __attribute__((constructor)) comm_add_busy_sem() {
