@@ -45,6 +45,10 @@ int make_inotify_pair(int fd[2]) {
 
 	ino_info[ino_num].file_fd = open(ino_names[ino_num],
 		O_CREAT | O_TRUNC | O_WRONLY, S_IRUSR | S_IWUSR);
+	if (ino_info[ino_num].file_fd < 0) {
+		printf("Error opening '%s'.  Error was '%m'\n", ino_names[ino_num]);
+		exit(1);
+	}
 
 	ino_info[ino_num].wd = inotify_add_watch(ino_info[ino_num].ino_fd,
 		ino_names[ino_num], IN_ALL_EVENTS);
@@ -69,6 +73,10 @@ inline int __PINGPONG_FN do_ping_inotify(int thread_num) {
 		/* blocking read */
 		length = read(ino_info[thread_num ^ 1].ino_fd, ino_info[thread_num].event_buf, EVENT_BUF_SIZE);
 		if (length < 0) {
+			if (errno == EINTR) {
+				errno = 0;
+				continue;
+			}
 			printf("Error reading from inotify fd in thread %d (error was '%m')\n", thread_num);
 		}
 
@@ -90,6 +98,11 @@ inline int __PINGPONG_FN do_pong_inotify(int thread_num) {
 		/* blocking read */
 		length = read(ino_info[thread_num ^ 1].ino_fd, ino_info[thread_num].event_buf, EVENT_BUF_SIZE);
 		if (length < 0) {
+			if (errno == EINTR) {
+				errno = 0;
+				continue;
+			}
+
 			printf("Error reading from inotify fd in thread %d (error was '%m')\n", thread_num);
 		}
 
