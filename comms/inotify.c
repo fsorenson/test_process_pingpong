@@ -10,10 +10,15 @@
 
 #define EVENT_SIZE	(sizeof(struct inotify_event))
 #define EVENT_BUF_SIZE	(1024 * (EVENT_SIZE + 16))
-static int ino_fd[2];
-static int open_fd[2];
-int ino_watch[2];
-char ino_buf[2][EVENT_BUF_SIZE];
+
+struct ino_info_struct {
+	int ino_fd;
+	int file_fd;
+	int wd;
+	char event_buf[EVENT_BUF_SIZE];
+};
+static struct ino_info_struct *ino_info;
+
 
 const char *ino_names[] = { "/dev/shm/ping.ino", "/dev/shm/pong.ino" };
 
@@ -21,17 +26,22 @@ const char *ino_names[] = { "/dev/shm/ping.ino", "/dev/shm/pong.ino" };
 int make_inotify_pair(int fd[2]) {
 	static int ino_num = 0;
 
-	ino_fd[ino_num] = inotify_init();
-	if (ino_fd[ino_num] < 0) {
+	if (ino_num == 0) {
+		ino_info = mmap(NULL, sizeof(struct ino_info_struct) * 2,
+			PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0);
+	}
+
+	ino_info[ino_num].ino_fd = inotify_init();
+	if (ino_info[ino_num].ino_fd < 0) {
 		perror("inotify_init");
 		exit(1);
 	}
 
-	open_fd[ino_num] = open(ino_names[ino_num],
-		O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR);
+	ino_info[ino_num].file_fd = open(ino_names[ino_num],
+		O_CREAT | O_TRUNC | O_WRONLY, S_IRUSR | S_IWUSR);
 
-	ino_watch[ino_num] = inotify_add_watch(ino_fd[ino_num],
-		ino_names[ino_num], IN_ACCESS | IN_ATTRIB | IN_MODIFY);
+	ino_info[ino_num].wd = inotify_add_watch(ino_info[ino_num].ino_fd,
+		ino_names[ino_num], IN_ALL_EVENTS);
 
 	fd[0] = fd[1] = ino_num;
 
@@ -40,32 +50,49 @@ int make_inotify_pair(int fd[2]) {
 }
 
 inline int __PINGPONG_FN do_ping_inotify(int thread_num) {
-	int counter;
-	int length;
+	struct inotify_event *ino_event;
+	long long counter;
+	long long length;
 
 	while (1) {
 		run_data->ping_count ++;
 
 		counter = 0;
-		write(open_fd[thread_num], "X", 1);
-		length = read(ino_fd[thread_num ^ 1], ino_buf[thread_num], EVENT_BUF_SIZE);
+		ftruncate(ino_info[thread_num].file_fd, 0);
+
+		/* blocking read */
+		length = read(ino_info[thread_num ^ 1].ino_fd, ino_info[thread_num].event_buf, EVENT_BUF_SIZE);
 		if (length < 0) {
 			printf("Error reading from inotify fd in thread %d (error was '%m')\n", thread_num);
-		{
+		}
+
+		while (counter < length) {
+			ino_event = (struct inotify_event *) &ino_info[thread_num].event_buf[counter];
+			counter += (long long)EVENT_SIZE + (long long)ino_event->len;
+		}
 	}
 }
 
 inline int __PINGPONG_FN do_pong_inotify(int thread_num) {
-	int counter;
-	int length;
+	struct inotify_event *ino_event;
+	long long counter;
+	long long length;
 
 	while (1) {
 		counter = 0;
-		length = read(ino_fd[thread_num ^ 1], ino_buf[thread_num], EVENT_BUF_SIZE);
+
+		/* blocking read */
+		length = read(ino_info[thread_num ^ 1].ino_fd, ino_info[thread_num].event_buf, EVENT_BUF_SIZE);
 		if (length < 0) {
 			printf("Error reading from inotify fd in thread %d (error was '%m')\n", thread_num);
 		}
-		write(open_fd[thread_num], "X", 1);
+
+		while (counter < length) {
+			ino_event = (struct inotify_event *) &ino_info[thread_num].event_buf[counter];
+			counter += (long long)EVENT_SIZE + (long long)ino_event->len;
+		}
+
+		ftruncate(ino_info[thread_num].file_fd, 0);
 	}
 }
 
