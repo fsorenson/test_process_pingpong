@@ -117,6 +117,7 @@ inline int __PINGPONG_FN do_pong_inotify(int thread_num) {
 
 
 int cleanup_inotify() {
+	munmap(ino_info, sizeof(struct ino_info_struct) * 2);
 
 	return 0;
 }
