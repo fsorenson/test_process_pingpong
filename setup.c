@@ -134,6 +134,7 @@ int parse_opts(int argc, char *argv[]) {
 	int opt = 0, long_index = 0;
 
 	static struct option long_options[] = {
+		{	"runtime",	required_argument,	0,	'r'	}, /* seconds to run the entire test */
 		{	"mode",		required_argument,	0,	'm'	}, /* communication mode */
 
 		{	"thread",	required_argument,	0,	't'	},
@@ -155,6 +156,9 @@ int parse_opts(int argc, char *argv[]) {
 				break;
 			case 'p':
 				parse_sched(optarg);
+				break;
+			case 'r':
+				config.runtime = strtoul(optarg, NULL, 10);
 				break;
 			default:
 				usage();
