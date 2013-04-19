@@ -34,27 +34,38 @@ const char * thread_mode_strings[] = {
 static int usage() {
 	int i;
 
-	printf("Usage: %s [options] [ <cpu #> <cpu #> ]\n", config.argv0);
-	printf("\n");
-	printf("Options:\n");
-	printf("    -m, --mode=MODE\n");
-	printf("        communication modes:\n");
+	printf(
+"Usage: %s [options] [ <cpu #> <cpu #> ]\n", config.argv0);
+printf(
+"\n"
+"Options:\n"
+
+"    -u, --update=#      seconds between statistics display (0 for no intermediate stats--implies '-s'); default=" xstr(DEFAULT_STATS_INTERVAL) "\n"
+"    -r, --runtime=#     number of seconds to run the test (0 to run continuously); default=" xstr(DEFAULT_EXECUTION_TIME) "\n"
+"    -s, --stats         output overall statistics at the end of the run (default)\n"
+"        --nostats       do not output statistics at the end of the run\n"
+"    -m, --mode=MODE\n"
+"        communication modes:\n"
+);
 
 	for (i = 0 ; i < comm_mode_count ; i ++) {
-		printf("            %20s  -  %s\n", comm_mode_info[i].name, comm_mode_info[i].help_text ? : "");
+		printf(
+"            %15s  -  %s\n", comm_mode_info[i].name, comm_mode_info[i].help_text ? : "");
 	}
 
-	printf("\n");
+	printf(
+"\n"
+"\n"
+"    -t, --thread=MODE, --thread_mode=MODE\n"
+"        thread modes: fork, clone, pthread\n"
+"\n"
+"    -p, --priority=POLICY:PRIORITY\n"
+"        policies: fifo, rr\n"
+"        priorities: 1-99 (careful with high priorities)\n"
+"\n"
+"    <cpu #> - pin the threads to the designated CPUs\n"
+);
 
-	printf("\n");
-	printf("\t-t, --thread=MODE, --thread_mode=MODE\n");
-	printf("\t\tthread modes: fork, clone, pthread\n");
-	printf("\n");
-	printf("\t-p, --priority=POLICY:PRIORITY\n");
-	printf("\t\tpolicies: fifo, rr\n");
-	printf("\t\tpriorities: 1-99 (careful with high priorities)\n");
-	printf("\n");
-	printf("\t<cpu #> - pin the threads to the designated CPUs\n");
 	printf("\n");
 
 	return 0;
