@@ -135,6 +135,7 @@ int parse_opts(int argc, char *argv[]) {
 
 	static struct option long_options[] = {
 		{	"runtime",	required_argument,	0,	'r'	}, /* seconds to run the entire test */
+		{	"update",	required_argument,	0,	'u'	}, /* seconds between stats output */
 		{	"mode",		required_argument,	0,	'm'	}, /* communication mode */
 
 		{	"thread",	required_argument,	0,	't'	},
@@ -159,6 +160,12 @@ int parse_opts(int argc, char *argv[]) {
 				break;
 			case 'r':
 				config.runtime = strtoul(optarg, NULL, 10);
+			case 'u':
+				config.stats_interval = strtol(optarg, NULL, 10);
+				if (config.stats_interval == 0)
+					config.stats_summary = true;
+				else if (config.stats_interval < 0)
+					config.stats_interval = DEFAULT_STATS_INTERVAL;
 				break;
 			default:
 				usage();
