@@ -24,6 +24,10 @@ typedef enum { no = 0, false = 0, yes = 1, true = 1 } __PACKED bool;
 #define unlikely(x)     __builtin_expect((x),0)
 #define offsetof(type, member)  __builtin_offsetof (type, member)
 
+#define xstr(s) str(s)
+#define str(s) #s
+
+
 
 int get_min_stack_size();
 uint64_t rdtsc();
