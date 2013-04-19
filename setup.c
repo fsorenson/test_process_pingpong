@@ -98,7 +98,7 @@ int setup_defaults(char *argv0) {
 	config.argv0 = argv0;
 
 	config.monitor_check_frequency	= DEFAULT_MONITOR_CHECK_FREQ;
-	config.max_execution_time	= DEFAULT_EXECUTION_TIME;
+	config.runtime		= DEFAULT_EXECUTION_TIME;
 	config.stats_interval	= DEFAULT_STATS_INTERVAL;
 	config.thread_mode	= DEFAULT_THREAD_MODE;
 
@@ -203,7 +203,7 @@ int do_comm_setup() {
 	make_pairs();
 
 	if (config.verbosity >= 0)
-		printf("Will run for %lu seconds\n", config.max_execution_time);
+		printf("Will run for %lu seconds\n", config.runtime);
 
 	set_priorities();
 

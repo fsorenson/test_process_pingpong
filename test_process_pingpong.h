@@ -88,7 +88,7 @@ struct config_struct {
 
 	long monitor_check_frequency; /* milliseconds between 'check if there's a need to display stats or end */
 	long stats_interval; /* in seconds */
-	unsigned long max_execution_time; /* in seconds */
+	unsigned long runtime; /* in seconds */
 
 	char *argv0;
 

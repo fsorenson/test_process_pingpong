@@ -251,7 +251,7 @@ int do_monitor_work() {
 	__sync_synchronize();
 
 	run_data->start_time = run_data->last_stats_time = get_time();
-	run_data->timeout_time = (double)run_data->start_time + (double)config.max_execution_time;
+	run_data->timeout_time = (double)run_data->start_time + (double)config.runtime;
 
 	while (run_data->stop != true) {
 		sigsuspend(&signal_mask);
