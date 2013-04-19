@@ -95,6 +95,10 @@ int make_tcp_pair(int fd[2]) {
 	return new_make_tcp_pair(fd);
 }
 
+inline int __PINGPONG_FN do_ping_tcp(int thread_num) {
+}
+inline int __PINGPONG_FN do_pong_tcp(int thread_num) {
+}
 
 
 //ADD_COMM_MODE(comm_add_tcp);
