@@ -73,17 +73,16 @@ int new_make_tcp_pair(int fd[2]) {
 			exit(-1);
 		}
 
-/*
-		if (setsockopt(tcp_fds[0], SOL_SOCKET, TCP_NODELAY, &yes_flag, sizeof(int)) == -1) {
-			printf("Error with setsockopt(TCP_NODELAY): %m\n");
-			exit(-1);
+		if (config.uid == 0) {
+			if (setsockopt(tcp_fds[0], SOL_SOCKET, TCP_NODELAY, &yes_flag, sizeof(int)) == -1) {
+				printf("Error with setsockopt(TCP_NODELAY): %m\n");
+				exit(-1);
+			}
+			if (setsockopt(tcp_fds[0], SOL_SOCKET, TCP_QUICKACK, &yes_flag, sizeof(int)) == -1) {
+				printf("Error with setsockopt (TCP_QUICKACK): %m\n");
+				exit(-1);
+			}
 		}
-		if (setsockopt(tcp_fds[0], SOL_SOCKET, TCP_QUICKACK, &yes_flag, sizeof(int)) == -1) {
-			printf("Error with setsockopt (TCP_QUICKACK): %m\n");
-			exit(-1);
-		}
-*/
-
 	}
 
 	fd[0] = tcp_fds[tcp_num];
