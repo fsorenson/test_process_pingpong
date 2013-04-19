@@ -132,6 +132,8 @@ void __attribute__((constructor)) comm_add_tcp() {
 
 	memset(&ops, 0, sizeof(struct comm_mode_ops_struct));
 	ops.comm_make_pair = make_tcp_pair;
+	ops.comm_do_ping = do_ping_tcp;
+	ops.comm_do_pong = do_pong_tcp;
 
 	comm_mode_do_initialization(&init_info, &ops);
 }
