@@ -14,7 +14,7 @@
 
 int tcp_fds[2];
 
-int new_make_tcp_pair(int fd[2]) {
+int make_tcp_pair(int fd[2]) {
 	static int tcp_num = 0;
 
 	int ret;
@@ -93,10 +93,6 @@ int new_make_tcp_pair(int fd[2]) {
 	return 0;
 }
 
-int make_tcp_pair(int fd[2]) {
-	return new_make_tcp_pair(fd);
-}
-
 inline int __PINGPONG_FN do_ping_tcp(int thread_num) {
 	char dummy = 'X';
 	(void)thread_num;
@@ -119,8 +115,6 @@ inline int __PINGPONG_FN do_pong_tcp(int thread_num) {
 	}
 }
 
-
-//ADD_COMM_MODE(comm_add_tcp);
 
 void __attribute__((constructor)) comm_add_tcp() {
 	struct comm_mode_init_info_struct init_info;
