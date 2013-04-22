@@ -160,6 +160,7 @@ int parse_opts(int argc, char *argv[]) {
 				break;
 			case 'r':
 				config.runtime = strtoul(optarg, NULL, 10);
+				break;
 			case 'u':
 				config.stats_interval = strtol(optarg, NULL, 10);
 				if (config.stats_interval == 0)
