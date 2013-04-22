@@ -36,6 +36,8 @@ deps =
 stabs =
 gcovs =
 
+sub_dirs =
+sub_dirs += $(objs) $(deps) $(stabs)
 
 # some warnings
 CFLAGS += -Wall -Wextra
@@ -186,9 +188,11 @@ gcovs += $(addprefix $(objs_dir)/, $(addsuffix .gcno,$(comms_glue)))
 
 # build the deps files
 $(deps_dir)/%.d: %.c %.h
+	@mkdir -p $(@D)
 	@$(SHELL) -ec '$(CC) -MM $(CPPFLAGS) $< | sed s@$*.o@objs/\&\ $@@ > $@'
 
 $(deps_dir)/%.d: $(comms_dir)/%.c $(comms_dir)/%.h
+	@mkdir -p $(@D)
 	@$(SHELL) -ec '$(CC) -MM $(CPPFLAGS) $< | sed s@$*.o@objs/\&\ $@@ > $@'
 
 
@@ -199,9 +203,11 @@ $(deps_dir)/%.d: $(comms_dir)/%.c $(comms_dir)/%.h
 
 
 $(objs_dir)/%.o: %.c  $(deps_dir)/%.d
+	@mkdir -p $(@D)
 	@$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@
 
 $(objs_dir)/%.o: $(comms_dir)/%.c $(deps_dir)/%.d
+	@mkdir -p $(@D)
 	@$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@
 
 
@@ -212,10 +218,12 @@ test_process_pingpong:	$(comms_glue_objs) $(comms_objs) $(objs) $(deps)
 
 
 $(stab_dir)/%.s: $(comms_dir)/%.c $(deps_dir)/%.d
+	@mkdir -p $(@D)
 	@$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -g -Wa,-ahl=$@ -o /tmp/gcc_out.log
 
 
 $(stab_dir)/%.s: %.c $(deps_dir)/%.d
+	@mkdir -p $(@D)
 	@$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -g -Wa,-ahl=$@ -o /tmp/gcc_out.log
 #	@$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -g -Wa,-ahl=$@ -o /dev/null
 #	$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -gstabs -g -S -Wa,-ahl=$@
@@ -243,13 +251,13 @@ cov:
 #		--no-recursion --output-file gcov/base.info
 #	lcov --directory=`pwd` --add-tracefile gcov/comms.info --add-tracefile gcov/base.info --output-file gcov/app.info
 
+
+
 clean:
-	#echo "objs=$(objs)"
-	#echo "deps=$(deps)"
-	#echo "stabs=$(stabs)"
-	#echo "comms_obs=$(comms_objs), comms_glue_objs=$(comms_glue_objs)"
-	#echo "gcovs=$(gcovs)"
-	@rm -f test_process_pingpong $(objs) $(deps) $(stabs) $(comms_objs) $(comms_glue_objs) $(gcovs)
-
-
+	@rm -f test_process_pingpong >/dev/null 2>&1
+	@rm -f $(objs) $(comms_objs) $(comms_glue_objs) >/dev/null 2>&1
+	@rm -f $(deps) >/dev/null 2>&1
+	@rm -f $(stabs) >/dev/null 2>&1
+	@rm -f $(gcovs) >/dev/null 2>&1
+	@ -rmdir $(objs_dir) $(deps_dir) $(stab_dir) >/dev/null 2>&1
 
