@@ -28,6 +28,11 @@ typedef enum { no = 0, false = 0, yes = 1, true = 1 } __PACKED bool;
 #define str(s) #s
 
 
+// memory barriers
+#define mb()    asm volatile("mfence":::"memory")
+#define rmb()   asm volatile("lfence":::"memory")
+#define wmb()   asm volatile("sfence"::: "memory")
+
 
 int get_min_stack_size();
 uint64_t rdtsc();
