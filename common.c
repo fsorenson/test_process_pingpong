@@ -112,3 +112,22 @@ int init_mlockall(void) {
 
 	return 0;
 }
+
+unsigned int page_align_size(unsigned int len, int size_align_flag) {
+	unsigned int page_size;
+
+	switch (size_align_flag) {
+		case SIZE_ALIGN_NONE:
+			return len;
+			break;
+		case SIZE_ALIGN_NORMAL:
+			page_size = 4096;
+			break;
+		case SIZE_ALIGN_HUGE:
+		default:
+			page_size = 2*1024*1024;
+			break;
+	};
+
+	return (len % page_size == 0) ? len : ((len / page_size) + 1) * page_size;
+}

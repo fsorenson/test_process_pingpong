@@ -44,4 +44,11 @@ int rename_thread(char *thread_name);
 void on_parent_death(int signum);
 int init_mlockall(void);
 
+
+#define SIZE_ALIGN_NONE         0
+#define SIZE_ALIGN_NORMAL       1
+#define SIZE_ALIGN_HUGE         2
+
+unsigned int page_align_size(unsigned int len, int size_align_flag);
+
 #endif
