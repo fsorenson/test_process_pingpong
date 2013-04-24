@@ -7,8 +7,9 @@
 #include <unistd.h>
 
 
-int comm_pre_pipe() {
+int comm_pre_pipe(int thread_num) {
 	struct sigaction sa;
+	(void)thread_num;
 
 write(1, "setup sigpipe\n", 14);
 	sigemptyset(&sa.sa_mask);
