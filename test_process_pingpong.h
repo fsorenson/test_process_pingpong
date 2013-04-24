@@ -40,7 +40,6 @@
 #define DEFAULT_STATS_SUMMARY	true /* display a summary immediately prior to exit */
 
 
-
 typedef enum {
 	thread_mode_fork, thread_mode_thread, thread_mode_pthread, thread_mode_context
 } __PACKED thread_modes;
@@ -84,7 +83,8 @@ struct config_struct {
 	int sched_policy;
 	int sched_prio;
 
-	char dummy1[4];
+	int size_align_flag;
+
 
 	long monitor_check_frequency; /* milliseconds between 'check if there's a need to display stats or end */
 	long stats_interval; /* in seconds */
