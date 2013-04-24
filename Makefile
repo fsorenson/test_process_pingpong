@@ -91,6 +91,9 @@ DEBUG_FLAGS += -g
 #DEBUG_FLAGS += -ggdb -gdwarf-3
 
 
+# enable this to get 'backtrace()' symbols
+#DEBUG_FLAGS += -rdynamic
+
 PROFILING_FLAGS=
 # enable this to get profiling with 'prof'
 #PROFILING_FLAGS += -p
