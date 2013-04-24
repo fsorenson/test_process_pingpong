@@ -4,6 +4,7 @@
 #include "test_process_pingpong.h"
 
 void print_backtrace(int signum);
+void print_backtrace_die(int signum);
 void print_backtrace2(int signum);
 
 int setup_timer();

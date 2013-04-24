@@ -9,7 +9,7 @@
 #include <execinfo.h>
 #include <sys/wait.h>
 
-void __NORETURN print_backtrace(int signum) {
+void print_backtrace(int signum) {
 	void *array[32];	/* Array to store backtrace symbols */
 	int size;		/* To store the exact no of values stored */
 	char **strings;		/* To store functions from the backtrace list in ARRAY */
@@ -23,6 +23,10 @@ void __NORETURN print_backtrace(int signum) {
 	/* prints each string of function names of trace*/
 	for (i = 0 ; i < size ; i++)
 		fprintf(stderr, "%s\n", strings[i]);
+}
+
+void __NORETURN print_backtrace_die(int signum) {
+	print_backtrace(signum);
 
 	exit(-1);
 }
