@@ -12,7 +12,7 @@
 	int op_placeholder2;			\
 	int (*comm_init)();			\
 	int (*comm_make_pair)(int fd[2]);	\
-	int (*comm_pre)();			\
+	int (*comm_pre)(int s);			\
 	int (*comm_begin)();			\
 	int (*comm_do_ping)(int s);		\
 	int (*comm_do_pong)(int s);		\
@@ -67,7 +67,7 @@ void comm_mode_add1(char *add_function_name);
 	void cons_ ## add_function_name() { comm_mode_add(#comm_name, #add_function_name); }
 
 int comm_no_init();
-int comm_no_pre();
+int comm_no_pre(int thread_num);
 int comm_no_begin();
 
 int comm_do_ping_generic(int thread_num);

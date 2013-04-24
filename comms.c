@@ -162,7 +162,9 @@ int comm_no_init() {
 	return 0;
 }
 
-int comm_no_pre() {
+int comm_no_pre(int thread_num) {
+	(void)thread_num;
+
 	return 0;
 }
 
