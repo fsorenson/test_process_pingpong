@@ -32,6 +32,7 @@ inline int __PINGPONG_FN do_ping_spin(int thread_num) {
 
 		do {
 			*spin_var = 1;
+			mb();
 		} while (0);
 		while (*spin_var != 0) {
 		}
@@ -46,6 +47,7 @@ inline int __PINGPONG_FN do_pong_spin(int thread_num) {
 		}
 		do {
 			*spin_var = 0;
+			mb();
 		} while (0);
 	}
 }
