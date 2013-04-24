@@ -86,7 +86,7 @@ void __NORETURN do_thread_work(int thread_num) {
 	setup_interrupt_signal(thread_num);
 	setup_crash_handler();
 
-	config.comm_pre();
+	config.comm_pre(thread_num);
 
 	if (config.set_affinity == true) {
 		set_affinity(config.cpu[thread_num]);
