@@ -1,5 +1,5 @@
-#ifndef __SIGNAL_H__
-#define __SIGNAL_H__
+#ifndef __SIGNALS_H__
+#define __SIGNALS_H__
 
 #include "test_process_pingpong.h"
 
