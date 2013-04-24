@@ -112,6 +112,10 @@ int setup_defaults(char *argv0) {
 	config.sched_policy	= DEFAULT_SCHED;
 	config.sched_prio	= DEFAULT_SCHED_PRIO;
 
+//	config.size_align_flag	= SIZE_ALIGN_NONE;
+//	config.size_align_flag	= SIZE_ALIGN_NORMAL;
+	config.size_align_flag	= SIZE_ALIGN_HUGE;
+
 	config.uid = getuid();
 	config.gid = getgid();
 	config.euid = geteuid();
@@ -209,8 +213,7 @@ int do_comm_setup() {
 	config.comm_interrupt = comm_mode_info[config.comm_mode_index].comm_interrupt;
 	config.comm_cleanup = comm_mode_info[config.comm_mode_index].comm_cleanup;
 
-	run_data = mmap(NULL, sizeof(struct run_data_struct),
-		PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0);
+	run_data = map_shared_area(sizeof(struct run_data_struct), config.size_align_flag);
 
 	make_pairs();
 
