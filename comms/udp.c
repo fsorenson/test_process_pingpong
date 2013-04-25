@@ -52,12 +52,13 @@ void __attribute__((constructor)) comm_add_udp() {
 	struct comm_mode_ops_struct ops;
 
 	memset(&init_info, 0, sizeof(struct comm_mode_init_info_struct));
-	init_info.name = "udp";
+	init_info.name = strdup("udp");
 
 	memset(&ops, 0, sizeof(struct comm_mode_ops_struct));
 	ops.comm_make_pair = make_udp_pair;
 
 	comm_mode_do_initialization(&init_info, &ops);
+	free(init_info.name);
 }
 
 ADD_COMM_MODE(udp, comm_add_udp);
