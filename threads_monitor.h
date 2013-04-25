@@ -23,8 +23,8 @@ void show_stats(int signum);
 void stop_handler(int signum);
 void child_handler(int signum);
 
-int do_monitor_work();
+int do_monitor_work(void);
 
-int start_threads();
+int start_threads(void);
 
 #endif
