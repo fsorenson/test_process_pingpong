@@ -79,9 +79,6 @@ void comm_mode_add(char *comm_name, char *add_function_name) {
 //	printf("adding '%s' with initialization function '%s'\n", comm_name, add_function_name);
 	comm_mode_count ++;
 }
-void comm_mode_add1(char *add_function_name) {
-	comm_mode_add("goober", add_function_name);
-}
 
 /* call this from within the initializer to note that the initialization function has been called */
 void comm_mode_mark_initialized(char *comm_mode_name) {
