@@ -3,11 +3,11 @@
 
 #include "test_process_pingpong.h"
 
-int comm_pre_pipe();
-void sig_handler_pipe();
-int comm_interrupt_pipe();
-int comm_cleanup_pipe();
+int comm_pre_pipe(int thread_num);
+void sig_handler_pipe(int sig);
+int comm_interrupt_pipe(void);
+int comm_cleanup_pipe(void);
 
-void comm_add_pipe();
+void comm_add_pipe(void);
 
 #endif
