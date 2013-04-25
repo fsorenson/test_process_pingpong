@@ -41,7 +41,7 @@ inline int __PINGPONG_FN do_pong_race(int thread_num) {
 	}
 }
 
-int cleanup_race() {
+int __CONST cleanup_race() {
 
 	return 0;
 }
