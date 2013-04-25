@@ -20,7 +20,9 @@ write(1, "setup sigpipe\n", 14);
 	return 0;
 }
 
-void __attribute__((noreturn)) sig_handler_pipe() {
+void __attribute__((noreturn)) sig_handler_pipe(int sig) {
+	(void)sig;
+
 write(1, "sigpipe\n", 8);
 	comm_cleanup_pipe();
 }
@@ -39,7 +41,7 @@ write(1, "bye\n", 4);
 }
 
 
-void __attribute__((constructor)) comm_add_pipe() {
+void __attribute__((constructor)) comm_add_pipe(void) {
 	struct comm_mode_init_info_struct init_info;
 	struct comm_mode_ops_struct ops;
 
