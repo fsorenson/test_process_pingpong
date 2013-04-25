@@ -72,7 +72,7 @@ void __attribute__((constructor)) comm_add_eventfd() {
 	struct comm_mode_ops_struct ops;
 
 	memset(&init_info, 0, sizeof(struct comm_mode_init_info_struct));
-	init_info.name = "eventfd";
+	init_info.name = strdup("eventfd");
 
 	memset(&ops, 0, sizeof(struct comm_mode_ops_struct));
 	ops.comm_make_pair = make_eventfd_pair;
@@ -80,7 +80,7 @@ void __attribute__((constructor)) comm_add_eventfd() {
 	ops.comm_do_pong = do_pong_eventfd;
 
 	comm_mode_do_initialization(&init_info, &ops);
-
+	free(init_info.name);
 }
 
 ADD_COMM_MODE(eventfd, comm_add_eventfd);
