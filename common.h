@@ -16,7 +16,7 @@
 #define __OPTIMIZED1	__attribute__((optimize("-Ofast")))
 #define __OPTIMIZED	__OPTIMIZED0
 
-#define __PINGPONG_FN  __NORETURN __HOT __OPTIMIZED
+#define __PINGPONG_FN  __NORETURN __HOT __OPTIMIZED1
 
 
 typedef enum { no = 0, false = 0, yes = 1, true = 1 } __PACKED bool;
