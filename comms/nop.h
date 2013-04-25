@@ -16,10 +16,10 @@ int do_ping_nop2(int thread_num);
 int do_ping_nop3(int thread_num);
 int do_pong_nop(int thread_num);
 
-int cleanup_nop();
+int cleanup_nop(void);
 
-void comm_add_nop1();
-void comm_add_nop2();
-void comm_add_nop3();
+void comm_add_nop1(void);
+void comm_add_nop2(void);
+void comm_add_nop3(void);
 
 #endif
