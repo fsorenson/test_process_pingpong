@@ -42,15 +42,20 @@ sub_dirs += $(objs) $(deps) $(stabs)
 # some warnings
 CFLAGS += -Wall -Wextra
 #CFLAGS += -pedantic
-CFLAGS += -Wunused-macros -Wunused -Wunused-parameter -Wunreachable-code
-CFLAGS += -Wshadow -Wundef -Wconversion -Wbad-function-cast
+CFLAGS += -Wunused -Wunused-but-set-variable -Wunused-but-set-parameter -Wunused-macros -Wunused-parameter -Wunused-function -unused-value -Wunreachable-code
+CFLAGS += -Wuninitialized
+CFLAGS += -Wsuggest-attribute=pure -Wsuggest-attribute=const -Wsuggest-attribute=noreturn
+CFLAGS += -Wshadow -Wundef -Wconversion -Wbad-function-cast -Wcast-align -Wwrite-strings -Wcast-qual
 CFLAGS += -Wpointer-arith -Wfloat-equal
 CFLAGS += -Wpacked -Wpadded -Winline -Wnested-externs
 CFLAGS += -Wendif-labels
 CFLAGS += -Wmissing-noreturn
-CFLAGS += -Wmissing-format-attribute -Wmissing-field-initializers
+CFLAGS += -Wmissing-format-attribute -Wmissing-prototypes -Wmissing-parameter-type -Wmissing-field-initializers
 CFLAGS += -Wmissing-declarations -Wredundant-decls -Wdeclaration-after-statement
-CFLAGS += -Wbad-function-cast
+CFLAGS += -Wclobbered -Wlogical-op
+#CFLAGS += -Wtraditional -Wtraditional-conversion
+CFLAGS += -Wdeclaration-after-statement
+CFLAGS += -Wunsafe-loop-optimizations
 
 # doesn't seem to work on older gcc
 #-Wlogical-op -Waddress
@@ -72,7 +77,11 @@ OPTIMIZATIONS += -malign-double
 OPTIMIZATIONS += -fif-conversion -fif-conversion2
 #OPTIMIZATIONS += -finline-functions -finline-functions-called-once -finline-small-functions
 OPTIMIZATIONS += -fargument-alias
+
+# testing
+OPTIMIZATIONS += -falign-functions -falign-loops -fdevirtualize -fexpensive-optimizations
 #OPTIMIZATIONS += 
+OPTIMIZATIONS += -fvariable-expansion-in-unroller -funswitch-loops
 #OPTIMIZATIONS += 
 
 
@@ -87,9 +96,11 @@ OPTIMIZATIONS += -fargument-alias
 
 # enable this to get debugging
 DEBUG_FLAGS=
-DEBUG_FLAGS += -g
+#DEBUG_FLAGS += -g
 #DEBUG_FLAGS += -ggdb -gdwarf-3
 
+
+#DEBUG_FLAGS += -fvar-tracking -fvar-tracking-assignments -fvar-tracking-uninit
 
 # enable this to get 'backtrace()' symbols
 #DEBUG_FLAGS += -rdynamic
