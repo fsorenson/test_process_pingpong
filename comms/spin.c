@@ -52,7 +52,7 @@ inline int __PINGPONG_FN do_pong_spin(int thread_num) {
 	}
 }
 
-int cleanup_spin() {
+int __CONST cleanup_spin() {
 
 	return 0;
 }
