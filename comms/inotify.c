@@ -127,8 +127,8 @@ void __attribute__((constructor)) comm_add_inotify() {
 	struct comm_mode_ops_struct ops;
 
 	memset(&init_info, 0, sizeof(struct comm_mode_init_info_struct));
-	init_info.name = "inotify";
-	init_info.help_text = "use inotify to watch for file modifications";
+	init_info.name = strdup("inotify");
+	init_info.help_text = strdup("use inotify to watch for file modifications");
 
 	memset(&ops, 0, sizeof(struct comm_mode_ops_struct));
 	ops.comm_make_pair = make_inotify_pair;
