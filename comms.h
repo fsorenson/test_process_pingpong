@@ -2,6 +2,8 @@
 #define __COMMS_H__
 
 #include "common.h"
+#include <sys/mman.h>
+#include <stdlib.h>
 
 /* don't necessarily want to limit this... just need a starting point */
 #define COMM_MODE_LIST_INCREMENT	5
