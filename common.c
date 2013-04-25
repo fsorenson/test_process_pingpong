@@ -113,7 +113,7 @@ int init_mlockall(void) {
 	return 0;
 }
 
-unsigned int page_align_size(unsigned int len, int size_align_flag) {
+unsigned int __CONST page_align_size(unsigned int len, int size_align_flag) {
 	unsigned int page_size;
 
 	switch (size_align_flag) {
