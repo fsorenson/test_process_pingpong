@@ -74,7 +74,7 @@ inline int __PINGPONG_FN do_pong_nop(int thread_num) {
 		nanosleep(&nop_ts, NULL);
 	}
 }
-int cleanup_nop() {
+int __CONST cleanup_nop() {
 
 	return 0;
 }
