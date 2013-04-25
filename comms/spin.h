@@ -8,8 +8,8 @@ int make_spin_pair(int fd[2]);
 int do_ping_spin(int thread_num);
 int do_pong_spin(int thread_num);
 
-int cleanup_spin();
+int cleanup_spin(void);
 
-void comm_add_spin();
+void comm_add_spin(void);
 
 #endif

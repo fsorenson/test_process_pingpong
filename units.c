@@ -1,4 +1,5 @@
 #include "units.h"
+#include "common.h"
 
 #include <stdio.h>
 #include <math.h>
@@ -60,7 +61,7 @@ typedef struct integer_time {
         int ms;
 } integer_time_t;
 
-integer_fixed_point_t f_to_fp(int prec, double f) {
+integer_fixed_point_t __CONST f_to_fp(int prec, double f) {
         integer_fixed_point_t int_fp;
 
         int_fp.prec = prec;

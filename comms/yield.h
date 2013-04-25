@@ -14,7 +14,7 @@ int do_pong_yield_nop(int thread_num);
 //int do_recv_yield(int fd);
 
 
-void comm_add_yield();
-void comm_add_yield_nop();
+void comm_add_yield(void);
+void comm_add_yield_nop(void);
 
 #endif

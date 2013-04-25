@@ -4,19 +4,19 @@
 #include "test_process_pingpong.h"
 #include <sched.h>
 
-int get_priorities();
-int set_priorities();
+int get_priorities(void);
+int set_priorities(void);
 
-int get_sched_interval();
+int get_sched_interval(void);
 
 int parse_sched(char *arg);
 
 #ifndef HAVE_SCHED_GETCPU
-int sched_getcpu();
+int sched_getcpu(void);
 #endif
 
-int num_cpus();
-int num_online_cpus();
+int num_cpus(void);
+int num_online_cpus(void);
 
 
 #endif

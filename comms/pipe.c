@@ -20,7 +20,9 @@ write(1, "setup sigpipe\n", 14);
 	return 0;
 }
 
-void __attribute__((noreturn)) sig_handler_pipe() {
+void __attribute__((noreturn)) sig_handler_pipe(int sig) {
+	(void)sig;
+
 write(1, "sigpipe\n", 8);
 	comm_cleanup_pipe();
 }
@@ -39,12 +41,12 @@ write(1, "bye\n", 4);
 }
 
 
-void __attribute__((constructor)) comm_add_pipe() {
+void __attribute__((constructor)) comm_add_pipe(void) {
 	struct comm_mode_init_info_struct init_info;
 	struct comm_mode_ops_struct ops;
 
 	memset(&init_info, 0, sizeof(struct comm_mode_init_info_struct));
-	init_info.name = "pipe";
+	init_info.name = strdup("pipe");
 
 	memset(&ops, 0, sizeof(struct comm_mode_ops_struct));
 	ops.comm_make_pair = pipe;
@@ -53,6 +55,7 @@ void __attribute__((constructor)) comm_add_pipe() {
 	ops.comm_cleanup = comm_cleanup_pipe;
 
 	comm_mode_do_initialization(&init_info, &ops);
+	free(init_info.name);
 }
 
 ADD_COMM_MODE(pipe, comm_add_pipe);

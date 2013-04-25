@@ -84,7 +84,7 @@ void __attribute__((constructor)) comm_add_mq() {
 	struct comm_mode_ops_struct ops;
 
 	memset(&init_info, 0, sizeof(struct comm_mode_init_info_struct));
-	init_info.name = "mq";
+	init_info.name = strdup("mq");
 
 	memset(&ops, 0, sizeof(struct comm_mode_ops_struct));
 	ops.comm_make_pair = make_mq_pair;
@@ -93,6 +93,7 @@ void __attribute__((constructor)) comm_add_mq() {
 	ops.comm_cleanup = cleanup_mq;
 
 	comm_mode_do_initialization(&init_info, &ops);
+	free(init_info.name);
 }
 
 ADD_COMM_MODE(mq, comm_add_mq);
