@@ -6,6 +6,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <errno.h>
+#include <sys/mman.h>
 
 struct comm_mode_info_struct *comm_mode_info = NULL;
 int comm_mode_count = 0;
