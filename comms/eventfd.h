@@ -25,7 +25,7 @@ int do_pong_eventfd(int thread_num);
 int do_send_eventfd(int fd);
 int do_recv_eventfd(int fd);
 
-void comm_add_eventfd();
+void comm_add_eventfd(void);
 
 #endif /* HAVE_EVENTFD */
 
