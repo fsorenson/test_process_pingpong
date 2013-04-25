@@ -90,7 +90,7 @@ inline int __PINGPONG_FN do_pong_signal(int thread_num) {
 	}
 }
 
-int cleanup_signal() {
+int __CONST cleanup_signal() {
 
 	return 0;
 }
