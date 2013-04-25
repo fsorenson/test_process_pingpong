@@ -158,17 +158,17 @@ char *get_comm_mode_name(int comm_mode_index) {
 	return comm_mode_info[comm_mode_index].name;
 }
 
-int comm_no_init() {
+int __CONST comm_no_init() {
 	return 0;
 }
 
-int comm_no_pre(int thread_num) {
+int __CONST comm_no_pre(int thread_num) {
 	(void)thread_num;
 
 	return 0;
 }
 
-int comm_no_begin() {
+int __CONST comm_no_begin() {
 	return 0;
 }
 
@@ -197,10 +197,10 @@ inline int comm_do_recv_generic(int fd) {
 	return (int)read(fd, &dummy, 1);
 }
 
-int comm_no_interrupt() {
+int __CONST comm_no_interrupt() {
 	return 0;
 }
 
-int comm_no_cleanup() {
+int __CONST comm_no_cleanup() {
 	return 0;
 }
