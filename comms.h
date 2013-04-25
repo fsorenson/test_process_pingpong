@@ -18,7 +18,7 @@
 	int (*comm_do_pong)(int s);		\
 	int (*comm_do_send)(int s);		\
 	int (*comm_do_recv)(int s);		\
-	int (*comm_interrupt)(int s);		\
+	int (*comm_interrupt)();		\
 	int (*comm_cleanup)();
 
 #define COMM_MODE_INIT_INFO \
@@ -50,7 +50,7 @@ struct comm_mode_info_struct {
 extern struct comm_mode_info_struct *comm_mode_info;
 extern int comm_mode_count;
 
-void cleanup_comm_mode_info();
+void cleanup_comm_mode_info(void);
 int parse_comm_mode(char *arg);
 char *get_comm_mode_name(int index);
 
@@ -63,23 +63,23 @@ void comm_mode_add1(char *add_function_name);
 
 
 #define ADD_COMM_MODE(comm_name,add_function_name) \
-	void cons_ ## add_function_name() __attribute__((constructor)); \
+	void cons_ ## add_function_name(void) __attribute__((constructor)); \
 	void cons_ ## add_function_name() { comm_mode_add(#comm_name, #add_function_name); }
 
-int comm_no_init();
+int comm_no_init(void);
 int comm_no_pre(int thread_num);
-int comm_no_begin();
+int comm_no_begin(void);
 
 int comm_do_ping_generic(int thread_num);
 int comm_do_pong_generic(int thread_num);
 int comm_do_send_generic(int fd);
 int comm_do_recv_generic(int fd);
 
-int comm_no_interrupt();
-int comm_no_cleanup();
+int comm_no_interrupt(void);
+int comm_no_cleanup(void);
 
 void comm_mode_do_initialization(struct comm_mode_init_info_struct *init_info, struct comm_mode_ops_struct *ops);
 void comm_mode_mark_initialized(char *comm_mode_name);
-bool comm_mode_verify_all();
+bool comm_mode_verify_all(void);
 
 #endif
