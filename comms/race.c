@@ -51,8 +51,8 @@ void __attribute__((constructor)) comm_add_race() {
 	struct comm_mode_ops_struct ops;
 
 	memset(&init_info, 0, sizeof(struct comm_mode_init_info_struct));
-	init_info.name = "race";
-	init_info.help_text = "both threads repeatedly write their own value--no pingpong";
+	init_info.name = strdup("race");
+	init_info.help_text = strdup("both threads repeatedly write their own value--no pingpong");
 
 	memset(&ops, 0, sizeof(struct comm_mode_ops_struct));
 	ops.comm_make_pair = make_race_pair;
@@ -61,5 +61,7 @@ void __attribute__((constructor)) comm_add_race() {
 	ops.comm_cleanup = cleanup_race;
 
 	comm_mode_do_initialization(&init_info, &ops);
+	free(init_info.name);
+	free(init_info.help_text);
 }
 ADD_COMM_MODE(race, comm_add_race);
