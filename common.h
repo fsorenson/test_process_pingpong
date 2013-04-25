@@ -7,8 +7,9 @@
 
 #include <stdint.h>
 
-#define __PACKED	__attribute__ ((packed))
-#define __NORETURN	__attribute__ ((noreturn))
+#define __CONST		__attribute__((const))
+#define __PACKED	__attribute__((packed))
+#define __NORETURN	__attribute__((noreturn))
 #define __HOT		__attribute__((hot))
 
 #define __OPTIMIZED0
