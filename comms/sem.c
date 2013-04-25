@@ -93,8 +93,8 @@ void __attribute__((constructor)) comm_add_sem() {
 	struct comm_mode_ops_struct ops;
 
 	memset(&init_info, 0, sizeof(struct comm_mode_init_info_struct));
-	init_info.name = "sem";
-	init_info.help_text = "wait on a semaphore to pingpong";
+	init_info.name = strdup("sem");
+	init_info.help_text = strdup("wait on a semaphore to pingpong");
 
 	memset(&ops, 0, sizeof(struct comm_mode_ops_struct));
 	ops.comm_make_pair = make_sem_pair;
@@ -105,6 +105,8 @@ void __attribute__((constructor)) comm_add_sem() {
 
 
 	comm_mode_do_initialization(&init_info, &ops);
+	free(init_info.name);
+	free(init_info.help_text);
 }
 
 void __attribute__((constructor)) comm_add_busy_sem() {
@@ -112,8 +114,8 @@ void __attribute__((constructor)) comm_add_busy_sem() {
 	struct comm_mode_ops_struct ops;
 
 	memset(&init_info, 0, sizeof(struct comm_mode_init_info_struct));
-	init_info.name = "busysem";
-	init_info.help_text = "busy-wait on a semaphore";
+	init_info.name = strdup("busysem");
+	init_info.help_text = strdup("busy-wait on a semaphore");
 
 	memset(&ops, 0, sizeof(struct comm_mode_ops_struct));
 	ops.comm_make_pair = make_sem_pair;
@@ -124,6 +126,8 @@ void __attribute__((constructor)) comm_add_busy_sem() {
 
 
 	comm_mode_do_initialization(&init_info, &ops);
+	free(init_info.name);
+	free(init_info.help_text);
 }
 
 ADD_COMM_MODE(sem, comm_add_sem);
