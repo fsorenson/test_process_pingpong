@@ -4,6 +4,6 @@
 #include "comms.h"
 
 int make_socket_pair(int fd[2]);
-void comm_add_socket_pair();
+void comm_add_socket_pair(void);
 
 #endif
