@@ -10,8 +10,8 @@ int do_pre_signal(int thread_num);
 int do_ping_signal(int thread_num);
 int do_pong_signal(int thread_num);
 
-int cleanup_signal();
+int cleanup_signal(void);
 
-void comm_add_signal();
+void comm_add_signal(void);
 
 #endif
