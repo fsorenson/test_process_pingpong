@@ -9,6 +9,7 @@
 #include <mqueue.h>
 #include <unistd.h>
 #include <sys/stat.h>
+#include <errno.h>
 
 static char *mqueue_path[2];
 mqd_t mqueue[2];
@@ -41,7 +42,7 @@ int make_mq_pair(int fd[2]) {
 	}
 
 	if ((ret = mq_open(mqueue_path[mq_num], flags, perms, &attr)) == -1) {
-		printf("Could not create mq '%s': %m\n", mqueue_path[mq_num]);
+		printf("Could not create mq '%s': %s\n", mqueue_path[mq_num], strerror(errno));
 		exit(-1);
 	}
 	mqueue[mq_num] = ret;
