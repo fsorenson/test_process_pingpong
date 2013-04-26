@@ -50,7 +50,8 @@ printf(
 
 	for (i = 0 ; i < comm_mode_count ; i ++) {
 		printf(
-"            %15s  -  %s\n", comm_mode_info[i].name, comm_mode_info[i].help_text ? : "");
+"            %15s  -  %s\n", comm_mode_info[i].name,
+		comm_mode_info[i].help_text ? comm_mode_info[i].help_text : "");
 	}
 
 	printf(
