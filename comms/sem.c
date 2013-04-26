@@ -8,6 +8,12 @@
 #include <fcntl.h>
 #include <sys/stat.h>
 
+char comm_name_sem[] = "sem";
+char comm_help_text_sem[] =  "wait on a semaphore to pingpong";
+
+char comm_name_busysem[] = "busysem";
+char comm_help_text_busysem[] = "busy-wait on a semaphore";
+
 sem_t *sems[2];
 const char *sem_names[] = { "ping", "pong" };
 static bool busy = false;
@@ -88,46 +94,39 @@ int cleanup_sem() {
 	return 0;
 }
 
+static struct comm_mode_init_info_struct comm_info_sem = {
+	.name = comm_name_sem,
+	.help_text = comm_help_text_sem
+};
+
+static struct comm_mode_ops_struct comm_ops_sem = {
+	.comm_make_pair = make_sem_pair,
+	.comm_begin = do_begin_sem,
+	.comm_do_ping = do_ping_sem,
+	.comm_do_pong = do_pong_sem,
+	.comm_cleanup = cleanup_sem
+};
+
 void __attribute__((constructor)) comm_add_sem() {
-        struct comm_mode_init_info_struct init_info;
-	struct comm_mode_ops_struct ops;
-
-	memset(&init_info, 0, sizeof(struct comm_mode_init_info_struct));
-	init_info.name = strdup("sem");
-	init_info.help_text = strdup("wait on a semaphore to pingpong");
-
-	memset(&ops, 0, sizeof(struct comm_mode_ops_struct));
-	ops.comm_make_pair = make_sem_pair;
-	ops.comm_begin = do_begin_sem;
-	ops.comm_do_ping = do_ping_sem;
-	ops.comm_do_pong = do_pong_sem;
-	ops.comm_cleanup = cleanup_sem;
-
-
-	comm_mode_do_initialization(&init_info, &ops);
-	free(init_info.name);
-	free(init_info.help_text);
+	comm_mode_do_initialization(&comm_info_sem, &comm_ops_sem);
 }
 
+
+static struct comm_mode_init_info_struct comm_info_busysem = {
+	.name = comm_name_busysem,
+	.help_text = comm_help_text_busysem
+};
+
+static struct comm_mode_ops_struct comm_ops_busysem = {
+	.comm_make_pair = make_sem_pair,
+	.comm_begin = do_begin_sem,
+	.comm_do_ping = do_ping_busysem,
+	.comm_do_pong = do_pong_busysem,
+	.comm_cleanup = cleanup_sem
+};
+
 void __attribute__((constructor)) comm_add_busy_sem() {
-        struct comm_mode_init_info_struct init_info;
-	struct comm_mode_ops_struct ops;
-
-	memset(&init_info, 0, sizeof(struct comm_mode_init_info_struct));
-	init_info.name = strdup("busysem");
-	init_info.help_text = strdup("busy-wait on a semaphore");
-
-	memset(&ops, 0, sizeof(struct comm_mode_ops_struct));
-	ops.comm_make_pair = make_sem_pair;
-	ops.comm_begin = do_begin_sem;
-	ops.comm_do_ping = do_ping_busysem;
-	ops.comm_do_pong = do_pong_busysem;
-	ops.comm_cleanup = cleanup_sem;
-
-
-	comm_mode_do_initialization(&init_info, &ops);
-	free(init_info.name);
-	free(init_info.help_text);
+	comm_mode_do_initialization(&comm_info_busysem, &comm_ops_busysem);
 }
 
 ADD_COMM_MODE(sem, comm_add_sem);
