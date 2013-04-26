@@ -111,16 +111,16 @@ void comm_mode_do_initialization(struct comm_mode_init_info_struct *init_info, s
 			if (init_info->help_text != 0)
 				comm_mode_info[i].help_text = strdup(init_info->help_text);
 
-			comm_mode_info[i].comm_init = ops->comm_init ? : comm_no_init;
+			comm_mode_info[i].comm_init = ops->comm_init ? ops->comm_init : comm_no_init;
 			comm_mode_info[i].comm_pre = ops->comm_pre != NULL ? ops->comm_pre : comm_no_pre;
 			comm_mode_info[i].comm_begin = ops->comm_begin != NULL ? ops->comm_begin : comm_no_begin;
 			comm_mode_info[i].comm_make_pair = ops->comm_make_pair;
-			comm_mode_info[i].comm_do_ping = ops->comm_do_ping ? : comm_do_ping_generic;
-			comm_mode_info[i].comm_do_pong = ops->comm_do_pong ? : comm_do_pong_generic;
-			comm_mode_info[i].comm_do_send = ops->comm_do_send ? : comm_do_send_generic;
-			comm_mode_info[i].comm_do_recv = ops->comm_do_recv ? : comm_do_recv_generic;
-			comm_mode_info[i].comm_interrupt = ops->comm_interrupt ? : comm_no_interrupt;
-			comm_mode_info[i].comm_cleanup = ops->comm_cleanup ? : comm_no_cleanup;
+			comm_mode_info[i].comm_do_ping = ops->comm_do_ping ? ops->comm_do_ping : comm_do_ping_generic;
+			comm_mode_info[i].comm_do_pong = ops->comm_do_pong ? ops->comm_do_pong : comm_do_pong_generic;
+			comm_mode_info[i].comm_do_send = ops->comm_do_send ? ops->comm_do_send : comm_do_send_generic;
+			comm_mode_info[i].comm_do_recv = ops->comm_do_recv ? ops->comm_do_recv : comm_do_recv_generic;
+			comm_mode_info[i].comm_interrupt = ops->comm_interrupt ? ops->comm_interrupt : comm_no_interrupt;
+			comm_mode_info[i].comm_cleanup = ops->comm_cleanup ? ops->comm_cleanup : comm_no_cleanup;
 
 
 			comm_mode_info[i].initialized = true;
