@@ -293,11 +293,13 @@ static int do_fork() {
 
 			do_monitor_work();
 		} else {
-			printf("Error while trying to fork: %d: %m\n", run_data->thread_info[thread_num].pid);
+			printf("Error while trying to fork: %d: %s\n",
+				run_data->thread_info[thread_num].pid, strerror(errno));
 			exit(-1);
 		}
 	} else {
-		printf("Error while trying to fork: %d: %m\n", run_data->thread_info[thread_num].pid);
+		printf("Error while trying to fork: %d: %s\n",
+			run_data->thread_info[thread_num].pid, strerror(errno));
 		exit(-1);
 	}
 
@@ -369,7 +371,7 @@ static int do_pthread() {
 	if ((ret = pthread_create((pthread_t *)&run_data->thread_info[thread_num].thread_id, &attr,
 		&pthread_function, (void *)&run_data->thread_info[thread_num])) != 0) {
 		errno = ret;
-		printf("Error occurred while starting 'ping' thread: %m\n");
+		printf("Error occurred while starting 'ping' thread: %s\n", strerror(errno));
 		exit(-1);
 	}
 
