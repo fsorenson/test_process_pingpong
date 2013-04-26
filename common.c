@@ -10,6 +10,7 @@
 #include <sys/prctl.h>
 #include <sys/mman.h>
 #include <time.h>
+#include <errno.h>
 
 
 inline int get_min_stack_size() {
@@ -89,7 +90,7 @@ inline int rename_thread(char *thread_name) {
 	strncpy(name, thread_name, 16);
 	name[16] = 0;
 	if ((ret = prctl(PR_SET_NAME, (unsigned long)&name)) == -1) {
-		printf("Failed to set thread name to '%s': %m\n", name);
+		printf("Failed to set thread name to '%s': %s\n", name, strerror(errno));
 		return -1;
 	}
 	return 0;
@@ -99,14 +100,14 @@ inline void on_parent_death(int signum) {
 	int ret;
 
 	if ((ret = prctl(PR_SET_PDEATHSIG, signum)) == -1) {
-		perror("Failed to create message to be delivered upon my becoming an orphan: %m\n");
+		printf("Failed to create message to be delivered upon my becoming an orphan: %s\n", strerror(errno));
 	}
 }
 
 int init_mlockall(void) {
 
 	if (mlockall(MCL_CURRENT | MCL_FUTURE)) {
-		printf("Failed to lock memory...paging latencies may occur.  Error was '%m'\n");
+		printf("Failed to lock memory...paging latencies may occur.  Error was '%s'\n", strerror(errno));
 		return 1;
 	}
 
