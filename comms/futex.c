@@ -2,6 +2,7 @@
 #include "comms.h"
 #include "test_process_pingpong.h"
 
+#include <stdio.h>
 #include <unistd.h>
 #include <sys/syscall.h>
 #include <sched.h>
@@ -10,6 +11,7 @@
 #include <linux/futex.h>
 #include <sys/ipc.h>
 #include <sys/shm.h>
+#include <sys/mman.h>
 
 static int shm_id;
 int *futex_id[2];
