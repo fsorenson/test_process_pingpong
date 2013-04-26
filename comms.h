@@ -21,11 +21,11 @@
 	int (*comm_do_send)(int s);		\
 	int (*comm_do_recv)(int s);		\
 	int (*comm_interrupt)();		\
-	int (*comm_cleanup)();
+	int (*comm_cleanup)()
 
 #define COMM_MODE_INIT_INFO \
 	char *name;				\
-	char *help_text;
+	char *help_text
 
 struct comm_mode_ops_struct {
 	COMM_MODE_OPS;
