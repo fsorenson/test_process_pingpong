@@ -56,7 +56,7 @@ void cleanup_comm_mode_info(void);
 int parse_comm_mode(char *arg);
 char *get_comm_mode_name(int index);
 
-void comm_mode_add(char *comm_name, char *add_function_name);
+void comm_mode_add(const char *comm_name, const char *add_function_name);
 
 #define ADD_COMM_MODE1(function_name) \
   void cons_ ## function_name() __attribute__ ((constructor)); \

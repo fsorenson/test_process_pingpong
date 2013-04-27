@@ -36,7 +36,7 @@ void __attribute__((destructor)) cleanup_comm_mode_info() {
 	comm_mode_count = 0;
 }
 
-void comm_mode_add(char *comm_name, char *add_function_name) {
+void comm_mode_add(const char *comm_name, const char *add_function_name) {
 	void *ret;
 //	unsigned long new_size;
 	unsigned long offset;
