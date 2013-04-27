@@ -5,6 +5,9 @@
 #include <sys/mman.h>
 #include <string.h>
 
+char comm_name_spin[] = "spin";
+char comm_help_text_spin[] = "busy-wait on a shared variable";
+
 int volatile *spin_var;
 
 int make_spin_pair(int fd[2]) {
@@ -57,22 +60,19 @@ int __CONST cleanup_spin() {
 	return 0;
 }
 
+static struct comm_mode_init_info_struct comm_info_spin = {
+	.name = comm_name_spin,
+	.help_text = comm_help_text_spin
+};
+
+static struct comm_mode_ops_struct comm_ops_spin = {
+	.comm_make_pair		= make_spin_pair,
+	.comm_do_ping		= do_ping_spin,
+	.comm_do_pong		= do_pong_spin,
+	.comm_cleanup		= cleanup_spin
+};
+
 void __attribute__((constructor)) comm_add_spin() {
-        struct comm_mode_init_info_struct init_info;
-	struct comm_mode_ops_struct ops;
-
-	memset(&init_info, 0, sizeof(struct comm_mode_init_info_struct));
-	init_info.name = strdup("spin");
-	init_info.help_text = strdup("busy-wait on a shared variable");
-
-	memset(&ops, 0, sizeof(struct comm_mode_ops_struct));
-	ops.comm_make_pair = make_spin_pair;
-	ops.comm_do_ping = do_ping_spin;
-	ops.comm_do_pong = do_pong_spin;
-	ops.comm_cleanup = cleanup_spin;
-
-	comm_mode_do_initialization(&init_info, &ops);
-	free(init_info.name);
-	free(init_info.help_text);
+	comm_mode_do_initialization(&comm_info_spin, &comm_ops_spin);
 }
 ADD_COMM_MODE(spin, comm_add_spin);

@@ -9,6 +9,13 @@
 #include <sched.h>
 #include <time.h>
 
+char comm_name_nop1[] = "nop1";
+char comm_help_text_nop1[] = "both threads do nothing, but one even sleeps while doing it";
+char comm_name_nop2[] = "nop2";
+char comm_help_text_nop2[] = "first thread sets the variable, then tests it (other thread sleeps)";
+char comm_name_nop3[] = "nop3";
+char comm_help_text_nop3[] = "literally do nothing...  just a loop";
+
 int *nop_var;
 
 struct timespec nop_ts;
@@ -79,55 +86,50 @@ int __CONST cleanup_nop() {
 	return 0;
 }
 
+static struct comm_mode_init_info_struct comm_info_nop1 = {
+	.name = comm_name_nop1,
+	.help_text = comm_help_text_nop1
+};
+
+static struct comm_mode_ops_struct comm_ops_nop1 = {
+	.comm_make_pair = make_nop_pair,
+	.comm_do_ping = do_ping_nop1,
+	.comm_do_pong = do_pong_nop,
+	.comm_cleanup = cleanup_nop
+};
+
+static struct comm_mode_init_info_struct comm_info_nop2 = {
+	.name = comm_name_nop2,
+	.help_text = comm_help_text_nop2
+};
+
+static struct comm_mode_ops_struct comm_ops_nop2 = {
+	.comm_make_pair = make_nop_pair,
+	.comm_do_ping = do_ping_nop2,
+	.comm_do_pong = do_pong_nop,
+	.comm_cleanup = cleanup_nop
+};
+
+static struct comm_mode_init_info_struct comm_info_nop3 = {
+	.name = comm_name_nop3,
+	.help_text = comm_help_text_nop3
+};
+
+static struct comm_mode_ops_struct comm_ops_nop3 = {
+	.comm_make_pair = make_nop_pair,
+	.comm_do_ping = do_ping_nop3,
+	.comm_do_pong = do_pong_nop,
+	.comm_cleanup = cleanup_nop
+};
+
 void __attribute__((constructor)) comm_add_nop1() {
-        struct comm_mode_init_info_struct init_info;
-	struct comm_mode_ops_struct ops;
-
-	memset(&init_info, 0, sizeof(struct comm_mode_init_info_struct));
-	init_info.name = strdup("nop1");
-	init_info.help_text = strdup("both threads do nothing, but one even sleeps while doing it");
-
-	memset(&ops, 0, sizeof(struct comm_mode_ops_struct));
-	ops.comm_make_pair = make_nop_pair;
-	ops.comm_do_ping = do_ping_nop1;
-	ops.comm_do_pong = do_pong_nop;
-	ops.comm_cleanup = cleanup_nop;
-
-	comm_mode_do_initialization(&init_info, &ops);
+	comm_mode_do_initialization(&comm_info_nop1, &comm_ops_nop1);
 }
 void __attribute__((constructor)) comm_add_nop2() {
-        struct comm_mode_init_info_struct init_info;
-	struct comm_mode_ops_struct ops;
-
-	memset(&init_info, 0, sizeof(struct comm_mode_init_info_struct));
-	init_info.name = strdup("nop2");
-	init_info.help_text = strdup("first thread sets the variable, then tests it (other thread sleeps)");
-
-	memset(&ops, 0, sizeof(struct comm_mode_ops_struct));
-	ops.comm_make_pair = make_nop_pair;
-	ops.comm_do_ping = do_ping_nop2;
-	ops.comm_do_pong = do_pong_nop;
-	ops.comm_cleanup = cleanup_nop;
-
-	comm_mode_do_initialization(&init_info, &ops);
-	free(init_info.name);
-	free(init_info.help_text);
+	comm_mode_do_initialization(&comm_info_nop2, &comm_ops_nop2);
 }
 void __attribute__((constructor)) comm_add_nop3() {
-        struct comm_mode_init_info_struct init_info;
-	struct comm_mode_ops_struct ops;
-
-	memset(&init_info, 0, sizeof(struct comm_mode_init_info_struct));
-	init_info.name = strdup("nop3");
-	init_info.help_text = strdup("literally do nothing...  just a loop");
-
-	memset(&ops, 0, sizeof(struct comm_mode_ops_struct));
-	ops.comm_make_pair = make_nop_pair;
-	ops.comm_do_ping = do_ping_nop3;
-	ops.comm_do_pong = do_pong_nop;
-	ops.comm_cleanup = cleanup_nop;
-
-	comm_mode_do_initialization(&init_info, &ops);
+	comm_mode_do_initialization(&comm_info_nop3, &comm_ops_nop3);
 }
 
 ADD_COMM_MODE(nop3, comm_add_nop3);

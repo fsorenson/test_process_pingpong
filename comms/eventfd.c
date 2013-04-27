@@ -16,6 +16,9 @@
 
 #include <sys/eventfd.h>
 
+char comm_name_eventfd[] = "eventfd";
+
+
 int make_eventfd_pair(int fd[2]) {
         fd[0] = eventfd(0, 0);
         fd[1] = dup(fd[0]);
@@ -66,21 +69,18 @@ inline int do_recv_eventfd(int fd) {
         return ! eventfd_read(fd, &dummy);
 }
 
+static struct comm_mode_init_info_struct comm_info_eventfd = {
+	.name = comm_name_eventfd
+};
+
+static struct comm_mode_ops_struct comm_ops_eventfd = {
+	.comm_make_pair = make_eventfd_pair,
+	.comm_do_ping = do_ping_eventfd,
+	.comm_do_pong = do_pong_eventfd
+};
 
 void __attribute__((constructor)) comm_add_eventfd() {
-	struct comm_mode_init_info_struct init_info;
-	struct comm_mode_ops_struct ops;
-
-	memset(&init_info, 0, sizeof(struct comm_mode_init_info_struct));
-	init_info.name = strdup("eventfd");
-
-	memset(&ops, 0, sizeof(struct comm_mode_ops_struct));
-	ops.comm_make_pair = make_eventfd_pair;
-	ops.comm_do_ping = do_ping_eventfd;
-	ops.comm_do_pong = do_pong_eventfd;
-
-	comm_mode_do_initialization(&init_info, &ops);
-	free(init_info.name);
+	comm_mode_do_initialization(&comm_info_eventfd, &comm_ops_eventfd);
 }
 
 ADD_COMM_MODE(eventfd, comm_add_eventfd);

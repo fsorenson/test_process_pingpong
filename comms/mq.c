@@ -11,6 +11,8 @@
 #include <sys/stat.h>
 #include <errno.h>
 
+char comm_name_mq[] = "mq";
+
 static char *mqueue_path[2];
 mqd_t mqueue[2];
 char mq_msg[2];
@@ -80,21 +82,18 @@ int cleanup_mq() {
 	return 0;
 }
 
+static struct comm_mode_init_info_struct comm_info_mq = {
+	.name = comm_name_mq
+};
+
+static struct comm_mode_ops_struct comm_ops_mq = {
+	.comm_make_pair = make_mq_pair,
+	.comm_do_send = do_send_mq,
+	.comm_do_recv = do_recv_mq,
+	.comm_cleanup = cleanup_mq
+};
+
 void __attribute__((constructor)) comm_add_mq() {
-        struct comm_mode_init_info_struct init_info;
-	struct comm_mode_ops_struct ops;
-
-	memset(&init_info, 0, sizeof(struct comm_mode_init_info_struct));
-	init_info.name = strdup("mq");
-
-	memset(&ops, 0, sizeof(struct comm_mode_ops_struct));
-	ops.comm_make_pair = make_mq_pair;
-	ops.comm_do_send = do_send_mq;
-	ops.comm_do_recv = do_recv_mq;
-	ops.comm_cleanup = cleanup_mq;
-
-	comm_mode_do_initialization(&init_info, &ops);
-	free(init_info.name);
+	comm_mode_do_initialization(&comm_info_mq, &comm_ops_mq);
 }
-
 ADD_COMM_MODE(mq, comm_add_mq);
