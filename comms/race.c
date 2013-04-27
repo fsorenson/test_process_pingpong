@@ -5,6 +5,9 @@
 #include <sys/mman.h>
 #include <string.h>
 
+char comm_name_race[] = "race";
+char comm_help_text_race[] = "both threads repeatedly write their own value--no pingpong";
+
 int volatile *race_var;
 
 int make_race_pair(int fd[2]) {
@@ -46,22 +49,19 @@ int __CONST cleanup_race() {
 	return 0;
 }
 
+static struct comm_mode_init_info_struct comm_info_race = {
+	.name = comm_name_race,
+	.help_text = comm_help_text_race
+};
+
+static struct comm_mode_ops_struct comm_ops_race = {
+	.comm_make_pair = make_race_pair,
+	.comm_do_ping = do_ping_race,
+	.comm_do_pong = do_pong_race,
+	.comm_cleanup = cleanup_race
+};
+
 void __attribute__((constructor)) comm_add_race() {
-        struct comm_mode_init_info_struct init_info;
-	struct comm_mode_ops_struct ops;
-
-	memset(&init_info, 0, sizeof(struct comm_mode_init_info_struct));
-	init_info.name = strdup("race");
-	init_info.help_text = strdup("both threads repeatedly write their own value--no pingpong");
-
-	memset(&ops, 0, sizeof(struct comm_mode_ops_struct));
-	ops.comm_make_pair = make_race_pair;
-	ops.comm_do_ping = do_ping_race;
-	ops.comm_do_pong = do_pong_race;
-	ops.comm_cleanup = cleanup_race;
-
-	comm_mode_do_initialization(&init_info, &ops);
-	free(init_info.name);
-	free(init_info.help_text);
+	comm_mode_do_initialization(&comm_info_race, &comm_ops_race);
 }
 ADD_COMM_MODE(race, comm_add_race);
