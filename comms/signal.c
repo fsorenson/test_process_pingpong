@@ -9,6 +9,8 @@
 #include <string.h>
 #include <stdio.h>
 
+char comm_name_signal[] = "signal";
+char comm_help_text_signal[] = "each thread sleeps until receiving a wakeup signal from the other";
 
 static int sigs[2];
 static int signal_received[2];
@@ -95,24 +97,21 @@ int __CONST cleanup_signal() {
 	return 0;
 }
 
+static struct comm_mode_init_info_struct comm_info_signal = {
+	.name = comm_name_signal,
+	.help_text = comm_help_text_signal
+};
+
+static struct comm_mode_ops_struct comm_ops_signal = {
+	.comm_make_pair = make_signal_pair,
+	.comm_pre = do_pre_signal,
+	.comm_do_ping = do_ping_signal,
+	.comm_do_pong = do_pong_signal,
+	.comm_cleanup = cleanup_signal
+};
+
 void __attribute__((constructor)) comm_add_signal() {
-        struct comm_mode_init_info_struct init_info;
-	struct comm_mode_ops_struct ops;
-
-	memset(&init_info, 0, sizeof(struct comm_mode_init_info_struct));
-	init_info.name = strdup("signal");
-	init_info.help_text = strdup("each thread sleeps until receiving a wakeup signal from the other");
-
-	memset(&ops, 0, sizeof(struct comm_mode_ops_struct));
-	ops.comm_make_pair = make_signal_pair;
-	ops.comm_pre = do_pre_signal;
-	ops.comm_do_ping = do_ping_signal;
-	ops.comm_do_pong = do_pong_signal;
-	ops.comm_cleanup = cleanup_signal;
-
-	comm_mode_do_initialization(&init_info, &ops);
-	free(init_info.name);
-	free(init_info.help_text);
+	comm_mode_do_initialization(&comm_info_signal, &comm_ops_signal);
 }
 
 ADD_COMM_MODE(signal, comm_add_signal);
