@@ -142,6 +142,7 @@ struct thread_stats_struct {
 	unsigned long long last_tsc;
 	struct rusage rusage;
 	struct rusage last_rusage;
+	struct timespec thread_time;
 //	unsigned int thread_id;
 };
 
