@@ -99,5 +99,5 @@ void __attribute__((constructor)) comm_add_race1() {
 void __attribute__((constructor)) comm_add_race2() {
 	comm_mode_do_initialization(&comm_info_race2, &comm_ops_race2);
 }
-ADD_COMM_MODE(race, comm_add_race2);
-ADD_COMM_MODE(race, comm_add_race1);
+ADD_COMM_MODE(race2, comm_add_race2);
+ADD_COMM_MODE(race1, comm_add_race1);
