@@ -79,7 +79,8 @@ OPTIMIZATIONS += -finline-functions -finline-functions-called-once -finline-smal
 OPTIMIZATIONS += -fargument-alias
 
 # testing
-OPTIMIZATIONS += -falign-functions -falign-loops -fdevirtualize -fexpensive-optimizations
+OPTIMIZATIONS += -falign-functions -falign-loops -falign-jumps -falign-labels
+OPTIMIZATIONS += -fdevirtualize -fexpensive-optimizations
 #OPTIMIZATIONS += 
 OPTIMIZATIONS += -fvariable-expansion-in-unroller -funswitch-loops
 #OPTIMIZATIONS += 
