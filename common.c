@@ -64,7 +64,7 @@ long double estimate_cpu_mhz() {
 	end_tsc = rdtsc(NULL);
 	end_time = get_time();
 
-	return	((long double)(end_tsc - start_tsc) / (long double)(end_time - start_time) / 1000.0 / 1000.0);
+	return	((long double)(end_tsc - start_tsc) / (long double)(end_time - start_time) / 1e3 / 1e3);
 }
 
 
@@ -80,7 +80,7 @@ long double get_time() {
 
 	clock_gettime(CLOCK_REALTIME, &ts);
 
-	return ((double) ts.tv_sec) + ((double)ts.tv_nsec / 1000000000.0);
+	return ((double) ts.tv_sec) + ((double)ts.tv_nsec / 1e9);
 }
 
 inline int rename_thread(char *thread_name) {
