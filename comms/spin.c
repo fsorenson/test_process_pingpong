@@ -4,6 +4,8 @@
 
 #include <sys/mman.h>
 #include <string.h>
+#include <stdio.h>
+#include <errno.h>
 
 char comm_name_spin[] = "spin";
 char comm_help_text_spin[] = "busy-wait on a shared variable";
