@@ -16,7 +16,7 @@ char comm_help_text_nop2[] = "first thread only sets the variable (second thread
 char comm_name_nop3[] = "nop3";
 char comm_help_text_nop3[] = "first thread only tests the variable (second thread sleeps)";
 
-int *nop_var;
+volatile int *nop_var;
 
 struct timespec nop_ts;
 
