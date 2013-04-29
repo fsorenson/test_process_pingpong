@@ -83,6 +83,19 @@ long double get_time() {
 	return ((double) ts.tv_sec) + ((double)ts.tv_nsec / 1e9);
 }
 
+struct timespec elapsed_time(const struct timespec start, const struct timespec stop) {
+	struct timespec ret;
+
+	if ((stop.tv_nsec - start.tv_nsec) < 0) {
+		ret.tv_sec = stop.tv_sec - start.tv_sec - 1;
+		ret.tv_nsec = 1000000000L + stop.tv_nsec - start.tv_nsec;
+	} else {
+		ret.tv_sec = stop.tv_sec - start.tv_sec;
+		ret.tv_nsec = stop.tv_nsec - start.tv_nsec;
+	}
+	return ret;
+}
+
 inline int rename_thread(char *thread_name) {
 	char name[17];
 	int ret;
