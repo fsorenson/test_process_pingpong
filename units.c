@@ -18,8 +18,6 @@ char *subsec_string(char *arg_buffer, long double size, int dec_pts) {
 
 	if (size <= 0.0) /* don't do negatives...  I said so. */
 		mult = max_mult;
-	if (size == INFINITY) /* don't do infinity either. */
-		mult = max_mult;
 
 	while ((size < 1.0) && (mult < max_mult)) {
 		mult ++;
