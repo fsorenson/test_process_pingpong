@@ -14,6 +14,7 @@ int make_nop_pair(int fd[2]);
 int do_ping_nop1(int thread_num);
 int do_ping_nop2(int thread_num);
 int do_ping_nop3(int thread_num);
+int do_ping_nop4(int thread_num);
 int do_pong_nop(int thread_num);
 
 int cleanup_nop(void);
@@ -21,5 +22,6 @@ int cleanup_nop(void);
 void comm_add_nop1(void);
 void comm_add_nop2(void);
 void comm_add_nop3(void);
+void comm_add_nop4(void);
 
 #endif

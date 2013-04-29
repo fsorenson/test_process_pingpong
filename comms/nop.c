@@ -15,6 +15,8 @@ char comm_name_nop2[] = "nop2";
 char comm_help_text_nop2[] = "first thread only sets the variable (second thread sleeps)";
 char comm_name_nop3[] = "nop3";
 char comm_help_text_nop3[] = "first thread only tests the variable (second thread sleeps)";
+char comm_name_nop4[] = "nop4";
+char comm_help_text_nop4[] = "both threads literally do nothing, but one even sleeps while doing it";
 
 volatile int *nop_var;
 
@@ -80,6 +82,9 @@ inline int __PINGPONG_FN do_ping_nop3(int thread_num) {
 		__asm__ __volatile__("");
 	}
 }
+inline int __PINGPONG_FN do_ping_nop4(int thread_num) {
+	(void) thread_num;
+
 	while (1) {
 		run_data->ping_count ++;
 	}
@@ -133,6 +138,18 @@ static struct comm_mode_ops_struct comm_ops_nop3 = {
 	.comm_cleanup = cleanup_nop
 };
 
+static struct comm_mode_init_info_struct comm_info_nop4 = {
+	.name = comm_name_nop4,
+	.help_text = comm_help_text_nop4
+};
+
+static struct comm_mode_ops_struct comm_ops_nop4 = {
+	.comm_make_pair = make_nop_pair,
+	.comm_do_ping = do_ping_nop4,
+	.comm_do_pong = do_pong_nop,
+	.comm_cleanup = cleanup_nop
+};
+
 void __attribute__((constructor)) comm_add_nop1() {
 	comm_mode_do_initialization(&comm_info_nop1, &comm_ops_nop1);
 }
@@ -142,7 +159,11 @@ void __attribute__((constructor)) comm_add_nop2() {
 void __attribute__((constructor)) comm_add_nop3() {
 	comm_mode_do_initialization(&comm_info_nop3, &comm_ops_nop3);
 }
+void __attribute__((constructor)) comm_add_nop4() {
+	comm_mode_do_initialization(&comm_info_nop4, &comm_ops_nop4);
+}
 
+ADD_COMM_MODE(nop4, comm_add_nop4);
 ADD_COMM_MODE(nop3, comm_add_nop3);
 ADD_COMM_MODE(nop2, comm_add_nop2);
 ADD_COMM_MODE(nop1, comm_add_nop1);
