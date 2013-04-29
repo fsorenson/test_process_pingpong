@@ -19,6 +19,7 @@ static int  estimate_cpu_speed(int thread_num) {
 }
 
 static int send_thread_stats(int thread_num) {
+
 #ifndef RUSAGE_THREAD
 #define RUSAGE_THREAD 1
 #endif
@@ -26,8 +27,11 @@ static int send_thread_stats(int thread_num) {
 		perror("getting rusage");
 	}
 
+	clock_gettime(CLOCK_THREAD_CPUTIME_ID, (struct timespec *)&run_data->thread_stats[thread_num].thread_time);
+
 	if (config.set_affinity == true)
 		run_data->thread_stats[thread_num].tsc = rdtsc(NULL);
+
 
 	run_data->rusage_req[thread_num] = false;
 	return 0;
