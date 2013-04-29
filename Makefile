@@ -97,7 +97,7 @@ OPTIMIZATIONS += -fvariable-expansion-in-unroller -funswitch-loops
 
 # enable this to get debugging
 DEBUG_FLAGS=
-#DEBUG_FLAGS += -g
+#DEBUG_FLAGS += -g -Og
 #DEBUG_FLAGS += -ggdb -gdwarf-3
 
 
