@@ -6,7 +6,7 @@
 
 
 char *subsec_string(char *arg_buffer, long double size, int dec_pts) {
-	static char local_buffer[1024];
+	static char local_buffer[32];
 	char *buffer;
 	unsigned int mult = 0;
 	int p = 0, unit_p = 0;
