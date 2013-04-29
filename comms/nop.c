@@ -48,11 +48,14 @@ int make_nop_pair(int fd[2]) {
 inline int __PINGPONG_FN do_ping_nop1(int thread_num) {
 	(void) thread_num;
 
+	*nop_var = 1;
 	while (1) {
 		run_data->ping_count ++;
 
-		while (1 != 1);
-		while (1 != 1);
+		*nop_var = *nop_var;
+		__asm__ __volatile__("");
+		do { } while (*nop_var != *nop_var);
+		__asm__ __volatile__("");
 	}
 }
 inline int __PINGPONG_FN do_ping_nop2(int thread_num) {
