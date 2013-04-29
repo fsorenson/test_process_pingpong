@@ -42,7 +42,7 @@ sub_dirs += $(objs) $(deps) $(stabs)
 # some warnings
 CFLAGS += -Wall -Wextra
 #CFLAGS += -pedantic
-CFLAGS += -Wunused -Wunused-but-set-variable -Wunused-but-set-parameter -Wunused-macros -Wunused-parameter -Wunused-function -unused-value -Wunreachable-code
+CFLAGS += -Wunused -Wunused-but-set-variable -Wunused-but-set-parameter -Wunused-macros -Wunused-parameter -Wunused-function -Wunused-value -Wunreachable-code
 CFLAGS += -Wuninitialized
 CFLAGS += -Wsuggest-attribute=pure -Wsuggest-attribute=const -Wsuggest-attribute=noreturn
 CFLAGS += -Wshadow -Wundef -Wconversion -Wbad-function-cast -Wcast-align -Wwrite-strings -Wcast-qual
