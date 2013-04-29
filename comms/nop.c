@@ -61,12 +61,12 @@ inline int __PINGPONG_FN do_ping_nop1(int thread_num) {
 inline int __PINGPONG_FN do_ping_nop2(int thread_num) {
 	(void) thread_num;
 
+	*nop_var = 1;
 	while (1) {
 		run_data->ping_count ++;
 
-		*nop_var = 1;
-		while (*nop_var != 1) {
-		}
+		do {} while (unlikely(*nop_var != 1));
+		__asm__ __volatile__("");
 	}
 }
 inline int __PINGPONG_FN do_ping_nop3(int thread_num) {
