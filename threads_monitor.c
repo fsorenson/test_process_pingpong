@@ -180,6 +180,22 @@ void show_stats(int signum) {
 		write(1, output_buffer, strlen(output_buffer));
 	}
 
+	/* user time */
+	snprintf(output_buffer, 255, " (%02ld.%06ld s / %02ld.%06ld s)",
+		run_data->thread_stats[0].rusage.ru_utime.tv_sec
+			, run_data->thread_stats[0].rusage.ru_utime.tv_usec,
+		run_data->thread_stats[1].rusage.ru_utime.tv_sec
+			, run_data->thread_stats[1].rusage.ru_utime.tv_usec);
+	write(1, output_buffer, strlen(output_buffer));
+
+	/* system time */
+	snprintf(output_buffer, 255, " (%02ld.%06ld s / %02ld.%06ld s)",
+		run_data->thread_stats[0].rusage.ru_stime.tv_sec
+			, run_data->thread_stats[0].rusage.ru_stime.tv_usec,
+		run_data->thread_stats[1].rusage.ru_stime.tv_sec
+			, run_data->thread_stats[1].rusage.ru_stime.tv_usec);
+	write(1, output_buffer, strlen(output_buffer));
+
 	// for now, let's ignore the context switches (i_stats.csw[ * ]) and calculated mhz (i_stats.mhz[ * ])
 
 	write(1, "\n", 1);
