@@ -185,8 +185,10 @@ void show_stats(int signum) {
 	write(1, "\n", 1);
 
 	/* cleanup things for the next time we come back */
-	memcpy((void *)&run_data->thread_stats[0].last_rusage, (void *)&run_data->thread_stats[0].rusage, sizeof(struct rusage));
-	memcpy((void *)&run_data->thread_stats[1].last_rusage, (void *)&run_data->thread_stats[1].rusage, sizeof(struct rusage));
+	memcpy((void *)&run_data->thread_stats[0].last_rusage,
+		(void *)&run_data->thread_stats[0].rusage, sizeof(struct rusage));
+	memcpy((void *)&run_data->thread_stats[1].last_rusage,
+		(const void *)&run_data->thread_stats[1].rusage, sizeof(struct rusage));
 
 	run_data->last_ping_count = i_stats.current_count;
 	run_data->last_stats_time = i_stats.current_time;
