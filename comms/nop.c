@@ -10,11 +10,11 @@
 #include <time.h>
 
 char comm_name_nop1[] = "nop1";
-char comm_help_text_nop1[] = "both threads do nothing, but one even sleeps while doing it";
+char comm_help_text_nop1[] = "first thread only sets the variable, then tests it (second thread sleeps)";
 char comm_name_nop2[] = "nop2";
-char comm_help_text_nop2[] = "first thread sets the variable, then tests it (other thread sleeps)";
+char comm_help_text_nop2[] = "first thread only sets the variable (second thread sleeps)";
 char comm_name_nop3[] = "nop3";
-char comm_help_text_nop3[] = "literally do nothing...  just a loop";
+char comm_help_text_nop3[] = "first thread only tests the variable (second thread sleeps)";
 
 int *nop_var;
 
