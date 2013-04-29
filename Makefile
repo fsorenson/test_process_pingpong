@@ -70,12 +70,12 @@ CFLAGS += -Wunsafe-loop-optimizations
 # -O -OO -O1 -O2 -O3 -Os -Ofast
 # older gcc doesn't understand '-Ofast'
 OPTIMIZATIONS =
-#OPTIMIZATIONS += -Ofast
-OPTIMIZATIONS += -O3
+OPTIMIZATIONS += -Ofast
+#OPTIMIZATIONS += -O3
 OPTIMIZATIONS += -fshort-enums
 OPTIMIZATIONS += -malign-double
 OPTIMIZATIONS += -fif-conversion -fif-conversion2
-#OPTIMIZATIONS += -finline-functions -finline-functions-called-once -finline-small-functions
+OPTIMIZATIONS += -finline-functions -finline-functions-called-once -finline-small-functions
 OPTIMIZATIONS += -fargument-alias
 
 # testing
