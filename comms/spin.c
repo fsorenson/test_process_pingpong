@@ -44,6 +44,7 @@ inline int __PINGPONG_FN do_ping_spin(int thread_num) {
 
 inline int __PINGPONG_FN do_pong_spin(int thread_num) {
 	(void)thread_num;
+
 	while (1) {
 
 		while (*spin_var != 1) {
