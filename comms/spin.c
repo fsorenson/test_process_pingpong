@@ -57,7 +57,7 @@ inline int __PINGPONG_FN do_pong_spin(int thread_num) {
 }
 
 int __CONST cleanup_spin() {
-
+	munmap((void *)spin_var, sizeof(int));
 	return 0;
 }
 
