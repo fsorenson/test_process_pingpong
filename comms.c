@@ -25,7 +25,7 @@ int parse_comm_mode(char *arg) {
 	return -1;
 }
 
-void __attribute__((destructor)) cleanup_comm_mode_info() {
+void __attribute__((destructor)) cleanup_comm_mode_info(void) {
 	int i;
 
 	for (i = 0 ; i < comm_mode_count ; i ++) {
@@ -132,7 +132,7 @@ void comm_mode_do_initialization(struct comm_mode_init_info_struct *init_info, s
 }
 
 /* this can be used to double-check that all the initializaation functions were called */
-bool comm_mode_verify_all() {
+bool comm_mode_verify_all(void) {
 	int i;
 	bool result = true;
 
@@ -156,7 +156,7 @@ char *get_comm_mode_name(int comm_mode_index) {
 	return comm_mode_info[comm_mode_index].name;
 }
 
-int __CONST comm_no_init() {
+int __CONST comm_no_init(void) {
 	return 0;
 }
 
@@ -166,7 +166,7 @@ int __CONST comm_no_pre(int thread_num) {
 	return 0;
 }
 
-int __CONST comm_no_begin() {
+int __CONST comm_no_begin(void) {
 	return 0;
 }
 
@@ -195,10 +195,10 @@ inline int comm_do_recv_generic(int fd) {
 	return (int)read(fd, &dummy, 1);
 }
 
-int __CONST comm_no_interrupt() {
+int __CONST comm_no_interrupt(void) {
 	return 0;
 }
 
-int __CONST comm_no_cleanup() {
+int __CONST comm_no_cleanup(void) {
 	return 0;
 }
