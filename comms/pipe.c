@@ -28,7 +28,7 @@ write(1, "sigpipe\n", 8);
 	comm_cleanup_pipe();
 }
 
-int comm_interrupt_pipe() {
+int comm_interrupt_pipe(void) {
 	close(config.mouth[0]);
 	close(config.mouth[1]);
 write(1, "sent interrupts\n", 16);
@@ -36,7 +36,7 @@ write(1, "sent interrupts\n", 16);
 	return 0;
 }
 
-int __attribute__((noreturn)) comm_cleanup_pipe() {
+int __attribute__((noreturn)) comm_cleanup_pipe(void) {
 write(1, "bye\n", 4);
 	exit(0);
 }
