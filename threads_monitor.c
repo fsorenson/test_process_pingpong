@@ -260,7 +260,7 @@ int do_monitor_work(void) {
 	while (run_data->stop != true) {
 		sigsuspend(&signal_mask);
 	}
-	config.comm_interrupt(SIGINT);
+	config.comm_interrupt();
 	stop_handler(1);
 
 	return 0;
