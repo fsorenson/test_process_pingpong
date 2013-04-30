@@ -70,7 +70,7 @@ inline int do_recv_mq(int fd) {
 	return (int)(mq_receive(mqueue[fd], &mq_msg[fd], 1, &mq_prio[fd]));
 }
 
-int cleanup_mq() {
+int cleanup_mq(void) {
 	mq_close(mqueue[0]);
 	mq_close(mqueue[1]);
 
@@ -93,7 +93,7 @@ static struct comm_mode_ops_struct comm_ops_mq = {
 	.comm_cleanup = cleanup_mq
 };
 
-void __attribute__((constructor)) comm_add_mq() {
+void __attribute__((constructor)) comm_add_mq(void) {
 	comm_mode_do_initialization(&comm_info_mq, &comm_ops_mq);
 }
 ADD_COMM_MODE(mq, comm_add_mq);
