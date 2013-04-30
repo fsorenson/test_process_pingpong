@@ -53,7 +53,7 @@ struct interval_stats_struct {
 	long double mhz[2]; /* approximate speed of the CPU */
 };
 
-static void monitor_cleanup() {
+static void monitor_cleanup(void) {
 	free(run_data->thread_info[0].stack);
 	free(run_data->thread_info[1].stack);
 
@@ -231,7 +231,7 @@ void child_handler(int signum) {
 	} /* no more processes have died */
 }
 
-int do_monitor_work() {
+int do_monitor_work(void) {
 	sigset_t signal_mask;
 
 
@@ -266,7 +266,7 @@ int do_monitor_work() {
 	return 0;
 }
 
-static int do_fork() {
+static int do_fork(void) {
 	int thread_num = 0;
 	int pid;
 
@@ -307,7 +307,7 @@ static int do_fork() {
 
 	return 0;
 }
-static int do_clone() {
+static int do_clone(void) {
 	int thread_num = 0;
 	int clone_flags;
 
@@ -355,7 +355,7 @@ static int do_clone() {
 	return 0;
 }
 
-static int do_pthread() {
+static int do_pthread(void) {
 	int thread_num = 0;
 	pthread_attr_t attr;
 	int ret;
@@ -395,7 +395,7 @@ static int do_pthread() {
 	return 0;
 }
 
-int start_threads() {
+int start_threads(void) {
 	printf("parent process is %d\n", getpid());
 
 	if (config.thread_mode == thread_mode_fork) {
