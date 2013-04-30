@@ -12,16 +12,16 @@
 	char *comm_mode_init_function;		\
 	int op_placeholder;			\
 	int op_placeholder2;			\
-	int (*comm_init)();			\
+	int (*comm_init)(void);			\
 	int (*comm_make_pair)(int fd[2]);	\
 	int (*comm_pre)(int s);			\
-	int (*comm_begin)();			\
+	int (*comm_begin)(void);		\
 	int (*comm_do_ping)(int s);		\
 	int (*comm_do_pong)(int s);		\
 	int (*comm_do_send)(int s);		\
 	int (*comm_do_recv)(int s);		\
-	int (*comm_interrupt)();		\
-	int (*comm_cleanup)()
+	int (*comm_interrupt)(void);		\
+	int (*comm_cleanup)(void)
 
 #define COMM_MODE_INIT_INFO \
 	char *name;				\
