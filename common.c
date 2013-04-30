@@ -13,7 +13,7 @@
 #include <errno.h>
 
 
-inline int get_min_stack_size() {
+inline int get_min_stack_size(void) {
 	long int minstack;
 
 	if ((minstack = sysconf(_SC_THREAD_STACK_MIN)) == -1) {
@@ -54,7 +54,7 @@ int do_sleep(long sec, long nsec) {
 	return 0;
 }
 
-long double estimate_cpu_mhz() {
+long double estimate_cpu_mhz(void) {
 	long double start_time, end_time;
 	unsigned long long start_tsc, end_tsc;
 
@@ -75,7 +75,7 @@ inline void set_affinity(int cpu) {
 	sched_setaffinity(0, sizeof(cpu_set_t), &mask);
 }
 
-long double get_time() {
+long double get_time(void) {
 	struct timespec ts;
 
 	clock_gettime(CLOCK_REALTIME, &ts);
