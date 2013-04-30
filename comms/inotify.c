@@ -119,7 +119,7 @@ inline int __PINGPONG_FN do_pong_inotify(int thread_num) {
 }
 
 
-int cleanup_inotify() {
+int cleanup_inotify(void) {
 	munmap(ino_info, sizeof(struct ino_info_struct) * 2);
 
 	return 0;
@@ -137,7 +137,7 @@ static struct comm_mode_ops_struct comm_ops_inotify = {
 	.comm_cleanup = cleanup_inotify
 };
 
-void __attribute__((constructor)) comm_add_inotify() {
+void __attribute__((constructor)) comm_add_inotify(void) {
 	comm_mode_do_initialization(&comm_info_inotify, &comm_ops_inotify);
 }
 
