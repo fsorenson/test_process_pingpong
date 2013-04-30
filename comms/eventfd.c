@@ -79,7 +79,7 @@ static struct comm_mode_ops_struct comm_ops_eventfd = {
 	.comm_do_pong = do_pong_eventfd
 };
 
-void __attribute__((constructor)) comm_add_eventfd() {
+void __attribute__((constructor)) comm_add_eventfd(void) {
 	comm_mode_do_initialization(&comm_info_eventfd, &comm_ops_eventfd);
 }
 
