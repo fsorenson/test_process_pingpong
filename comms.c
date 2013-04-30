@@ -38,15 +38,12 @@ void __attribute__((destructor)) cleanup_comm_mode_info(void) {
 
 void comm_mode_add(const char *comm_name, const char *add_function_name) {
 	void *ret;
-//	unsigned long new_size;
 	unsigned long offset;
 	unsigned long zero_address;
 	unsigned long zero_size;
 
 	if ((comm_mode_count % COMM_MODE_LIST_INCREMENT) == 0) {
 
-//		new_size = (long unsigned int)(comm_mode_count + COMM_MODE_LIST_INCREMENT) *
-//		                        sizeof(struct comm_mode_info_struct);
 		ret = realloc(comm_mode_info,
 			(long unsigned int)(comm_mode_count + COMM_MODE_LIST_INCREMENT) *
 			sizeof(struct comm_mode_info_struct));
@@ -77,7 +74,6 @@ void comm_mode_add(const char *comm_name, const char *add_function_name) {
 	comm_mode_info[comm_mode_count].comm_mode_index = comm_mode_count;
 	comm_mode_info[comm_mode_count].initialized = false;
 
-//	printf("adding '%s' with initialization function '%s'\n", comm_name, add_function_name);
 	comm_mode_count ++;
 }
 
@@ -102,12 +98,6 @@ void comm_mode_do_initialization(struct comm_mode_init_info_struct *init_info, s
 		if (strlen(comm_mode_info[i].name) != strlen(init_info->name))
 			continue;
 		if (!strncmp(comm_mode_info[i].name, init_info->name, strlen(comm_mode_info[i].name))) {
-//			memcpy(&comm_mode_info[i] + offsetof(struct comm_mode_info_struct, op_placeholder),
-/*
-			memcpy(&comm_mode_info[i].op_placeholder,
-				ops,
-				sizeof(struct comm_mode_ops_struct));
-*/
 			if (init_info->help_text != 0)
 				comm_mode_info[i].help_text = strdup(init_info->help_text);
 
@@ -142,11 +132,7 @@ bool comm_mode_verify_all(void) {
 			printf("Initialization function '%s' for comm mode '%s' was not called!!\n",
 			comm_mode_info[i].comm_mode_init_function,
 			comm_mode_info[i].name);
-/*		} else {
-			printf("Initialization function '%s' for comm mode '%s' was called!!\n",
-			comm_mode_info[i].comm_mode_init_function,
-			comm_mode_info[i].name);
-*/		}
+		}
 	}
 	return result;
 }
