@@ -58,7 +58,7 @@ inline int __PINGPONG_FN do_pong_spin(int thread_num) {
 	}
 }
 
-int __CONST cleanup_spin() {
+int __CONST cleanup_spin(void) {
 	munmap((void *)spin_var, sizeof(int));
 	return 0;
 }
@@ -75,7 +75,7 @@ static struct comm_mode_ops_struct comm_ops_spin = {
 	.comm_cleanup		= cleanup_spin
 };
 
-void __attribute__((constructor)) comm_add_spin() {
+void __attribute__((constructor)) comm_add_spin(void) {
 	comm_mode_do_initialization(&comm_info_spin, &comm_ops_spin);
 }
 ADD_COMM_MODE(spin, comm_add_spin);
