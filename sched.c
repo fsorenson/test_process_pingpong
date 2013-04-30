@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-int get_priorities() {
+int get_priorities(void) {
 	struct sched_param param;
 
 	config.cur_sched_policy = sched_getscheduler(0);
@@ -14,7 +14,7 @@ int get_priorities() {
 
 	return 0;
 }
-int set_priorities() {
+int set_priorities(void) {
 	struct sched_param param;
 
 	if (config.euid == 0) {
@@ -26,7 +26,7 @@ int set_priorities() {
 
 	return 0;
 }
-int get_sched_interval() {
+int get_sched_interval(void) {
 	struct timespec tp;
 	int ret;
 
@@ -61,14 +61,14 @@ int parse_sched(char *arg) {
 #include <syscall.h>
 #include <unistd.h>
 //#include <asm-i386/unistd.h>
-int sched_getcpu() {
+int sched_getcpu(void) {
         int c, s;
         s = (int)syscall(__NR_getcpu, &c, NULL, NULL);
         return (s == -1) ? s : c;
 }
 #endif
 
-int num_cpus() {
+int num_cpus(void) {
 	int ncpu;
 
 	if ((ncpu = (int)sysconf(_SC_NPROCESSORS_CONF)) == -1) {
@@ -77,7 +77,7 @@ int num_cpus() {
 	}
 	return ncpu;
 }
-int num_online_cpus() {
+int num_online_cpus(void) {
 	int ncpu;
 
 	if ((ncpu = (int)sysconf(_SC_NPROCESSORS_ONLN)) == -1) {
