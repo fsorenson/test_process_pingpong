@@ -57,7 +57,7 @@ void __NORETURN print_backtrace2(int signum) {
 	_exit(1);
 }
 
-void stop_timer() {
+void stop_timer(void) {
 	struct itimerval ntimeout;
 
 	signal(SIGALRM, SIG_IGN); /* ignore the timer if it alarms */
@@ -66,7 +66,7 @@ void stop_timer() {
 	setitimer(ITIMER_REAL, &ntimeout, NULL);	/* stop timer */
 }
 
-int setup_timer() {
+int setup_timer(void) {
 	struct sigaction sa;
 	struct itimerval timer;
 
@@ -87,7 +87,7 @@ int setup_timer() {
 
 	return 0;
 }
-int setup_stop_signal() {
+int setup_stop_signal(void) {
 	struct sigaction sa;
 
 	run_data->stop = false;
@@ -99,7 +99,7 @@ int setup_stop_signal() {
 
 	return 0;
 }
-int setup_child_signals() {
+int setup_child_signals(void) {
 	struct sigaction sa;
 
 	sigemptyset(&sa.sa_mask);
@@ -110,7 +110,7 @@ int setup_child_signals() {
 	return 0;
 }
 
-void setup_crash_handler() {
+void setup_crash_handler(void) {
 	struct sigaction sa;
 
 	sigemptyset(&sa.sa_mask);
