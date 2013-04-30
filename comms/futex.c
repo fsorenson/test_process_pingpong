@@ -51,13 +51,13 @@ inline int do_recv_futex(int fd) {
 }
 
 
-int cleanup_futex() {
+int cleanup_futex(void) {
 	shmctl(shm_id, IPC_RMID, 0);
 
 	return 0;
 }
 
-void __attribute__((constructor)) comm_add_futex() {
+void __attribute__((constructor)) comm_add_futex(void) {
         struct comm_mode_init_info_struct init_info;
 	struct comm_mode_ops_struct ops;
 
