@@ -31,7 +31,7 @@ const char * thread_mode_strings[] = {
 	, [ thread_mode_pthread ] = "pthread"
 };
 
-static int usage() {
+static int usage(void) {
 	int i;
 
 	printf(
@@ -189,7 +189,7 @@ int parse_opts(int argc, char *argv[]) {
 	return 0;
 }
 
-static void make_pairs() {
+static void make_pairs(void) {
 	config.comm_make_pair(config.pair1);
 	config.comm_make_pair(config.pair2);
 
@@ -199,7 +199,7 @@ static void make_pairs() {
 	config.ear[1] = config.pairs[0][0];
 }
 
-int do_comm_setup() {
+int do_comm_setup(void) {
 
 	printf("Setting up '%s'\n", get_comm_mode_name(config.comm_mode_index));
 
