@@ -95,7 +95,7 @@ static struct comm_mode_ops_struct comm_ops_yield = {
 	.comm_do_pong = do_pong_yield
 };
 
-void __attribute__((constructor)) comm_add_yield() {
+void __attribute__((constructor)) comm_add_yield(void) {
 	comm_mode_do_initialization(&comm_info_yield, &comm_ops_yield);
 }
 
@@ -109,7 +109,7 @@ static struct comm_mode_ops_struct comm_ops_yield_nop = {
 	.comm_do_ping = do_ping_yield_nop,
 	.comm_do_pong = do_pong_yield_nop
 };
-void __attribute__((constructor)) comm_add_yield_nop() {
+void __attribute__((constructor)) comm_add_yield_nop(void) {
 	comm_mode_do_initialization(&comm_info_yield_nop, &comm_ops_yield_nop);
 }
 ADD_COMM_MODE(yield_nop, comm_add_yield_nop);
