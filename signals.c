@@ -66,12 +66,12 @@ void stop_timer(void) {
 	setitimer(ITIMER_REAL, &ntimeout, NULL);	/* stop timer */
 }
 
-int setup_timer(void) {
+void setup_timer(void) {
 	struct sigaction sa;
 	struct itimerval timer;
 
 	if (config.stats_interval == 0) /* no updates */
-		return 0;
+		return;
 
 	timer.it_value.tv_sec = config.stats_interval;
 	timer.it_value.tv_usec = 0;
@@ -85,9 +85,9 @@ int setup_timer(void) {
 	sigaction(SIGALRM, &sa, NULL);
 	setitimer(ITIMER_REAL, &timer, 0);
 
-	return 0;
+	return;
 }
-int setup_stop_signal(void) {
+void setup_stop_signal(void) {
 	struct sigaction sa;
 
 	run_data->stop = false;
@@ -97,9 +97,9 @@ int setup_stop_signal(void) {
 	sa.sa_handler = &stop_handler;
 	sigaction(SIGINT, &sa, NULL);
 
-	return 0;
+	return;
 }
-int setup_child_signals(void) {
+void setup_child_signals(void) {
 	struct sigaction sa;
 
 	sigemptyset(&sa.sa_mask);
@@ -107,7 +107,7 @@ int setup_child_signals(void) {
 	sa.sa_handler = &child_handler;
 	sigaction(SIGCHLD, &sa, NULL);
 
-	return 0;
+	return;
 }
 
 void setup_crash_handler(void) {
