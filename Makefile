@@ -254,17 +254,20 @@ $(deps_dir)/%.d: $(comms_dir)/%.c $(comms_dir)/%.h
 
 $(objs_dir)/%.o: %.c  $(deps_dir)/%.d
 	@mkdir -p $(@D)
-	@$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@
+	@mkdir -p stabs
+	@$(CC) $(CPPFLAGS) $(CFLAGS) $(WARNINGS) -c $< -o $@ \
+		-Wa,-adhlmns=$(stab_dir)/$(addsuffix .s,$(basename $(notdir $@))) -g -fverbose-asm -masm=intel
 
 $(objs_dir)/%.o: $(comms_dir)/%.c $(deps_dir)/%.d
 	@mkdir -p $(@D)
-	@$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@
-
+	@mkdir -p stabs
+	@$(CC) $(CPPFLAGS) $(CFLAGS) $(WARNINGS) -c $< -o $@ \
+		-Wa,-adhlmns=$(stab_dir)/$(addsuffix .s,$(basename $(notdir $@))) -g -fverbose-asm -masm=intel
 
 
 
 test_process_pingpong:	$(comms_glue_objs) $(comms_objs) $(objs) $(deps)
-	$(CC) $(comms_glue_objs) $(comms_objs) $(objs) $(CPPFLAGS) $(CFLAGS) $(LIBS) -o $@
+	$(CC) $(comms_glue_objs) $(comms_objs) $(objs) $(CPPFLAGS) $(CFLAGS) $(LIBS) $(WARNINGS) -o $@
 
 
 $(stab_dir)/%.s: $(comms_dir)/%.c $(deps_dir)/%.d
