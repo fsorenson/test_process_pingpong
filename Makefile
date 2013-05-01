@@ -16,6 +16,9 @@ CFLAGS=
 CPPFLAGS += -std=gnu99
 #CPPFLAGS += -std=c99
 
+# only enable if 'static' is really what we want
+#CPPFLAGS += -static
+
 #CFLAGS += -D_XOPEN_SOURCE=600 -D_GNU_SOURCE
 
 # tell gcc my cpus don't do avx?...
