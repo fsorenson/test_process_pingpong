@@ -28,6 +28,26 @@ CPPFLAGS += -std=gnu99
 #CFLAGS += -march=corei7 -mtune=corei7
 #CFLAGS += -march=corei7 -mtune=corei7
 
+COMPILE_DEBUG =
+# only enable these if you want to see _exceptionally_verbose_ debugging messages during compilation
+# cool idea, though
+#COMPILE_DEBUG += -Q
+
+# statistics about compilation
+#COMPILE_DEBUG += -ftime-report
+#COMPILE_DEBUG += -fmem-report
+#COMPILE_DEBUG += -time
+
+# > 0 - output same info as -dRS
+# > 1 - output basic block probability, detailed ready list info, and unit/insn info
+# > 2 - RTL at abort point, control-flow and regions info
+# > 4 - includes dependence info
+# > 9 - output always goes to stderr
+#COMPILE_DEBUG += -fsched-verbose=
+
+
+CFLAGS += $(COMPILE_DEBUG)
+
 
 # begin with empty lists
 C_SRCS =
