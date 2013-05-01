@@ -63,29 +63,41 @@ sub_dirs =
 sub_dirs += $(objs) $(deps) $(stabs)
 
 # some warnings
-CFLAGS += -Wall -Wextra
-#CFLAGS += -pedantic
-CFLAGS += -Wunused -Wunused-but-set-variable -Wunused-but-set-parameter -Wunused-macros -Wunused-parameter -Wunused-function -Wunused-value -Wunreachable-code
-CFLAGS += -Wuninitialized
-CFLAGS += -Wsuggest-attribute=pure -Wsuggest-attribute=const -Wsuggest-attribute=noreturn
-CFLAGS += -Wshadow -Wundef -Wconversion -Wbad-function-cast -Wcast-align -Wwrite-strings -Wcast-qual
-CFLAGS += -Wpointer-arith -Wfloat-equal
-CFLAGS += -Wpacked -Wpadded -Winline -Wnested-externs
-CFLAGS += -Wendif-labels
-CFLAGS += -Wmissing-noreturn
-CFLAGS += -Wmissing-format-attribute -Wmissing-prototypes -Wmissing-parameter-type -Wmissing-field-initializers
-CFLAGS += -Wmissing-declarations -Wredundant-decls -Wdeclaration-after-statement
-CFLAGS += -Wclobbered -Wlogical-op
-#CFLAGS += -Wtraditional -Wtraditional-conversion
-CFLAGS += -Wdeclaration-after-statement
-CFLAGS += -Wunsafe-loop-optimizations
+WARNINGS =
+WARNINGS += -Wall -Wextra
+WARNINGS += -pedantic
+WARNINGS += -Wunused -Wunused-but-set-variable -Wunused-but-set-parameter -Wunused-macros
+WARNINGS += -Wunused-result -Wunused-parameter -Wunused-function -Wunused-value
+WARNINGS += -Wunreachable-code
+WARNINGS += -Wuninitialized -Winit-self
+WARNINGS += -Wsuggest-attribute=pure -Wsuggest-attribute=const -Wsuggest-attribute=noreturn
+WARNINGS += -Wshadow -Wconversion -Wsign-conversion -Wsign-compare -Wbad-function-cast -Wcast-align -Wwrite-strings -Wcast-qual
+WARNINGS += -Wundef -Wshadow
+WARNINGS += -Wpointer-arith -Wfloat-equal
+WARNINGS += -Wpacked -Wpadded -Winline -Wnested-externs
+WARNINGS += -Wendif-labels
+WARNINGS += -Wmissing-noreturn
+WARNINGS += -Wmissing-format-attribute -Wmissing-prototypes -Wmissing-parameter-type -Wmissing-field-initializers
+WARNINGS += -Wmissing-declarations -Wredundant-decls -Wdeclaration-after-statement
+WARNINGS += -Wclobbered -Wlogical-op
+WARNINGS += -Wdisabled-optimization
+WARNINGS += -Wunsafe-loop-optimizations
+WARNINGS += -Wstrict-prototypes -Wold-style-definition
+WARNINGS += -Wchar-subscripts -Wcomment
+WARNINGS += -Wdouble-promotion -Wtype-limits -Wimplicit-int -Wimplicit-function-declaration
+WARNINGS += -Wparentheses -Wmissing-braces
+WARNINGS += -Wswitch -Wswitch-default -Wswitch-enum
+WARNINGS += -Wmissing-format-attribute
+WARNINGS += -Warray-bounds -Wunsafe-loop-optimizations
+WARNINGS += -Wsequence-point -Wreturn-type
 
 # doesn't seem to work on older gcc
-#-Wlogical-op -Waddress
+WARNINGS += -Wlogical-op -Waddress -Waggregate-return
 
 
 # too annoying to enable
-#CFLAGS += -Wstrict-prototypes -Wold-style-definition
+#WARNINGS += -Wtraditional -Wtraditional-conversion
+#WARNINGS += -Wlong-long
 
 
 
