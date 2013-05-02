@@ -9,9 +9,6 @@
 #include <string.h>
 #include <stdio.h>
 
-char comm_name_signal[] = "signal";
-char comm_help_text_signal[] = "each thread sleeps until receiving a wakeup signal from the other";
-
 static int sigs[2];
 static int signal_received[2];
 struct timespec sig_ts[2];
@@ -97,11 +94,6 @@ int __CONST cleanup_signal(void) {
 	return 0;
 }
 
-static struct comm_mode_init_info_struct comm_info_signal = {
-	.name = comm_name_signal,
-	.help_text = comm_help_text_signal
-};
-
 static struct comm_mode_ops_struct comm_ops_signal = {
 	.comm_make_pair = make_signal_pair,
 	.comm_pre = do_pre_signal,
@@ -109,9 +101,5 @@ static struct comm_mode_ops_struct comm_ops_signal = {
 	.comm_do_pong = do_pong_signal,
 	.comm_cleanup = cleanup_signal
 };
-
-void comm_add_signal(void) {
-	comm_mode_do_initialization(&comm_info_signal, &comm_ops_signal);
-}
 
 NEW_ADD_COMM_MODE(signal, "each thread sleeps until receiving a wakeup signal from the other", &comm_ops_signal);

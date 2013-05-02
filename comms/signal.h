@@ -12,6 +12,4 @@ int do_pong_signal(int thread_num);
 
 int cleanup_signal(void);
 
-void comm_add_signal(void);
-
 #endif
