@@ -11,6 +11,4 @@ int do_recv_futex(int fd);
 
 int cleanup_futex(void);
 
-void comm_add_futex(void);
-
 #endif
