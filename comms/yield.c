@@ -7,11 +7,6 @@
 #include <string.h>
 #include <time.h>
 
-char comm_name_yield[] = "yield";
-char comm_help_text_yield[] = "each thread calls sched_yield() until their turn to pingpong";
-char comm_name_yield_nop[] = "yield_nop";
-char comm_help_text_yield_nop[] = "only tests rate at which sched_yield() re-schedules--no pingpong";
-
 static int volatile *yield_var;
 
 struct timespec yield_ts;
@@ -84,24 +79,10 @@ inline int __PINGPONG_FN do_pong_yield_nop(int thread_num) {
 	}
 }
 
-static struct comm_mode_init_info_struct comm_info_yield = {
-	.name = comm_name_yield,
-	.help_text = comm_help_text_yield
-};
-
 static struct comm_mode_ops_struct comm_ops_yield = {
 	.comm_make_pair = make_yield_pair,
 	.comm_do_ping = do_ping_yield,
 	.comm_do_pong = do_pong_yield
-};
-
-void comm_add_yield(void) {
-	comm_mode_do_initialization(&comm_info_yield, &comm_ops_yield);
-}
-
-static struct comm_mode_init_info_struct comm_info_yield_nop = {
-	.name = comm_name_yield_nop,
-	.help_text = comm_help_text_yield_nop
 };
 
 static struct comm_mode_ops_struct comm_ops_yield_nop = {
@@ -109,9 +90,6 @@ static struct comm_mode_ops_struct comm_ops_yield_nop = {
 	.comm_do_ping = do_ping_yield_nop,
 	.comm_do_pong = do_pong_yield_nop
 };
-void comm_add_yield_nop(void) {
-	comm_mode_do_initialization(&comm_info_yield_nop, &comm_ops_yield_nop);
-}
 
 NEW_ADD_COMM_MODE(yield_nop, "only tests rate at which sched_yield() re-schedules--no pingpong", &comm_ops_yield_nop);
 NEW_ADD_COMM_MODE(yield, "each thread calls sched_yield() until their turn to pingpong", &comm_ops_yield);
