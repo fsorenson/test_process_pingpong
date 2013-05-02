@@ -63,4 +63,5 @@ typedef struct integer_fixed_point {
 	char dummy[4];
 } integer_fixed_point_t;
 
+integer_fixed_point_t __CONST f_to_fp(int prec, long double f);
 #endif

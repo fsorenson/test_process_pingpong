@@ -2,6 +2,7 @@
 #include "common.h"
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <math.h>
 
 
@@ -58,14 +59,4 @@ typedef struct integer_time {
         int s;
         int ms;
 } integer_time_t;
-
-integer_fixed_point_t __CONST f_to_fp(int prec, double f) {
-        integer_fixed_point_t int_fp;
-
-        int_fp.prec = prec;
-        int_fp.i = (unsigned long int) f;
-        int_fp.dec = (unsigned long)((f - (double)int_fp.i) * prec);
-
-        return int_fp;
-}
 

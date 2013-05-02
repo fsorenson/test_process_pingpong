@@ -10,7 +10,5 @@
 
 char *subsec_string(char *arg_buffer, long double size, int dec_pts);
 
-integer_fixed_point_t f_to_fp(int prec, double f);
-
 
 #endif

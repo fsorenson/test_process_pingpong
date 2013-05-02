@@ -11,6 +11,7 @@
 #include <sys/mman.h>
 #include <time.h>
 #include <errno.h>
+#include <math.h>
 
 
 inline int get_min_stack_size(void) {
@@ -149,5 +150,28 @@ unsigned int __CONST page_align_size(unsigned int len, int size_align_flag) {
 void *map_shared_area(unsigned int len, int size_align_flag) {
 	return mmap(NULL, page_align_size(len, size_align_flag),
                 PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0);
+}
+
+integer_fixed_point_t __CONST f_to_fp(int prec, long double f) {
+	integer_fixed_point_t int_fp;
+	unsigned long mult;
+	long long i;
+	unsigned long long i2;
+	long double fmult;
+
+	fmult = pow(10.0, prec * 1.0);
+	mult = (unsigned long)fmult;
+
+	i = llroundl(f * fmult);
+	i2 = (unsigned long long)((i < 0) ? (0 - i) : i);
+
+	int_fp.prec = prec;
+
+	int_fp.i = i2 / mult;
+	int_fp.dec = i2 - (int_fp.i * mult);
+
+	return int_fp;
+}
+}
 }
 
