@@ -19,9 +19,4 @@ int do_pong_nop(int thread_num);
 
 int cleanup_nop(void);
 
-void comm_add_nop1(void);
-void comm_add_nop2(void);
-void comm_add_nop3(void);
-void comm_add_nop4(void);
-
 #endif
