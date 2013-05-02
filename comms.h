@@ -25,7 +25,8 @@
 
 #define COMM_MODE_INIT_INFO \
 	char *name;				\
-	char *help_text
+	char *help_text;			\
+	char *source_file
 
 struct comm_mode_ops_struct {
 	COMM_MODE_OPS;
