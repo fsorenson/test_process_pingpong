@@ -14,4 +14,4 @@ static struct comm_mode_ops_struct comm_ops_socketpair = {
 	.comm_make_pair = make_socket_pair
 };
 
-NEW_ADD_COMM_MODE(socketpair, "", &comm_ops_socketpair);
+ADD_COMM_MODE(socketpair, "", &comm_ops_socketpair);

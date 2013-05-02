@@ -102,4 +102,4 @@ static struct comm_mode_ops_struct comm_ops_signal = {
 	.comm_cleanup = cleanup_signal
 };
 
-NEW_ADD_COMM_MODE(signal, "each thread sleeps until receiving a wakeup signal from the other", &comm_ops_signal);
+ADD_COMM_MODE(signal, "each thread sleeps until receiving a wakeup signal from the other", &comm_ops_signal);

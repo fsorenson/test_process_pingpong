@@ -129,4 +129,4 @@ static struct comm_mode_ops_struct comm_ops_inotify = {
 	.comm_cleanup = cleanup_inotify
 };
 
-NEW_ADD_COMM_MODE(inotify, "use inotify to watch for file modifications", &comm_ops_inotify);
+ADD_COMM_MODE(inotify, "use inotify to watch for file modifications", &comm_ops_inotify);

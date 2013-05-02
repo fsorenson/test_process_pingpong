@@ -67,4 +67,4 @@ static struct comm_mode_ops_struct comm_ops_spin = {
 	.comm_cleanup		= cleanup_spin
 };
 
-NEW_ADD_COMM_MODE(spin, "busy-wait on a shared variable", &comm_ops_spin);
+ADD_COMM_MODE(spin, "busy-wait on a shared variable", &comm_ops_spin);

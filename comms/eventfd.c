@@ -72,7 +72,7 @@ static struct comm_mode_ops_struct comm_ops_eventfd = {
 	.comm_do_pong = do_pong_eventfd
 };
 
-NEW_ADD_COMM_MODE(eventfd, "", &comm_ops_eventfd);
+ADD_COMM_MODE(eventfd, "", &comm_ops_eventfd);
 
 
 #endif /* HAVE_EVENTFD */

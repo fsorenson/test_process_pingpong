@@ -87,4 +87,4 @@ static struct comm_mode_ops_struct comm_ops_mq = {
 	.comm_cleanup = cleanup_mq
 };
 
-NEW_ADD_COMM_MODE(mq, "", &comm_ops_mq);
+ADD_COMM_MODE(mq, "", &comm_ops_mq);

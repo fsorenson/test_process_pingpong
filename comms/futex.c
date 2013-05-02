@@ -64,4 +64,4 @@ static struct comm_mode_ops_struct comm_ops_futex = {
 	.comm_cleanup = cleanup_futex
 };
 
-NEW_ADD_COMM_MODE(futex, "use futex wait/wake to benefit from kernel-arbitrated lock contention", &comm_ops_futex);
+ADD_COMM_MODE(futex, "use futex wait/wake to benefit from kernel-arbitrated lock contention", &comm_ops_futex);

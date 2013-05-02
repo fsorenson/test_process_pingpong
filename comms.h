@@ -59,17 +59,6 @@ char *get_comm_mode_name(int index);
 
 void comm_mode_add(const char *comm_name, const char *add_function_name);
 
-#define ADD_COMM_MODE1(function_name) \
-  void cons_ ## function_name() __attribute__ ((constructor)); \
-  void cons_ ## function_name() { comm_mode_add2(#function_name); }
-
-
-#define ADD_COMM_MODE(comm_name,add_function_name) \
-	void cons_ ## add_function_name(void) __attribute__((constructor)); \
-	void cons_ ## add_function_name(void) { comm_mode_add(#comm_name, #add_function_name); } \
-	static __attribute__((unused)) char comm_SOURCE_FILE_##comm_name[] = __FILE__
-// kludgy, but seems to work to get rid of 'extra semicolon' and 'defined, but not used' messages
-
 #define NEW_ADD_COMM_MODE(comm_name,_help_text,ops) \
 	static char comm_mode_init_name_##comm_name[] = #comm_name; \
 	static char comm_mode_init_help_text_##comm_name[] = _help_text; \

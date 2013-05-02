@@ -78,5 +78,5 @@ static struct comm_mode_ops_struct comm_ops_race2 = {
 	.comm_cleanup = cleanup_race
 };
 
-NEW_ADD_COMM_MODE(race2, "both threads repeatedly write their own value _AND_ increment the counter--no pingpong", &comm_ops_race2);
-NEW_ADD_COMM_MODE(race1, "both threads repeatedly write their own value--no pingpong", &comm_ops_race1);
+ADD_COMM_MODE(race2, "both threads repeatedly write their own value _AND_ increment the counter--no pingpong", &comm_ops_race2);
+ADD_COMM_MODE(race1, "both threads repeatedly write their own value--no pingpong", &comm_ops_race1);
