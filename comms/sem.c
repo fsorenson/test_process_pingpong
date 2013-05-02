@@ -129,6 +129,5 @@ void comm_add_busy_sem(void) {
 	comm_mode_do_initialization(&comm_info_busysem, &comm_ops_busysem);
 }
 
-ADD_COMM_MODE(sem, comm_add_sem);
-ADD_COMM_MODE(busysem, comm_add_busysem);
-
+NEW_ADD_COMM_MODE(busysem, "busy-wait on a semaphore", &comm_ops_busysem);
+NEW_ADD_COMM_MODE(sem, "wait on a semaphore", &comm_ops_sem);

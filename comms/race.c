@@ -99,5 +99,5 @@ void comm_add_race1(void) {
 void comm_add_race2(void) {
 	comm_mode_do_initialization(&comm_info_race2, &comm_ops_race2);
 }
-ADD_COMM_MODE(race2, comm_add_race2);
-ADD_COMM_MODE(race1, comm_add_race1);
+NEW_ADD_COMM_MODE(race2, "both threads repeatedly write their own value _AND_ increment the counter--no pingpong", &comm_ops_race2);
+NEW_ADD_COMM_MODE(race1, "both threads repeatedly write their own value--no pingpong", &comm_ops_race1);

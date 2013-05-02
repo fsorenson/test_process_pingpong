@@ -83,7 +83,7 @@ void comm_add_eventfd(void) {
 	comm_mode_do_initialization(&comm_info_eventfd, &comm_ops_eventfd);
 }
 
-ADD_COMM_MODE(eventfd, comm_add_eventfd);
+NEW_ADD_COMM_MODE(eventfd, "", &comm_ops_eventfd);
 
 
 #endif /* HAVE_EVENTFD */

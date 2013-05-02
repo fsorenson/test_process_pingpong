@@ -56,4 +56,4 @@ void comm_add_pipe(void) {
 	comm_mode_do_initialization(&comm_info_pipe, &comm_ops_pipe);
 }
 
-ADD_COMM_MODE(pipe, comm_add_pipe);
+NEW_ADD_COMM_MODE(pipe, "", &comm_ops_pipe);

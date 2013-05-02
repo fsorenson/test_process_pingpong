@@ -23,5 +23,4 @@ void comm_add_socket_pair(void) {
 	comm_mode_do_initialization(&comm_info_socketpair, &comm_ops_socketpair);
 }
 
-ADD_COMM_MODE(socketpair, comm_add_socket_pair);
-
+NEW_ADD_COMM_MODE(socketpair, "", &comm_ops_socketpair);

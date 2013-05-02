@@ -96,4 +96,5 @@ static struct comm_mode_ops_struct comm_ops_mq = {
 void comm_add_mq(void) {
 	comm_mode_do_initialization(&comm_info_mq, &comm_ops_mq);
 }
-ADD_COMM_MODE(mq, comm_add_mq);
+
+NEW_ADD_COMM_MODE(mq, "", &comm_ops_mq);

@@ -132,4 +132,4 @@ void comm_add_tcp(void) {
 	comm_mode_do_initialization(&comm_info_tcp, &comm_ops_tcp);
 }
 
-ADD_COMM_MODE(tcp, comm_add_tcp);
+NEW_ADD_COMM_MODE(tcp, "", &comm_ops_tcp);

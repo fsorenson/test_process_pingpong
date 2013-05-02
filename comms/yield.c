@@ -112,5 +112,6 @@ static struct comm_mode_ops_struct comm_ops_yield_nop = {
 void comm_add_yield_nop(void) {
 	comm_mode_do_initialization(&comm_info_yield_nop, &comm_ops_yield_nop);
 }
-ADD_COMM_MODE(yield_nop, comm_add_yield_nop);
-ADD_COMM_MODE(yield, comm_add_yield);
+
+NEW_ADD_COMM_MODE(yield_nop, "only tests rate at which sched_yield() re-schedules--no pingpong", &comm_ops_yield_nop);
+NEW_ADD_COMM_MODE(yield, "each thread calls sched_yield() until their turn to pingpong", &comm_ops_yield);

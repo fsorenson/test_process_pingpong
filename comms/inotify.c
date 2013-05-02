@@ -141,5 +141,4 @@ void comm_add_inotify(void) {
 	comm_mode_do_initialization(&comm_info_inotify, &comm_ops_inotify);
 }
 
-ADD_COMM_MODE(inotify, comm_add_inotify);
-
+NEW_ADD_COMM_MODE(inotify, "use inotify to watch for file modifications", &comm_ops_inotify);

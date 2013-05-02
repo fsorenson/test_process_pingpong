@@ -114,4 +114,4 @@ void comm_add_signal(void) {
 	comm_mode_do_initialization(&comm_info_signal, &comm_ops_signal);
 }
 
-ADD_COMM_MODE(signal, comm_add_signal);
+NEW_ADD_COMM_MODE(signal, "each thread sleeps until receiving a wakeup signal from the other", &comm_ops_signal);

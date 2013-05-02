@@ -61,4 +61,4 @@ void comm_add_udp(void) {
 	comm_mode_do_initialization(&comm_info_udp, &comm_ops_udp);
 }
 
-ADD_COMM_MODE(udp, comm_add_udp);
+NEW_ADD_COMM_MODE(udp, "", &comm_ops_udp);

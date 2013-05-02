@@ -78,4 +78,4 @@ static struct comm_mode_ops_struct comm_ops_spin = {
 void comm_add_spin(void) {
 	comm_mode_do_initialization(&comm_info_spin, &comm_ops_spin);
 }
-ADD_COMM_MODE(spin, comm_add_spin);
+NEW_ADD_COMM_MODE(spin, "busy-wait on a shared variable", &comm_ops_spin);
