@@ -8,11 +8,6 @@
 #include <fcntl.h>
 #include <sys/stat.h>
 
-char comm_name_sem[] = "sem";
-char comm_help_text_sem[] =  "wait on a semaphore to pingpong";
-
-char comm_name_busysem[] = "busysem";
-char comm_help_text_busysem[] = "busy-wait on a semaphore";
 
 sem_t *sems[2];
 const char *sem_names[] = { "ping", "pong" };
@@ -94,27 +89,12 @@ int cleanup_sem(void) {
 	return 0;
 }
 
-static struct comm_mode_init_info_struct comm_info_sem = {
-	.name = comm_name_sem,
-	.help_text = comm_help_text_sem
-};
-
 static struct comm_mode_ops_struct comm_ops_sem = {
 	.comm_make_pair = make_sem_pair,
 	.comm_begin = do_begin_sem,
 	.comm_do_ping = do_ping_sem,
 	.comm_do_pong = do_pong_sem,
 	.comm_cleanup = cleanup_sem
-};
-
-void comm_add_sem(void) {
-	comm_mode_do_initialization(&comm_info_sem, &comm_ops_sem);
-}
-
-
-static struct comm_mode_init_info_struct comm_info_busysem = {
-	.name = comm_name_busysem,
-	.help_text = comm_help_text_busysem
 };
 
 static struct comm_mode_ops_struct comm_ops_busysem = {
@@ -124,10 +104,6 @@ static struct comm_mode_ops_struct comm_ops_busysem = {
 	.comm_do_pong = do_pong_busysem,
 	.comm_cleanup = cleanup_sem
 };
-
-void comm_add_busy_sem(void) {
-	comm_mode_do_initialization(&comm_info_busysem, &comm_ops_busysem);
-}
 
 NEW_ADD_COMM_MODE(busysem, "busy-wait on a semaphore", &comm_ops_busysem);
 NEW_ADD_COMM_MODE(sem, "wait on a semaphore", &comm_ops_sem);

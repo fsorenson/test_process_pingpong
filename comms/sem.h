@@ -22,7 +22,4 @@ int do_recv_busy_sem(int fd);
 
 int cleanup_sem(void);
 
-void comm_add_sem(void);
-void comm_add_busy_sem(void);
-
 #endif
