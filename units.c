@@ -7,6 +7,9 @@
 
 
 char *subsec_string(char *arg_buffer, long double size, int dec_pts) {
+	integer_fixed_point_t int_fp;
+
+
 	static char local_buffer[32];
 	char *buffer;
 	unsigned int mult = 0;
@@ -20,6 +23,8 @@ char *subsec_string(char *arg_buffer, long double size, int dec_pts) {
 	if (size <= 0.0) /* don't do negatives...  I said so. */
 		mult = max_mult;
 
+	int_fp = f_to_fp(dec_pts, size);
+
 	while ((size < 1.0) && (mult < max_mult)) {
 		mult ++;
 		size *= 1000.0;
@@ -29,13 +34,17 @@ char *subsec_string(char *arg_buffer, long double size, int dec_pts) {
 		mult = 0;
 	}
 
-	if (size >= 100.0)
-		buffer[p++] = (char)(((int)(size / 100.0) % 10) + '0');
-	if (size >= 10.0)
-		buffer[p++] = (char)(((int)(size / 10.0) % 10) + '0');
-	buffer[p++] = (char)(((int)(size) % 10) + '0');
+	int_fp = f_to_fp(dec_pts, size);
+
+
+	if (int_fp.i >= 100)
+		buffer[p++] = (char)(((int_fp.i / 100) % 10) + '0');
+	if (size >= 10)
+		buffer[p++] = (char)(((int_fp.i / 10) % 10) + '0');
+	buffer[p++] = (char)((int_fp.i % 10) + '0');
 
 	if (dec_pts > 0) {
+//		i = mult
 		buffer[p++] = '.';
 
 		size -= truncl(size);
