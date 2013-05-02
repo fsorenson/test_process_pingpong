@@ -6,6 +6,5 @@
 //#include "test_process_pingpong.h"
 
 int make_udp_pair(int fd[2]);
-void comm_add_udp(void);
 
 #endif

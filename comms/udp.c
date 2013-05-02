@@ -7,8 +7,6 @@
 #include <netinet/ip.h>
 #include <sys/socket.h>
 
-char comm_name_udp[] = "udp";
-
 int make_udp_pair(int fd[2]) {
         int fds, fdc;
         socklen_t addr_len;
@@ -49,16 +47,8 @@ int make_udp_pair(int fd[2]) {
         return 0;
 }
 
-static struct comm_mode_init_info_struct comm_info_udp = {
-	.name = comm_name_udp
-};
-
 static struct comm_mode_ops_struct comm_ops_udp = {
 	.comm_make_pair = make_udp_pair
 };
-
-void comm_add_udp(void) {
-	comm_mode_do_initialization(&comm_info_udp, &comm_ops_udp);
-}
 
 NEW_ADD_COMM_MODE(udp, "", &comm_ops_udp);
