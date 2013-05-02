@@ -12,9 +12,6 @@
 
 #include <errno.h>
 
-char comm_name_inotify[] = "inotify";
-char comm_help_text_inotify[] = "use inotify to watch for file modifications";
-
 #define EVENT_SIZE	(sizeof(struct inotify_event))
 #define EVENT_BUF_SIZE	(1024 * (EVENT_SIZE + 16))
 
@@ -125,20 +122,11 @@ int cleanup_inotify(void) {
 	return 0;
 }
 
-static struct comm_mode_init_info_struct comm_info_inotify = {
-	.name = comm_name_inotify,
-	.help_text = comm_help_text_inotify
-};
-
 static struct comm_mode_ops_struct comm_ops_inotify = {
 	.comm_make_pair = make_inotify_pair,
 	.comm_do_ping = do_ping_inotify,
 	.comm_do_pong = do_pong_inotify,
 	.comm_cleanup = cleanup_inotify
 };
-
-void comm_add_inotify(void) {
-	comm_mode_do_initialization(&comm_info_inotify, &comm_ops_inotify);
-}
 
 NEW_ADD_COMM_MODE(inotify, "use inotify to watch for file modifications", &comm_ops_inotify);

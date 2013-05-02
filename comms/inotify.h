@@ -13,6 +13,4 @@ int do_pong_inotify(int thread_num);
 
 int cleanup_inotify(void);
 
-void comm_add_inotify(void);
-
 #endif
