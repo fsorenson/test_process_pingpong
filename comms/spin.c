@@ -7,9 +7,6 @@
 #include <stdio.h>
 #include <errno.h>
 
-char comm_name_spin[] = "spin";
-char comm_help_text_spin[] = "busy-wait on a shared variable";
-
 int volatile *spin_var;
 
 int make_spin_pair(int fd[2]) {
@@ -63,11 +60,6 @@ int __CONST cleanup_spin(void) {
 	return 0;
 }
 
-static struct comm_mode_init_info_struct comm_info_spin = {
-	.name = comm_name_spin,
-	.help_text = comm_help_text_spin
-};
-
 static struct comm_mode_ops_struct comm_ops_spin = {
 	.comm_make_pair		= make_spin_pair,
 	.comm_do_ping		= do_ping_spin,
@@ -75,7 +67,4 @@ static struct comm_mode_ops_struct comm_ops_spin = {
 	.comm_cleanup		= cleanup_spin
 };
 
-void comm_add_spin(void) {
-	comm_mode_do_initialization(&comm_info_spin, &comm_ops_spin);
-}
 NEW_ADD_COMM_MODE(spin, "busy-wait on a shared variable", &comm_ops_spin);

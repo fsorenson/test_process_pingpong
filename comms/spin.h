@@ -10,6 +10,4 @@ int do_pong_spin(int thread_num);
 
 int cleanup_spin(void);
 
-void comm_add_spin(void);
-
 #endif
