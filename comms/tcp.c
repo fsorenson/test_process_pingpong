@@ -12,9 +12,6 @@
 #include <netinet/tcp.h>
 #include <errno.h>
 
-char comm_name_tcp[] = "tcp";
-
-
 int tcp_fds[2];
 
 int make_tcp_pair(int fd[2]) {
@@ -118,18 +115,10 @@ inline int __PINGPONG_FN do_pong_tcp(int thread_num) {
 	}
 }
 
-static struct comm_mode_init_info_struct comm_info_tcp = {
-	.name = comm_name_tcp
-};
-
 static struct comm_mode_ops_struct comm_ops_tcp = {
 	.comm_make_pair = make_tcp_pair,
 	.comm_do_ping = do_ping_tcp,
 	.comm_do_pong = do_pong_tcp
 };
-
-void comm_add_tcp(void) {
-	comm_mode_do_initialization(&comm_info_tcp, &comm_ops_tcp);
-}
 
 NEW_ADD_COMM_MODE(tcp, "", &comm_ops_tcp);
