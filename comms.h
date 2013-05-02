@@ -66,7 +66,9 @@ void comm_mode_add(const char *comm_name, const char *add_function_name);
 
 #define ADD_COMM_MODE(comm_name,add_function_name) \
 	void cons_ ## add_function_name(void) __attribute__((constructor)); \
-	void cons_ ## add_function_name() { comm_mode_add(#comm_name, #add_function_name); }
+	void cons_ ## add_function_name(void) { comm_mode_add(#comm_name, #add_function_name); } \
+	static __attribute__((unused)) char comm_SOURCE_FILE_##comm_name[] = __FILE__
+// kludgy, but seems to work to get rid of 'extra semicolon' and 'defined, but not used' messages
 
 int comm_no_init(void);
 int comm_no_pre(int thread_num);
