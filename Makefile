@@ -28,7 +28,12 @@ CPPFLAGS += -std=gnu99
 #CFLAGS += -march=corei7 -mtune=corei7
 #CFLAGS += -march=corei7 -mtune=corei7
 
+
 COMPILE_DEBUG =
+
+# normal verbose
+#COMPILE_DEBUG += -v
+
 # only enable these if you want to see _exceptionally_verbose_ debugging messages during compilation
 # cool idea, though
 #COMPILE_DEBUG += -Q
