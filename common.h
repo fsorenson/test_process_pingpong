@@ -34,6 +34,8 @@ typedef enum { no = 0, false = 0, yes = 1, true = 1 } __PACKED bool;
 #define mb()    asm volatile("mfence":::"memory")
 #define rmb()   asm volatile("lfence":::"memory")
 #define wmb()   asm volatile("sfence"::: "memory")
+#define mb2()	asm volatile ("" : : : "memory");
+//__sync_synchronize()
 
 
 int get_min_stack_size(void);
