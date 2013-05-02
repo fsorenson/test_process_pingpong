@@ -172,6 +172,24 @@ integer_fixed_point_t __CONST f_to_fp(int prec, long double f) {
 
 	return int_fp;
 }
+
+// logb(x) = logc(x) / logc(b)
+long double __CONST log_base(long double base, long double num) {
+	return logl(num) / logl(base);
 }
+
+unsigned long long __CONST ld_to_ull(long double d) {
+	return (unsigned long long)d;
+}
+
+long long __CONST ipowll(long x, long y) {
+	double xf, yf;
+	long double pf;
+
+	xf = (double)x;
+	yf = (double)y;
+	pf = pow(xf, yf);
+
+	return (long long)pf;
 }
 

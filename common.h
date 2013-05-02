@@ -64,4 +64,9 @@ typedef struct integer_fixed_point {
 } integer_fixed_point_t;
 
 integer_fixed_point_t __CONST f_to_fp(int prec, long double f);
+
+long double log_base(long double base, long double num);
+unsigned long long ld_to_ull(long double d);
+long long ipowll(long x, long y);
+
 #endif
