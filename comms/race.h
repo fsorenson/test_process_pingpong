@@ -12,7 +12,4 @@ int do_pong_race2(int thread_num);
 
 int cleanup_race(void);
 
-void comm_add_race1(void);
-void comm_add_race2(void);
-
 #endif
