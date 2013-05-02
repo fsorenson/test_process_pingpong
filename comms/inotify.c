@@ -137,7 +137,7 @@ static struct comm_mode_ops_struct comm_ops_inotify = {
 	.comm_cleanup = cleanup_inotify
 };
 
-void __attribute__((constructor)) comm_add_inotify(void) {
+void comm_add_inotify(void) {
 	comm_mode_do_initialization(&comm_info_inotify, &comm_ops_inotify);
 }
 

@@ -128,7 +128,7 @@ static struct comm_mode_ops_struct comm_ops_tcp = {
 	.comm_do_pong = do_pong_tcp
 };
 
-void __attribute__((constructor)) comm_add_tcp(void) {
+void comm_add_tcp(void) {
 	comm_mode_do_initialization(&comm_info_tcp, &comm_ops_tcp);
 }
 

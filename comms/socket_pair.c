@@ -19,7 +19,7 @@ static struct comm_mode_ops_struct comm_ops_socketpair = {
 	.comm_make_pair = make_socket_pair
 };
 
-void __attribute__((constructor)) comm_add_socket_pair(void) {
+void comm_add_socket_pair(void) {
 	comm_mode_do_initialization(&comm_info_socketpair, &comm_ops_socketpair);
 }
 

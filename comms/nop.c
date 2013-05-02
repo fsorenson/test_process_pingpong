@@ -150,16 +150,16 @@ static struct comm_mode_ops_struct comm_ops_nop4 = {
 	.comm_cleanup = cleanup_nop
 };
 
-void __attribute__((constructor)) comm_add_nop1(void) {
+void comm_add_nop1(void) {
 	comm_mode_do_initialization(&comm_info_nop1, &comm_ops_nop1);
 }
-void __attribute__((constructor)) comm_add_nop2(void) {
+void comm_add_nop2(void) {
 	comm_mode_do_initialization(&comm_info_nop2, &comm_ops_nop2);
 }
-void __attribute__((constructor)) comm_add_nop3(void) {
+void comm_add_nop3(void) {
 	comm_mode_do_initialization(&comm_info_nop3, &comm_ops_nop3);
 }
-void __attribute__((constructor)) comm_add_nop4(void) {
+void comm_add_nop4(void) {
 	comm_mode_do_initialization(&comm_info_nop4, &comm_ops_nop4);
 }
 

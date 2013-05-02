@@ -110,7 +110,7 @@ static struct comm_mode_ops_struct comm_ops_signal = {
 	.comm_cleanup = cleanup_signal
 };
 
-void __attribute__((constructor)) comm_add_signal(void) {
+void comm_add_signal(void) {
 	comm_mode_do_initialization(&comm_info_signal, &comm_ops_signal);
 }
 

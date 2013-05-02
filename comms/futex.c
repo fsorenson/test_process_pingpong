@@ -57,7 +57,7 @@ int cleanup_futex(void) {
 	return 0;
 }
 
-void __attribute__((constructor)) comm_add_futex(void) {
+void comm_add_futex(void) {
         struct comm_mode_init_info_struct init_info;
 	struct comm_mode_ops_struct ops;
 

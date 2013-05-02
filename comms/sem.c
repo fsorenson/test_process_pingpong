@@ -107,7 +107,7 @@ static struct comm_mode_ops_struct comm_ops_sem = {
 	.comm_cleanup = cleanup_sem
 };
 
-void __attribute__((constructor)) comm_add_sem(void) {
+void comm_add_sem(void) {
 	comm_mode_do_initialization(&comm_info_sem, &comm_ops_sem);
 }
 
@@ -125,7 +125,7 @@ static struct comm_mode_ops_struct comm_ops_busysem = {
 	.comm_cleanup = cleanup_sem
 };
 
-void __attribute__((constructor)) comm_add_busy_sem(void) {
+void comm_add_busy_sem(void) {
 	comm_mode_do_initialization(&comm_info_busysem, &comm_ops_busysem);
 }
 

@@ -57,7 +57,7 @@ static struct comm_mode_ops_struct comm_ops_udp = {
 	.comm_make_pair = make_udp_pair
 };
 
-void __attribute__((constructor)) comm_add_udp(void) {
+void comm_add_udp(void) {
 	comm_mode_do_initialization(&comm_info_udp, &comm_ops_udp);
 }
 

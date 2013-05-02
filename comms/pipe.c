@@ -52,7 +52,7 @@ static struct comm_mode_ops_struct comm_ops_pipe = {
 	.comm_cleanup = comm_cleanup_pipe
 };
 
-void __attribute__((constructor)) comm_add_pipe(void) {
+void comm_add_pipe(void) {
 	comm_mode_do_initialization(&comm_info_pipe, &comm_ops_pipe);
 }
 
