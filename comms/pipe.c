@@ -6,8 +6,6 @@
 #include <string.h>
 #include <unistd.h>
 
-char comm_name_pipe[] = "pipe";
-
 int comm_pre_pipe(int thread_num) {
 	struct sigaction sa;
 	(void)thread_num;
@@ -41,19 +39,11 @@ write(1, "bye\n", 4);
 	exit(0);
 }
 
-static struct comm_mode_init_info_struct comm_info_pipe = {
-	.name = comm_name_pipe,
-};
-
 static struct comm_mode_ops_struct comm_ops_pipe = {
 	.comm_make_pair = pipe,
 	.comm_pre = comm_pre_pipe,
 	.comm_interrupt = comm_interrupt_pipe,
 	.comm_cleanup = comm_cleanup_pipe
 };
-
-void comm_add_pipe(void) {
-	comm_mode_do_initialization(&comm_info_pipe, &comm_ops_pipe);
-}
 
 NEW_ADD_COMM_MODE(pipe, "", &comm_ops_pipe);
