@@ -8,6 +8,7 @@
 #include <stdint.h>
 
 #define __CONST		__attribute__((const))
+#define __PURE		__attribute__((pure))
 #define __PACKED	__attribute__((packed))
 #define __NORETURN	__attribute__((noreturn))
 #define __HOT		__attribute__((hot))
