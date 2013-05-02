@@ -10,6 +10,4 @@ int do_recv_mq(int fd);
 
 int cleanup_mq(void);
 
-void comm_add_mq(void);
-
 #endif
