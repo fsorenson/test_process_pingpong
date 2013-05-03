@@ -14,8 +14,8 @@
 #include <sys/mman.h>
 
 static int shm_id;
-int *futex_id[2];
-int futex_vals[2];
+static int *futex_id[2];
+static int futex_vals[2];
 
 int make_futex_pair(int fd[2]) {
 	static int futex_num = 0;
