@@ -11,7 +11,7 @@
 static int  estimate_cpu_speed(int thread_num) {
 
 	run_data->thread_info[thread_num].cpu_mhz = estimate_cpu_mhz();
-	run_data->thread_info[thread_num].cpu_cycle_time = 1 / run_data->thread_info[thread_num].cpu_mhz / 1e6;
+	run_data->thread_info[thread_num].cpu_cycle_time = 1 / run_data->thread_info[thread_num].cpu_mhz / 1e6L;
 
 	return 0;
 }

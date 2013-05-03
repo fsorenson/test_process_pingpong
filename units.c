@@ -20,17 +20,17 @@ char *subsec_string(char *arg_buffer, long double size, int dec_pts) {
 
 	buffer = (arg_buffer != NULL) ? arg_buffer : local_buffer;
 
-	if (size <= 0.0) /* don't do negatives...  I said so. */
+	if (size <= 0.0L) /* don't do negatives...  I said so. */
 		mult = max_mult;
 
 	int_fp = f_to_fp(dec_pts, size);
 
-	while ((size < 1.0) && (mult < max_mult)) {
+	while ((size < 1.0L) && (mult < max_mult)) {
 		mult ++;
-		size *= 1000.0;
+		size *= 1000.0L;
 	}
 	if (mult >= max_mult) {
-		size = 0.0;
+		size = 0.0L;
 		mult = 0;
 	}
 
@@ -49,7 +49,7 @@ char *subsec_string(char *arg_buffer, long double size, int dec_pts) {
 
 		size -= truncl(size);
 		while (dec_pts-- > 0) {
-			size *= 10.0;
+			size *= 10.0L;
 			buffer[p++] = (char)(size + '0');
 			size -= truncl(size);
 		}

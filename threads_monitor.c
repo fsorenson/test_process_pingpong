@@ -175,8 +175,8 @@ void show_stats(int signum) {
 
 	if (config.set_affinity == true) {
 		snprintf(output_buffer, 255, ", ping: %d.%d cycles, pong: %d.%d cycles",
-			(int)i_stats.cpi[0], (int)(i_stats.cpi[0] * 100.0) % 100,
-			(int)i_stats.cpi[1], (int)(i_stats.cpi[1] * 100.0) & 100);
+			(int)i_stats.cpi[0], (int)(i_stats.cpi[0] * 100.0L) % 100,
+			(int)i_stats.cpi[1], (int)(i_stats.cpi[1] * 100.0L) & 100);
 		write(1, output_buffer, strlen(output_buffer));
 	}
 

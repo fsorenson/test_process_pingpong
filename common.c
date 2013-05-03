@@ -65,7 +65,7 @@ long double estimate_cpu_mhz(void) {
 	end_tsc = rdtsc(NULL);
 	end_time = get_time();
 
-	return	((long double)(end_tsc - start_tsc) / (long double)(end_time - start_time) / 1e3 / 1e3);
+	return	((long double)(end_tsc - start_tsc) / (long double)(end_time - start_time) / 1e3L / 1e3L);
 }
 
 
@@ -81,7 +81,7 @@ long double get_time(void) {
 
 	clock_gettime(CLOCK_REALTIME, &ts);
 
-	return ((double) ts.tv_sec) + ((double)ts.tv_nsec / 1e9);
+	return ((double) ts.tv_sec) + ((double)ts.tv_nsec / 1e9L);
 }
 
 struct timespec elapsed_time(const struct timespec start, const struct timespec stop) {
@@ -159,7 +159,7 @@ integer_fixed_point_t __CONST f_to_fp(int prec, long double f) {
 	unsigned long long i2;
 	long double fmult;
 
-	fmult = pow(10.0, prec * 1.0);
+	fmult = powl(10.0L, prec * 1.0L);
 	mult = (unsigned long)fmult;
 
 	i = llroundl(f * fmult);
