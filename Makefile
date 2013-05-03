@@ -281,7 +281,7 @@ $(objs_dir)/%.o: $(comms_dir)/%.c $(deps_dir)/%.d
 
 
 test_process_pingpong:	$(comms_glue_objs) $(comms_objs) $(objs) $(deps)
-	$(CC) $(comms_glue_objs) $(comms_objs) $(objs) $(CPPFLAGS) $(CFLAGS) $(LIBS) $(WARNINGS) -o $@
+	$(CC) $(comms_glue_objs) $(comms_objs) $(objs) $(CPPFLAGS) $(CFLAGS) $(LIBS) $(WARNINGS) $(LDFLAGS) -o $@
 
 
 $(stab_dir)/%.s: $(comms_dir)/%.c $(deps_dir)/%.d
