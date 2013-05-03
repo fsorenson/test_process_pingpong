@@ -130,8 +130,17 @@ OPTIMIZATIONS += -fvariable-expansion-in-unroller -funswitch-loops
 
 #CFLAGS += -fweb -flto
 
+
+# LD flags
+# still experimenting to see which are/aren't useful/interesting
+LDFLAGS += -Wl,--warn-common -Wl,--warn-constructors
+LDFLAGS += -Wl,--warn-multiple-gp
+#LDFLAGS += -Wl,--warn-section-align -Wl,--warn-shared-textrel -Wl,--warn-unresolved-symbols
+#LDFLAGS += -Wl,--verbose=1
+
 # remove symbols for ultra-small binaries--or use strip
 #LDFLAGS += -Wl,-S -Wl,-s
+
 
 
 
