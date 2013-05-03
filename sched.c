@@ -33,7 +33,7 @@ int get_sched_interval(void) {
 	if ((ret = sched_rr_get_interval(0, &tp)) == -1) {
 		perror("erro getting RR scheduling interval: %m\n");
 	} else {
-		config.sched_rr_quantum = ((double)tp.tv_sec + (double)tp.tv_nsec) / 1000000000.0;
+		config.sched_rr_quantum = ((long double)tp.tv_sec + (long double)tp.tv_nsec) / 1e9L;
 	}
 
 	return 0;

@@ -94,7 +94,7 @@ struct config_struct {
 
 	char *sched_string;
 
-	double sched_rr_quantum;
+	long double sched_rr_quantum;
 
 
 	COMM_MODE_OPS;
@@ -107,7 +107,7 @@ struct config_struct {
 	int (*comm_interrupt)();
 	int (*comm_cleanup)();
 */
-	char dummy2[8];
+//	char dummy2[8];
 };
 
 extern struct config_struct config;
