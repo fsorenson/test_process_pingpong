@@ -69,40 +69,40 @@ sub_dirs += $(objs) $(deps) $(stabs)
 
 # some warnings
 WARNINGS =
-WARNINGS += -Wall -Wextra
-WARNINGS += -pedantic
-WARNINGS += -Wunused -Wunused-but-set-variable -Wunused-but-set-parameter -Wunused-macros
-WARNINGS += -Wunused-result -Wunused-parameter -Wunused-function -Wunused-value
-WARNINGS += -Wunreachable-code
-WARNINGS += -Wuninitialized -Winit-self
-WARNINGS += -Wsuggest-attribute=pure -Wsuggest-attribute=const -Wsuggest-attribute=noreturn
-WARNINGS += -Wshadow -Wconversion -Wsign-conversion -Wsign-compare -Wbad-function-cast -Wcast-align -Wwrite-strings -Wcast-qual
-WARNINGS += -Wundef -Wshadow
-WARNINGS += -Wpointer-arith -Wfloat-equal
-WARNINGS += -Wpacked -Wpadded -Winline -Wnested-externs
-WARNINGS += -Wendif-labels
-WARNINGS += -Wmissing-noreturn
-WARNINGS += -Wmissing-format-attribute -Wmissing-prototypes -Wmissing-parameter-type -Wmissing-field-initializers
+
+WARNINGS += -Wall -Wextra -pedantic
+WARNINGS += -Wmissing-include-dirs
+WARNINGS += -Wcomment -Wmultichar
+
+# these reviewed, and do not appear to be covered by above flags
+WARNINGS += -Wswitch-default -Wswitch-enum -Winit-self
+WARNINGS += -Wpacked -Wpadded -Wwrite-strings -Wlogical-op
+WARNINGS += -Wstrict-overflow -Wconversion
 WARNINGS += -Wmissing-declarations -Wredundant-decls -Wdeclaration-after-statement
-WARNINGS += -Wclobbered -Wlogical-op
-WARNINGS += -Wdisabled-optimization
-WARNINGS += -Wunsafe-loop-optimizations
-WARNINGS += -Wstrict-prototypes -Wold-style-definition
-WARNINGS += -Wchar-subscripts -Wcomment
-WARNINGS += -Wdouble-promotion -Wtype-limits -Wimplicit-int -Wimplicit-function-declaration
-WARNINGS += -Wparentheses -Wmissing-braces
-WARNINGS += -Wswitch -Wswitch-default -Wswitch-enum
-WARNINGS += -Wmissing-format-attribute
-WARNINGS += -Warray-bounds -Wunsafe-loop-optimizations
-WARNINGS += -Wsequence-point -Wreturn-type
+WARNINGS += -Wmissing-prototypes -Wstrict-prototypes -Wunused-parameter
+WARNINGS += -Wold-style-definition
+WARNINGS += -Waggregate-return -Wbad-function-cast -Wcast-qual -Wcast-align
+WARNINGS += -Wundef -Wendif-labels -Wshadow
 
-# doesn't seem to work on older gcc
-WARNINGS += -Wlogical-op -Waddress -Waggregate-return
+WARNINGS += -Wsuggest-attribute=pure -Wsuggest-attribute=const -Wsuggest-attribute=noreturn
+WARNINGS += -Winline -Wnested-externs
+WARNINGS += -Wtrampolines -Wstack-protector
+WARNINGS += -Wdisabled-optimization -Wunsafe-loop-optimizations
 
+WARNINGS += -Wunsuffixed-float-constants -Wdouble-promotion -Wfloat-equal
 
-# too annoying to enable
+#additional format options NOT in Wall:
+WARNINGS += -Wformat-y2k -Wno-format-extra-args -Wno-format-zero-length -Wformat-nonliteral -Wformat-security -Wformat=2
+
+# Cant find these in the documentation
+WARNINGS += -Wunused-macros -Wunreachable-code -Wmissing-noreturn
+
+#may be too annoying
 #WARNINGS += -Wtraditional -Wtraditional-conversion
-#WARNINGS += -Wlong-long
+WARNINGS += -Wmissing-format-attribute
+#WARNINGS += -Wlong-long -Wvla
+WARNINGS += --all-warnings
+#WARNINGS += -Wc++-compat 
 
 
 
