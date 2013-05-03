@@ -121,7 +121,7 @@ OPTIMIZATIONS += -fargument-alias
 # testing
 OPTIMIZATIONS += -falign-functions -falign-loops -falign-jumps -falign-labels
 OPTIMIZATIONS += -fdevirtualize -fexpensive-optimizations
-#OPTIMIZATIONS += 
+OPTIMIZATIONS += -fstrict-overflow
 OPTIMIZATIONS += -fvariable-expansion-in-unroller -funswitch-loops
 #OPTIMIZATIONS += 
 
