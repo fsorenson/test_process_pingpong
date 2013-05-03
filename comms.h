@@ -59,7 +59,7 @@ char *get_comm_mode_name(int index);
 
 void comm_mode_add(const char *comm_name, const char *add_function_name);
 
-#define NEW_ADD_COMM_MODE(comm_name,_help_text,ops) \
+#define ADD_COMM_MODE(comm_name,_help_text,ops) \
 	static char comm_mode_init_name_##comm_name[] = #comm_name; \
 	static char comm_mode_init_help_text_##comm_name[] = _help_text; \
 	static char comm_mode_init_source_file_##comm_name[] = __FILE__; \
