@@ -213,7 +213,12 @@ gcovs += $(addprefix $(objs_dir)/, $(addsuffix .gcda,$(f)))
 gcovs += $(addprefix $(objs_dir)/, $(addsuffix .gcno,$(f)))
 
 
-comms = tcp udp pipe socket_pair sem futex mq eventfd inotify signal spin yield race nop
+comms =
+comms += tcp udp pipe socket_pair
+comms += sem
+comms += futex futex_test mq eventfd inotify signal
+comms += spin yield race nop
+#comms += benaphore
 
 comms_c_srcs = $(addprefix $(comms_dir)/, $(addsuffix .c,$(comms)))
 comms_h_srcs = $(addprefix $(comms_dir)/, $(addsuffix .h,$(comms)))
