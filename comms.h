@@ -9,8 +9,6 @@
 #define COMM_MODE_LIST_INCREMENT	5
 
 #define COMM_MODE_OPS				\
-	int op_placeholder;			\
-	int op_placeholder2;			\
 	int (*comm_init)(void);			\
 	int (*comm_make_pair)(int fd[2]);	\
 	int (*comm_pre)(int s);			\
