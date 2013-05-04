@@ -35,7 +35,7 @@ void __attribute__((destructor)) cleanup_comm_mode_info(void) {
 	comm_mode_count = 0;
 }
 
-void comm_mode_add(const char *comm_name, const char *add_function_name) {
+void comm_mode_add(const char *comm_name) {
 	void *ret;
 	unsigned long offset;
 	unsigned long zero_address;

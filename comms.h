@@ -54,7 +54,7 @@ void cleanup_comm_mode_info(void);
 int parse_comm_mode(char *arg);
 char *get_comm_mode_name(int index);
 
-void comm_mode_add(const char *comm_name, const char *add_function_name);
+void comm_mode_add(const char *comm_name);
 
 #define ADD_COMM_MODE(comm_name,_help_text,ops) \
 	static char comm_mode_init_name_##comm_name[] = #comm_name; \
@@ -67,7 +67,7 @@ void comm_mode_add(const char *comm_name, const char *add_function_name);
 	}; \
 	void cons_comm_mode_ ## comm_name(void) __attribute__((constructor)); \
 	void cons_comm_mode_ ## comm_name(void) { \
-		comm_mode_add(#comm_name, ""); \
+		comm_mode_add(#comm_name); \
 		comm_mode_do_initialization(&comm_mode_info_ ##comm_name, ops); \
 	} \
 	static __attribute__((unused)) char comm_mode_init_dummy_##comm_name
