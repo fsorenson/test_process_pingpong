@@ -30,7 +30,6 @@ void __attribute__((destructor)) cleanup_comm_mode_info(void) {
 
 	for (i = 0 ; i < comm_mode_count ; i ++) {
 		free(comm_mode_info[i].name);
-		free(comm_mode_info[i].comm_mode_init_function);
 	}
 	free(comm_mode_info);
 	comm_mode_count = 0;
@@ -70,7 +69,6 @@ void comm_mode_add(const char *comm_name, const char *add_function_name) {
 
 
 	comm_mode_info[comm_mode_count].name = strdup(comm_name);
-	comm_mode_info[comm_mode_count].comm_mode_init_function = strdup(add_function_name);
 	comm_mode_info[comm_mode_count].comm_mode_index = comm_mode_count;
 	comm_mode_info[comm_mode_count].initialized = false;
 
@@ -129,8 +127,7 @@ bool comm_mode_verify_all(void) {
 	for (i = 0 ; i < comm_mode_count ; i ++) {
 		if (comm_mode_info[i].initialized == false) {
 			result = false;
-			printf("Initialization function '%s' for comm mode '%s' was not called!!\n",
-			comm_mode_info[i].comm_mode_init_function,
+			printf("Initialization function for comm mode '%s' was not called!!\n",
 			comm_mode_info[i].name);
 		}
 	}

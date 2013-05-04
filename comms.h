@@ -9,7 +9,6 @@
 #define COMM_MODE_LIST_INCREMENT	5
 
 #define COMM_MODE_OPS				\
-	char *comm_mode_init_function;		\
 	int op_placeholder;			\
 	int op_placeholder2;			\
 	int (*comm_init)(void);			\
