@@ -9,10 +9,11 @@
 
 int volatile *spin_var;
 static int mem_sync_method;
-// mem_sync_method = 0 - mb()
-// mem_sync_method = 1 - msync( MS_SYNC )
-// mem_sync_method = 2 - msync( MS_INVALIDATE )
-// mem_sync_method = 3 - msync( MS_ASYNC )
+// mem_sync_method = 0 - no memory sync
+// mem_sync_method = 1 - mb()
+// mem_sync_method = 2 - msync( MS_SYNC )
+// mem_sync_method = 3 - msync( MS_INVALIDATE )
+// mem_sync_method = 4 - msync( MS_ASYNC )
 
 int make_spin_pair(int fd[2]) {
 	static int spin_num = 0;
@@ -33,24 +34,27 @@ int make_spin_pair(int fd[2]) {
 
 
 #define MEM_SYNC_METHOD_0 \
-	mb()
+	asm("")
 #define MEM_SYNC_METHOD_1 \
-	msync(local_spin_var, 1, MS_SYNC)
+	mb()
 #define MEM_SYNC_METHOD_2 \
 	msync(local_spin_var, 2, MS_SYNC)
 #define MEM_SYNC_METHOD_3 \
 	msync(local_spin_var, 3, MS_SYNC)
+#define MEM_SYNC_METHOD_4 \
+	msync(local_spin_var, 4, MS_SYNC)
 
-#define MEM_SYNC_METHOD_NAME_0 "mb()"
-#define MEM_SYNC_METHOD_NAME_1 "msync( MS_SYNC )"
-#define MEM_SYNC_METHOD_NAME_2 "msync( MS_INVALIDATE )"
-#define MEM_SYNC_METHOD_NAME_3 "msync( MS_ASYNC )"
+#define MEM_SYNC_METHOD_NAME_0 "no memory sync"
+#define MEM_SYNC_METHOD_NAME_1 "mb()"
+#define MEM_SYNC_METHOD_NAME_2 "msync( MS_SYNC )"
+#define MEM_SYNC_METHOD_NAME_3 "msync( MS_INVALIDATE )"
+#define MEM_SYNC_METHOD_NAME_4 "msync( MS_ASYNC )"
 
 #define do_mem_sync_method(val) \
 	MEM_SYNC_METHOD_##val
 
-#define LOOP_METHOD(val) \
-	LOOP_LABEL_ ## val: \
+#define PING_LOOP_METHOD(val) \
+	PING_LOOP_LABEL_ ## val: \
 		printf("Pinging with %s\n", MEM_SYNC_METHOD_NAME_ ## val); \
 		while (1) { \
 			run_data->ping_count ++; \
@@ -61,25 +65,25 @@ int make_spin_pair(int fd[2]) {
 			} while (0); \
 			while (*spin_var != 0) { \
 			} \
-\
-\
 		}
 
 inline int __PINGPONG_FN do_ping_spin(int thread_num) {
 	void *local_spin_var;
 	static void *sync_mem_method_table[] = {
-		&&LOOP_LABEL_0, &&LOOP_LABEL_1,
-		&&LOOP_LABEL_2, &&LOOP_LABEL_3 };
+		&&PING_LOOP_LABEL_0, &&PING_LOOP_LABEL_1,
+		&&PING_LOOP_LABEL_2, &&PING_LOOP_LABEL_3,
+		&&PING_LOOP_LABEL_4 };
 	(void)thread_num;
 
 	local_spin_var = spin_var;
 
 	goto *sync_mem_method_table[mem_sync_method];
 
-	LOOP_METHOD(0);
-	LOOP_METHOD(1);
-	LOOP_METHOD(2);
-	LOOP_METHOD(3);
+	PING_LOOP_METHOD(0);
+	PING_LOOP_METHOD(1);
+	PING_LOOP_METHOD(2);
+	PING_LOOP_METHOD(3);
+	PING_LOOP_METHOD(4);
 
 }
 
