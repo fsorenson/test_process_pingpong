@@ -32,6 +32,18 @@ int make_spin_pair(int fd[2]) {
 }
 
 
+#define MEM_SYNC_METHOD_0 \
+	mb()
+#define MEM_SYNC_METHOD_1 \
+	msync(local_spin_var, 1, MS_SYNC)
+#define MEM_SYNC_METHOD_2 \
+	msync(local_spin_var, 2, MS_SYNC)
+#define MEM_SYNC_METHOD_3 \
+	msync(local_spin_var, 3, MS_SYNC)
+
+#define do_mem_sync_method(val) \
+	MEM_SYNC_METHOD_##val
+
 inline int __PINGPONG_FN do_ping_spin(int thread_num) {
 	(void)thread_num;
 
