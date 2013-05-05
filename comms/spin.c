@@ -8,6 +8,11 @@
 #include <errno.h>
 
 int volatile *spin_var;
+static int mem_sync_method;
+// mem_sync_method = 0 - mb()
+// mem_sync_method = 1 - msync( MS_SYNC )
+// mem_sync_method = 2 - msync( MS_INVALIDATE )
+// mem_sync_method = 3 - msync( MS_ASYNC )
 
 int make_spin_pair(int fd[2]) {
 	static int spin_num = 0;
@@ -16,6 +21,7 @@ int make_spin_pair(int fd[2]) {
 		spin_var = mmap(NULL, sizeof(int),
 			PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0);
 		*spin_var = 0;
+		mem_sync_method = 0;
 	}
 
 	fd[0] = spin_num;
