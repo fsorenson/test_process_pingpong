@@ -67,6 +67,18 @@ int make_spin_pair(int fd[2]) {
 			} \
 		}
 
+#define PONG_LOOP_METHOD(val) \
+	PONG_LOOP_LABEL_ ## val: \
+		printf("Ponging with %s\n", MEM_SYNC_METHOD_NAME_ ## val); \
+		while (1) { \
+			while (*spin_var != 1) { \
+			} \
+			do { \
+				*spin_var = 0; \
+				do_mem_sync_method(val); \
+			} while (0); \
+		}
+
 inline int __PINGPONG_FN do_ping_spin(int thread_num) {
 	void *local_spin_var;
 	static void *sync_mem_method_table[] = {
@@ -88,17 +100,22 @@ inline int __PINGPONG_FN do_ping_spin(int thread_num) {
 }
 
 inline int __PINGPONG_FN do_pong_spin(int thread_num) {
+	void *local_spin_var;
+	static void *sync_mem_method_table[] = {
+		&&PONG_LOOP_LABEL_0, &&PONG_LOOP_LABEL_1,
+		&&PONG_LOOP_LABEL_2, &&PONG_LOOP_LABEL_3,
+		&&PONG_LOOP_LABEL_4 };
 	(void)thread_num;
 
-	while (1) {
+	local_spin_var = spin_var;
 
-		while (*spin_var != 1) {
-		}
-		do {
-			*spin_var = 0;
-			mb();
-		} while (0);
-	}
+	goto *sync_mem_method_table[mem_sync_method];
+
+	PONG_LOOP_METHOD(0);
+	PONG_LOOP_METHOD(1);
+	PONG_LOOP_METHOD(2);
+	PONG_LOOP_METHOD(3);
+	PONG_LOOP_METHOD(4);
 }
 
 int __CONST cleanup_spin(void) {
