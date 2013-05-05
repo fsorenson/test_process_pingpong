@@ -49,6 +49,22 @@ int make_spin_pair(int fd[2]) {
 #define do_mem_sync_method(val) \
 	MEM_SYNC_METHOD_##val
 
+#define LOOP_METHOD(val) \
+	LOOP_LABEL_ ## val: \
+		printf("Pinging with %s\n", MEM_SYNC_METHOD_NAME_ ## val); \
+		while (1) { \
+			run_data->ping_count ++; \
+\
+			do { \
+				*spin_var = 1; \
+				do_mem_sync_method(val); \
+			} while (0); \
+			while (*spin_var != 0) { \
+			} \
+\
+\
+		}
+
 inline int __PINGPONG_FN do_ping_spin(int thread_num) {
 	(void)thread_num;
 
