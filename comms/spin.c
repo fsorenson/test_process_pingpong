@@ -41,6 +41,11 @@ int make_spin_pair(int fd[2]) {
 #define MEM_SYNC_METHOD_3 \
 	msync(local_spin_var, 3, MS_SYNC)
 
+#define MEM_SYNC_METHOD_NAME_0 "mb()"
+#define MEM_SYNC_METHOD_NAME_1 "msync( MS_SYNC )"
+#define MEM_SYNC_METHOD_NAME_2 "msync( MS_INVALIDATE )"
+#define MEM_SYNC_METHOD_NAME_3 "msync( MS_ASYNC )"
+
 #define do_mem_sync_method(val) \
 	MEM_SYNC_METHOD_##val
 
