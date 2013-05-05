@@ -66,18 +66,21 @@ int make_spin_pair(int fd[2]) {
 		}
 
 inline int __PINGPONG_FN do_ping_spin(int thread_num) {
+	void *local_spin_var;
+	static void *sync_mem_method_table[] = {
+		&&LOOP_LABEL_0, &&LOOP_LABEL_1,
+		&&LOOP_LABEL_2, &&LOOP_LABEL_3 };
 	(void)thread_num;
 
-	while (1) {
-		run_data->ping_count ++;
+	local_spin_var = spin_var;
 
-		do {
-			*spin_var = 1;
-			mb();
-		} while (0);
-		while (*spin_var != 0) {
-		}
-	}
+	goto *sync_mem_method_table[mem_sync_method];
+
+	LOOP_METHOD(0);
+	LOOP_METHOD(1);
+	LOOP_METHOD(2);
+	LOOP_METHOD(3);
+
 }
 
 inline int __PINGPONG_FN do_pong_spin(int thread_num) {
