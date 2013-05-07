@@ -218,6 +218,7 @@ comms += tcp udp pipe socket_pair
 comms += sem
 comms += futex futex_test mq eventfd inotify signal
 comms += spin yield race nop
+comms += namedpipe
 #comms += benaphore
 
 comms_c_srcs = $(addprefix $(comms_dir)/, $(addsuffix .c,$(comms)))
