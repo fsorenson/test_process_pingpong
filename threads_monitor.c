@@ -124,6 +124,16 @@ static int gather_stats(struct interval_stats_struct *i_stats) {
 	i_stats->csw[0] = i_stats->rusage[0].ru_nvcsw + i_stats->rusage[0].ru_nivcsw;
 	i_stats->csw[1] = i_stats->rusage[1].ru_nvcsw + i_stats->rusage[1].ru_nivcsw;
 
+	i_stats->rusage[0].ru_utime.tv_sec = run_data->thread_stats[0].rusage.ru_utime.tv_sec;
+	i_stats->rusage[0].ru_utime.tv_usec = run_data->thread_stats[0].rusage.ru_utime.tv_usec;
+	i_stats->rusage[0].ru_stime.tv_sec = run_data->thread_stats[0].rusage.ru_stime.tv_sec;
+	i_stats->rusage[0].ru_stime.tv_usec = run_data->thread_stats[0].rusage.ru_stime.tv_usec;
+
+	i_stats->rusage[1].ru_utime.tv_sec = run_data->thread_stats[1].rusage.ru_utime.tv_sec;
+	i_stats->rusage[1].ru_utime.tv_usec = run_data->thread_stats[1].rusage.ru_utime.tv_usec;
+	i_stats->rusage[1].ru_stime.tv_sec = run_data->thread_stats[1].rusage.ru_stime.tv_sec;
+	i_stats->rusage[1].ru_stime.tv_usec = run_data->thread_stats[1].rusage.ru_stime.tv_usec;
+
 
 	if (config.set_affinity == true) {
 		i_stats->interval_tsc[0] = run_data->thread_stats[0].tsc - run_data->thread_stats[0].last_tsc;
