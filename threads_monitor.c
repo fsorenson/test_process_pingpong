@@ -175,18 +175,44 @@ void show_stats(int signum) {
 	if (run_data->stop == true) /* don't worry about output...  let's just pack up and go home */
 		return;
 
-	snprintf(output_buffer, 255, "%s - %llu iterations -> %s",
-		subsec_string(temp_string1, i_stats.run_time, 3),
-		i_stats.interval_count,
-		subsec_string(temp_string2, i_stats.iteration_time, 3));
+// header
+snprintf(output_buffer, 255, "%5s %12s %11s\n",
+	"time", "cycles/sec", "cycle time");
+write(1, output_buffer, strlen(output_buffer));
 
+
+	snprintf(output_buffer, 255, "%s %12llu %11s",
+		subsec_string(temp_string1, i_stats.run_time, 1),
+		i_stats.interval_count,
+		subsec_string(temp_string2, i_stats.iteration_time, 2));
 	output_buffer[255] = 0;
 	write(1, output_buffer, strlen(output_buffer));
 
+
 	if (config.set_affinity == true) {
-		snprintf(output_buffer, 255, ", ping: %d.%d cycles, pong: %d.%d cycles",
-			(int)i_stats.cpi[0], (int)(i_stats.cpi[0] * 100.0L) % 100,
+		snprintf(output_buffer, 255, ", ping: %d.%d cyc.",
+			(int)i_stats.cpi[0], (int)(i_stats.cpi[0] * 100.0L) % 100);
+		write(1, output_buffer, strlen(output_buffer));
+		snprintf(output_buffer, 255, ", %ld/%ld csw",
+			i_stats.rusage[0].ru_nvcsw, i_stats.rusage[0].ru_nivcsw);
+		write(1, output_buffer, strlen(output_buffer));
+	}
+
+	snprintf(output_buffer, 255, ", %LF s usr, %LF s sys",
+		(i_stats.rusage[0].ru_utime.tv_sec * 1.0L) + (i_stats.rusage[0].ru_utime.tv_usec / 1.0e6L),
+		(i_stats.rusage[0].ru_stime.tv_sec * 1.0L) + (i_stats.rusage[0].ru_stime.tv_usec / 1.0e6L));
+	write(1, output_buffer, strlen(output_buffer));
+
+
+
+
+	if (config.set_affinity == true) {
+
+		snprintf(output_buffer, 255, ", pong: %d.%d cyc.",
 			(int)i_stats.cpi[1], (int)(i_stats.cpi[1] * 100.0L) & 100);
+		write(1, output_buffer, strlen(output_buffer));
+		snprintf(output_buffer, 255, ", %ld csw",
+			i_stats.csw[1]);
 		write(1, output_buffer, strlen(output_buffer));
 	}
 
@@ -207,6 +233,7 @@ void show_stats(int signum) {
 	write(1, output_buffer, strlen(output_buffer));
 
 	// for now, let's ignore the context switches (i_stats.csw[ * ]) and calculated mhz (i_stats.mhz[ * ])
+
 
 	write(1, "\n", 1);
 
