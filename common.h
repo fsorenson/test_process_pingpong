@@ -24,7 +24,10 @@ typedef enum { no = 0, false = 0, yes = 1, true = 1 } __PACKED bool;
 
 #define likely(x)       __builtin_expect((x),1)
 #define unlikely(x)     __builtin_expect((x),0)
+
+#ifndef offsetof
 #define offsetof(type, member)  __builtin_offsetof (type, member)
+#endif
 
 #define xstr(s) str(s)
 #define str(s) #s
