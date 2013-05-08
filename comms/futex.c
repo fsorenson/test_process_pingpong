@@ -13,6 +13,10 @@
 #include <sys/shm.h>
 #include <sys/mman.h>
 
+#ifndef SYS_futex
+#define SYS_futex __NR_futex
+#endif
+
 static int shm_id;
 static int *futex_id[2];
 static int futex_vals[2];
