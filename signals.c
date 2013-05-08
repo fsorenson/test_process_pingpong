@@ -47,7 +47,7 @@ void __NORETURN print_backtrace2(int signum) {
 	} else if (child_pid == 0) {
 		const char* argv[] = {"sh", "-c", buf, NULL};
 
-		sprintf(buf, "gdb -p %d -batch -ex thread apply all bt 2>/dev/null | "
+		snprintf(buf, 1024, "gdb -p %d -batch -ex thread apply all bt 2>/dev/null | "
 		"sed '0,/<signal handler/d'", dying_pid);
 		execve("/bin/sh", (char**)argv, NULL);
 		_exit(1);
