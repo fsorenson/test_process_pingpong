@@ -12,6 +12,14 @@ LIBS += -lrt
 #CC = diet $(CC)
 #LIBS += -lcompat
 
+
+base_dir = $(CURDIR)
+base_dir_name = $(notdir $(base_dir))
+parent_dir = $(shell dirname $(base_dir))
+#$(info base_dir = $(base_dir))
+#$(info base_dir_name = $(base_dir_name))
+#$(info parent_dir = $(parent_dir))
+
 comms_dir = comms
 objs_dir = objs
 deps_dir = deps
@@ -311,6 +319,18 @@ $(stab_dir)/%.s: %.c $(deps_dir)/%.d
 #	$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -gstabs -g -S -asm -Wa,-ahl=$@
 
 stabs: $(stabs)
+
+
+src_release: $(SRCS)
+	$(eval rel_srcs = $(addprefix $(base_dir_name)/, $(SRCS)))
+	$(eval tarball = $(parent_dir)/$(base_dir_name).tar.bz2)
+	$(info tarball = $(tarball))
+	@( \
+		cd .. ; \
+		tar -C $(parent_dir) cjf $(tarball) $(rel_srcs) \
+			$(base_dir_name)/Makefile\
+	)
+	$(info wrote $(tarball))
 
 
 .PHONY: cov clean
