@@ -26,6 +26,14 @@
   #define HAVE_GETCPU
 #endif
 
+#ifndef SYS_getpid
+#define SYS_getpid 39
+#endif
+
+#ifndef SYS_gettid
+#define SYS_gettid 186
+#endif
+
 
 // 64 KB stack
 #define STACK_SIZE	1024*64
