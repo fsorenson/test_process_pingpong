@@ -18,6 +18,9 @@ static int  estimate_cpu_speed(int thread_num) {
 }
 
 static int send_thread_stats(int thread_num) {
+#ifndef RUSAGE_THREAD
+#define RUSAGE_THREAD 1
+#endif
 	if (getrusage(RUSAGE_THREAD, (struct rusage *)&run_data->thread_stats[thread_num].rusage) == -1) {
 		perror("getting rusage");
 	}
