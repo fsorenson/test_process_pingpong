@@ -29,6 +29,16 @@ typedef enum { no = 0, false = 0, yes = 1, true = 1 } __PACKED bool;
 #define offsetof(type, member)  __builtin_offsetof (type, member)
 #endif
 
+#ifndef DEFFILEMODE
+#define DEFFILEMODE (S_IRUSR|S_IWUSR|S_IRGRP|S_IWGRP|S_IROTH|S_IWOTH)/* 0666*/
+#endif
+
+#if	!defined(_BSD_SOURCE) && !defined(SVID_SOURCE) && !(defined(_XOPEN_SOURCE) && (_XOPEN_SOURCE >= 600)) \
+	&& !defined(_ISOC99_SOURCE) && !(defined(_POSIX_C_SOURCE) && (_POSIX_C_SOURCE >= 200112L))
+#define powl(x,y) \
+	(double)pow( (double)x, (double)y)
+#endif
+
 #define xstr(s) str(s)
 #define str(s) #s
 
