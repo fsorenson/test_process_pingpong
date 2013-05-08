@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <signal.h>
+#include <sys/syscall.h>
 
 static int  estimate_cpu_speed(int thread_num) {
 

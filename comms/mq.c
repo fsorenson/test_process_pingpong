@@ -9,6 +9,8 @@
 #include <mqueue.h>
 #include <unistd.h>
 #include <sys/stat.h>
+#include <sys/types.h>
+#include <fcntl.h>
 #include <errno.h>
 
 static char *mqueue_path[2];

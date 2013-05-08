@@ -16,6 +16,7 @@
 #include <sys/syscall.h>
 #include <sys/time.h>
 #include <sys/resource.h>
+#include <pthread.h>
 
 #ifdef SYS_eventfd
   #define HAVE_EVENTFD
