@@ -27,10 +27,13 @@ int make_mq_pair(int fd[2]) {
 	int flags = O_RDWR | O_CREAT;
 	int perms = DEFFILEMODE;
 
-
+#ifdef _SC_MQ_PRIO_MAX
 	if (max_mq_prio == -1) {
 		max_mq_prio = sysconf(_SC_MQ_PRIO_MAX) - 1;
 	}
+#else
+	max_mq_prio = MQ_PRIO_MAX;
+#endif
 
 	attr.mq_flags = 0;
 	attr.mq_maxmsg = 1;
