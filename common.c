@@ -17,10 +17,14 @@
 inline int get_min_stack_size(void) {
 	long int minstack;
 
+#ifdef _SC_THREAD_STACK_MIN
 	if ((minstack = sysconf(_SC_THREAD_STACK_MIN)) == -1) {
 		perror("sysconf(_SC_THREAD_STACK_MIN)");
 		exit(1);
 	}
+#else
+	minstack = 16384;
+#endif
 	return (int)minstack;
 }
 
