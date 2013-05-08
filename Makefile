@@ -2,7 +2,15 @@
 CC=gcc
 #CC=gcc
 #CC=g++
-LIBS=-lpthread -lm -lrt
+LIBS=-lpthread -lm -lpthread
+
+
+# for glibc
+LIBS += -lrt
+
+# for dietlibc:
+#CC = diet $(CC)
+#LIBS += -lcompat
 
 comms_dir = comms
 objs_dir = objs
