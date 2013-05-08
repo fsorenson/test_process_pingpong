@@ -4,6 +4,7 @@ CC=gcc
 #CC=g++
 LIBS=-lpthread -lm -lpthread
 
+target = test_process_pingpong
 
 # for glibc
 LIBS += -lrt
@@ -206,9 +207,9 @@ CFLAGS += $(DEBUG_FLAGS) $(PROFILING_FLAGS)
 
 CFLAGS += -DHAVE_SCHED_GETCPU
 
-all: test_process_pingpong
+all: $(target)
 
-f = test_process_pingpong
+f = $(target)
 f += common
 f += units
 f += sched
@@ -217,7 +218,7 @@ f += signals
 f += setup
 #f += tcp udp pipe socket_pair sem eventfd futex spin nop mq
 
-#SRCS = test_process_pingpong.c
+#SRCS = $(target).c
 C_SRCS += $(addsuffix .c,$(f))
 H_SRCS += $(addsuffix .h,$(f))
 SRCS += $(C_SRCS) $(H_SRCS)
@@ -302,7 +303,7 @@ $(objs_dir)/%.o: $(comms_dir)/%.c $(deps_dir)/%.d
 
 
 
-test_process_pingpong:	$(comms_glue_objs) $(comms_objs) $(objs) $(deps)
+$(target):	$(comms_glue_objs) $(comms_objs) $(objs) $(deps)
 	$(CC) $(comms_glue_objs) $(comms_objs) $(objs) $(CPPFLAGS) $(CFLAGS) $(LIBS) $(WARNINGS) $(LDFLAGS) -o $@
 
 
@@ -355,7 +356,7 @@ cov:
 
 
 clean:
-	@rm -f test_process_pingpong >/dev/null 2>&1
+	@rm -f $(target) >/dev/null 2>&1
 	@rm -f $(objs) $(comms_objs) $(comms_glue_objs) >/dev/null 2>&1
 	@rm -f $(deps) >/dev/null 2>&1
 	@rm -f $(stabs) >/dev/null 2>&1
