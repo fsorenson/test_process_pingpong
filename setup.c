@@ -151,7 +151,7 @@ int parse_opts(int argc, char *argv[]) {
 
 
 	opterr = 0;
-	while ((opt = getopt_long(argc, argv, "m:t:p:", long_options,
+	while ((opt = getopt_long(argc, argv, "m:t:p:r:u:", long_options,
 			&long_index)) != -1) {
 		switch (opt) {
 			case 'm':
