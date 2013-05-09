@@ -74,8 +74,13 @@ inline int do_recv_mq(int fd) {
 }
 
 int cleanup_mq(void) {
+#ifdef __GLIBC__
 	mq_close(mqueue[0]);
 	mq_close(mqueue[1]);
+#else
+	close(mqueue[0]);
+	close(mqueue[1]);
+#endif
 
 	mq_unlink(mqueue_path[0]);
 	mq_unlink(mqueue_path[1]);
