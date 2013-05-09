@@ -10,7 +10,7 @@
 #include <sys/wait.h>
 
 
-
+#ifdef __GLIBC__
 void print_backtrace(int signum) {
 	void *array[32];	/* Array to store backtrace symbols */
 	int size;		/* To store the exact no of values stored */
@@ -25,12 +25,6 @@ void print_backtrace(int signum) {
 	/* prints each string of function names of trace*/
 	for (i = 0 ; i < size ; i++)
 		fprintf(stderr, "%s\n", strings[i]);
-}
-
-void __NORETURN print_backtrace_die(int signum) {
-	print_backtrace(signum);
-
-	exit(-1);
 }
 
 void __NORETURN print_backtrace2(int signum) {
@@ -55,6 +49,21 @@ void __NORETURN print_backtrace2(int signum) {
 		waitpid(child_pid, NULL, 0);
 	}
 	_exit(1);
+}
+#else
+void print_backtrace(int signum) {
+	(void)signum;
+}
+void __NORETURN print_backtrace2(int signum) {
+	(void)signum;
+	_exit(1);
+}
+#endif // ifdef __GLIBC__
+
+void __NORETURN print_backtrace_die(int signum) {
+	print_backtrace(signum);
+
+	exit(-1);
 }
 
 void stop_timer(void) {
