@@ -87,9 +87,12 @@ sub_dirs += $(objs) $(deps) $(stabs)
 # some warnings
 WARNINGS =
 
-WARNINGS += -Wall -Wextra -pedantic
+WARNINGS += -Wall -Wextra
 WARNINGS += -Wmissing-include-dirs
 WARNINGS += -Wcomment -Wmultichar
+
+# enable whenever we want to do massive cleanup, otherwise too chatty
+# WARNINGS += -pedantic -Waggregate-return
 
 # these reviewed, and do not appear to be covered by above flags
 WARNINGS += -Wswitch-default -Wswitch-enum -Winit-self
@@ -98,7 +101,7 @@ WARNINGS += -Wstrict-overflow -Wconversion
 WARNINGS += -Wmissing-declarations -Wredundant-decls -Wdeclaration-after-statement
 WARNINGS += -Wmissing-prototypes -Wstrict-prototypes -Wunused-parameter
 WARNINGS += -Wold-style-definition
-WARNINGS += -Waggregate-return -Wbad-function-cast -Wcast-qual -Wcast-align
+WARNINGS += -Wbad-function-cast -Wcast-qual -Wcast-align
 WARNINGS += -Wundef -Wendif-labels -Wshadow
 
 WARNINGS += -Wsuggest-attribute=pure -Wsuggest-attribute=const -Wsuggest-attribute=noreturn
