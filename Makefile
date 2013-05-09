@@ -30,7 +30,7 @@ LDFLAGS=
 CPPFLAGS= -iquote .
 CFLAGS=
 
-CPPFLAGS += -std=gnu99
+CPPFLAGS += -std=gnu11
 #CPPFLAGS += -std=c99
 
 # only enable if 'static' is really what we want
