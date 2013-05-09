@@ -337,7 +337,7 @@ src_release: $(SRCS)
 	$(info tarball = $(tarball))
 	@( \
 		cd .. ; \
-		tar -C $(parent_dir) cjf $(tarball) $(rel_srcs) \
+		tar -C $(parent_dir) -cjf $(tarball) $(rel_srcs) \
 			$(base_dir_name)/Makefile\
 	)
 	$(info wrote $(tarball))
@@ -347,7 +347,7 @@ full_release: $(SRCS) $(target)
 	$(eval tarball = $(parent_dir)/$(base_dir_name).tar.bz2)
 	$(info tarball = $(tarball))
 	@( \
-		tar -C $(parent_dir) cjf $(tarball) $(rel_srcs) \
+		tar -C $(parent_dir) -cjf $(tarball) $(rel_srcs) \
 			$(base_dir_name)/Makefile \
 			$(base_dir_name)/$(target) \
 	)
