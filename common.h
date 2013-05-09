@@ -6,6 +6,7 @@
 #endif
 
 #include <stdint.h>
+#include <math.h>
 
 #define __CONST		__attribute__((const))
 #define __PURE		__attribute__((pure))
@@ -33,10 +34,12 @@ typedef enum { no = 0, false = 0, yes = 1, true = 1 } __PACKED bool;
 #define DEFFILEMODE (S_IRUSR|S_IWUSR|S_IRGRP|S_IWGRP|S_IROTH|S_IWOTH)/* 0666*/
 #endif
 
-#if	!defined(_BSD_SOURCE) && !defined(SVID_SOURCE) && !(defined(_XOPEN_SOURCE) && (_XOPEN_SOURCE >= 600)) \
-	&& !defined(_ISOC99_SOURCE) && !(defined(_POSIX_C_SOURCE) && (_POSIX_C_SOURCE >= 200112L))
+#ifndef __GLIBC__
 #define powl(x,y) \
 	(double)pow( (double)x, (double)y)
+
+#define log(x) \
+	pow(M_E, x)
 #endif
 
 #define xstr(s) str(s)
