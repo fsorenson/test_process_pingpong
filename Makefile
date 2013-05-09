@@ -10,7 +10,7 @@ target = test_process_pingpong
 LIBS += -lrt
 
 # for dietlibc:
-#CC = diet $(CC)
+#CC := diet $(CC)
 #LIBS += -lcompat
 
 
@@ -44,6 +44,9 @@ CPPFLAGS += -std=gnu99
 #CFLAGS += -march=native -mtune=native
 #CFLAGS += -march=corei7 -mtune=corei7
 #CFLAGS += -march=corei7 -mtune=corei7
+
+# check for eventfd.h
+HAVE_EVENTFD = $(shell [[ -f /usr/include/sys/eventfd.h ]] && echo "-DHAVE_EVENTFD_H")
 
 
 COMPILE_DEBUG =
@@ -236,7 +239,10 @@ gcovs += $(addprefix $(objs_dir)/, $(addsuffix .gcno,$(f)))
 comms =
 comms += tcp udp pipe socket_pair
 comms += sem
-comms += futex futex_test mq eventfd inotify signal
+comms += futex futex_test mq inotify signal
+ifneq ($(HAVE_EVENTFD),)
+comms += eventfd
+endif
 comms += spin yield race nop
 comms += namedpipe
 #comms += benaphore
