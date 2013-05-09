@@ -31,6 +31,8 @@ int comm_makepair_namedpipe(int fd[2]) {
 	fcntl(fd[1], F_SETFL, O_DIRECT);
 
 	namedpipe_num ++;
+
+	return 0;
 }
 
 inline int __PINGPONG_FN comm_ping_namedpipe(int thread_num) {
