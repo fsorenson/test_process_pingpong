@@ -24,7 +24,7 @@ int make_udp_pair(int fd[2]) {
         a.inaddr.sin_port = 0;
         a.inaddr.sin_addr.s_addr = INADDR_ANY;
 
-        bind(fds, &a.addr, addr_len);
+        bind(fds, (struct sockaddr *)&a.addr, addr_len);
 
         fdc = socket(PF_INET, SOCK_DGRAM, 0);
 
@@ -32,7 +32,7 @@ int make_udp_pair(int fd[2]) {
         a.inaddr.sin_family = AF_INET;
         a.inaddr.sin_port = 0;
         a.inaddr.sin_addr.s_addr = INADDR_ANY;
-        bind(fds, &a.inaddr, addr_len);
+        bind(fds, (struct sockaddr *)&a.inaddr, addr_len);
 
 //      addr_len = sizeof(saddr);
         getsockname(fds, &a.addr, &addr_len);
