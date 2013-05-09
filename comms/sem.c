@@ -105,5 +105,5 @@ static struct comm_mode_ops_struct comm_ops_busysem = {
 	.comm_cleanup = cleanup_sem
 };
 
-ADD_COMM_MODE(busysem, "busy-wait on a semaphore", &comm_ops_busysem);
 ADD_COMM_MODE(sem, "wait on a semaphore", &comm_ops_sem);
+ADD_COMM_MODE(busysem, "busy-wait on a semaphore", &comm_ops_busysem);
