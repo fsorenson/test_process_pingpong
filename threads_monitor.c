@@ -206,13 +206,28 @@ void show_stats(int signum) {
 	write(1, "\n", 1);
 
 
-	snprintf(output_buffer, 255, "%s %12llu %11s",
+	// general stats
+	snprintf(output_buffer, output_buffer_len, "%7s %12llu %11s",
 		subsec_string(temp_string1, i_stats.run_time, 1),
 		i_stats.interval_count,
 		subsec_string(temp_string2, i_stats.iteration_time, 2));
-	output_buffer[255] = 0;
+	output_buffer[output_buffer_len - 1] = 0;
 	write(1, output_buffer, strlen(output_buffer));
 
+	// per-thread stats
+	snprintf(output_buffer, output_buffer_len, " | %5ld / %5ld  %4.1LF%%  %4.1LF%%",
+		i_stats.rusage[0].ru_nvcsw, i_stats.rusage[0].ru_nivcsw,
+		((i_stats.rusage[0].ru_utime.tv_sec * 100.0L) + (i_stats.rusage[0].ru_utime.tv_usec / 1.0e4L) / i_stats.interval_time),
+		((i_stats.rusage[0].ru_stime.tv_sec * 100.0L) + (i_stats.rusage[0].ru_stime.tv_usec / 1.0e4L) / i_stats.interval_time)
+		);
+	write(1, output_buffer, strlen(output_buffer));
+
+	snprintf(output_buffer, output_buffer_len, " | %5ld / %5ld  %4.1LF%%  %4.1LF%%",
+		i_stats.rusage[1].ru_nvcsw, i_stats.rusage[1].ru_nivcsw,
+		((i_stats.rusage[1].ru_utime.tv_sec * 100.0L) + (i_stats.rusage[1].ru_utime.tv_usec / 1.0e4L) / i_stats.interval_time),
+		((i_stats.rusage[1].ru_stime.tv_sec * 100.0L) + (i_stats.rusage[1].ru_stime.tv_usec / 1.0e4L) / i_stats.interval_time)
+		);
+	write(1, output_buffer, strlen(output_buffer));
 
 	if (config.set_affinity == true) {
 		snprintf(output_buffer, 255, ", ping: %d.%d cyc.",
