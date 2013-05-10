@@ -89,7 +89,7 @@ void setup_timer(void) {
 
 	sigemptyset(&sa.sa_mask);
 	sa.sa_flags = 0;
-	sa.sa_handler = &show_stats;
+	sa.sa_handler = &show_periodic_stats;
 
 	sigaction(SIGALRM, &sa, NULL);
 	setitimer(ITIMER_REAL, &timer, 0);
