@@ -238,11 +238,6 @@ void show_stats(int signum) {
 		write(1, output_buffer, strlen(output_buffer));
 	}
 
-	snprintf(output_buffer, 255, ", %LF s usr, %LF s sys",
-		(i_stats.rusage[0].ru_utime.tv_sec * 1.0L) + (i_stats.rusage[0].ru_utime.tv_usec / 1.0e6L),
-		(i_stats.rusage[0].ru_stime.tv_sec * 1.0L) + (i_stats.rusage[0].ru_stime.tv_usec / 1.0e6L));
-	write(1, output_buffer, strlen(output_buffer));
-
 
 
 
