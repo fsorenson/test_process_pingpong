@@ -149,7 +149,9 @@ static int gather_stats(struct interval_stats_struct *i_stats) {
 	return 0;
 }
 
-void show_stats(int signum) {
+static struct interval_stats_struct i_stats;
+
+void show_periodic_stats(int signum) {
 #define OUTPUT_BUFFER_LEN 400
 	static char output_buffer[OUTPUT_BUFFER_LEN];
 	size_t output_buffer_len = OUTPUT_BUFFER_LEN;
@@ -159,8 +161,6 @@ void show_stats(int signum) {
 	static char temp_string2[TEMP_STRING_LEN];
 	size_t temp_string_len = TEMP_STRING_LEN;
 #undef TEMP_STRING_LEN
-
-	struct interval_stats_struct i_stats;
 
 	(void)signum;
 
@@ -175,6 +175,17 @@ void show_stats(int signum) {
 
 	if (run_data->stop == true) /* don't worry about output...  let's just pack up and go home */
 		return;
+
+	show_stats_header();
+	show_stats();
+	store_last_stats();
+}
+
+void show_stats_header(void) {
+#define OUTPUT_BUFFER_LEN 400
+	static char output_buffer[OUTPUT_BUFFER_LEN];
+	size_t output_buffer_len = OUTPUT_BUFFER_LEN;
+#undef OUTPUT_BUFFER_LEN
 
 	// original format
 	// 83.000 s - 64962 iterations -> 15.393 us, ping: 40945.64 cycles, pong: 40945.100 cycles
@@ -204,7 +215,17 @@ void show_stats(int signum) {
 	write(1, output_buffer, strlen(output_buffer));
 
 	write(1, "\n", 1);
+}
 
+void show_stats(void) {
+#define OUTPUT_BUFFER_LEN 400
+	static char output_buffer[OUTPUT_BUFFER_LEN];
+	size_t output_buffer_len = OUTPUT_BUFFER_LEN;
+#undef OUTPUT_BUFFER_LEN
+#define TEMP_STRING_LEN 30
+	static char temp_string1[TEMP_STRING_LEN];
+	static char temp_string2[TEMP_STRING_LEN];
+#undef TEMP_STRING_LEN
 
 	// general stats
 	snprintf(output_buffer, output_buffer_len, "%7s %12llu %11s",
@@ -254,7 +275,9 @@ void show_stats(int signum) {
 */
 
 	write(1, "\n", 1);
+}
 
+void store_last_stats(void) {
 	/* cleanup things for the next time we come back */
 	memcpy((void *)&run_data->thread_stats[0].last_rusage,
 		(void *)&run_data->thread_stats[0].rusage, sizeof(struct rusage));
