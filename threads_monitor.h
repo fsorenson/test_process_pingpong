@@ -17,8 +17,10 @@
 
 /* thread startup, execution, handlers, etc */
 
-
-void show_stats(int signum);
+void show_periodic_stats(int signum);
+void show_stats_header(void);
+void show_stats(void);
+void store_last_stats(void);
 
 void stop_handler(int signum);
 void child_handler(int signum);
