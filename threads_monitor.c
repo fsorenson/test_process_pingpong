@@ -230,10 +230,10 @@ void show_stats(int signum) {
 	write(1, output_buffer, strlen(output_buffer));
 
 	if (config.set_affinity == true) {
-		snprintf(output_buffer, 255, ", ping: %d.%d cyc.",
+		snprintf(output_buffer, output_buffer_len, ", ping: %d.%d cyc.",
 			(int)i_stats.cpi[0], (int)(i_stats.cpi[0] * 100.0L) % 100);
 		write(1, output_buffer, strlen(output_buffer));
-		snprintf(output_buffer, 255, ", %ld/%ld csw",
+		snprintf(output_buffer, output_buffer_len, ", %ld/%ld csw",
 			i_stats.rusage[0].ru_nvcsw, i_stats.rusage[0].ru_nivcsw);
 		write(1, output_buffer, strlen(output_buffer));
 	}
@@ -243,10 +243,10 @@ void show_stats(int signum) {
 
 	if (config.set_affinity == true) {
 
-		snprintf(output_buffer, 255, ", pong: %d.%d cyc.",
+		snprintf(output_buffer, output_buffer_len, ", pong: %d.%d cyc.",
 			(int)i_stats.cpi[1], (int)(i_stats.cpi[1] * 100.0L) & 100);
 		write(1, output_buffer, strlen(output_buffer));
-		snprintf(output_buffer, 255, ", %ld csw",
+		snprintf(output_buffer, output_buffer_len, ", %ld csw",
 			i_stats.csw[1]);
 		write(1, output_buffer, strlen(output_buffer));
 	}
