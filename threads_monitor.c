@@ -229,6 +229,8 @@ void show_stats(int signum) {
 		);
 	write(1, output_buffer, strlen(output_buffer));
 
+
+/* cpu cycles/pingpong for ping
 	if (config.set_affinity == true) {
 		snprintf(output_buffer, output_buffer_len, ", ping: %d.%d cyc.",
 			(int)i_stats.cpi[0], (int)(i_stats.cpi[0] * 100.0L) % 100);
@@ -237,10 +239,9 @@ void show_stats(int signum) {
 			i_stats.rusage[0].ru_nvcsw, i_stats.rusage[0].ru_nivcsw);
 		write(1, output_buffer, strlen(output_buffer));
 	}
+*/
 
-
-
-
+/* cpu cycles/pingpong for pong
 	if (config.set_affinity == true) {
 
 		snprintf(output_buffer, output_buffer_len, ", pong: %d.%d cyc.",
@@ -250,6 +251,7 @@ void show_stats(int signum) {
 			i_stats.csw[1]);
 		write(1, output_buffer, strlen(output_buffer));
 	}
+*/
 
 	write(1, "\n", 1);
 
