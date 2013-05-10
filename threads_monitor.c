@@ -161,7 +161,6 @@ void show_periodic_stats(int signum) {
 	static char temp_string2[TEMP_STRING_LEN];
 	size_t temp_string_len = TEMP_STRING_LEN;
 #undef TEMP_STRING_LEN
-
 	(void)signum;
 
 	memset(&i_stats, 0, sizeof(struct interval_stats_struct));
