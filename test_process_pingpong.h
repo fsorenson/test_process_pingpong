@@ -129,6 +129,8 @@ struct thread_info_struct {
 	int thread_num;
 	int pid;
 	int tid;
+	pid_t sid;
+	pid_t pgid;
 	pid_t ptid;
 	pid_t ctid;
 

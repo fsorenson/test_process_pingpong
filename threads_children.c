@@ -78,6 +78,10 @@ void __NORETURN do_thread_work(int thread_num) {
 		run_data->thread_info[thread_num].tid = (int)syscall(SYS_gettid);
 	if (run_data->thread_info[thread_num].pid == 0)
 		run_data->thread_info[thread_num].pid = (int)syscall(SYS_getpid);
+	run_data->thread_info[thread_num].sid =
+		(int)syscall(SYS_getsid, run_data->thread_info[thread_num].pid);
+	run_data->thread_info[thread_num].pgid =
+		(int)syscall(SYS_getpgid, run_data->thread_info[thread_num].pid);
 
 	estimate_cpu_speed(thread_num);
 
