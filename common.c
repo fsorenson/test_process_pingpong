@@ -101,6 +101,19 @@ struct timespec elapsed_time(const struct timespec start, const struct timespec 
 	return ret;
 }
 
+struct timeval elapsed_time_timeval(const struct timeval start, const struct timeval stop) {
+	struct timeval ret;
+
+	if ((stop.tv_usec - start.tv_usec) < 0) {
+		ret.tv_sec = stop.tv_sec - start.tv_sec - 1;
+		ret.tv_usec = 1000000L + stop.tv_usec - start.tv_usec;
+	} else {
+		ret.tv_sec = stop.tv_sec - start.tv_sec;
+		ret.tv_usec = stop.tv_usec - start.tv_usec;
+	}
+	return ret;
+}
+
 inline int rename_thread(char *thread_name) {
 	char name[17];
 	int ret;
