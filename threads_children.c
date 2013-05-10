@@ -69,8 +69,11 @@ static int setup_interrupt_signal(int thread_num) {
 }
 
 void __NORETURN do_thread_work(int thread_num) {
+#define OUTPUT_BUFFER_LEN 200
 	char cpu_cycle_time_buffer[50];
-	char buf[100];
+	char output_buffer[OUTPUT_BUFFER_LEN];
+	size_t output_buffer_len = OUTPUT_BUFFER_LEN;
+#undef OUTPUT_BUFFER_LEN
 
 	rename_thread(run_data->thread_info[thread_num].thread_name);
 
@@ -86,13 +89,14 @@ void __NORETURN do_thread_work(int thread_num) {
 	estimate_cpu_speed(thread_num);
 
 
-	snprintf(buf, 99, "%d: %s - thread %d, pid %d, tid %d, CPU estimated at %.2Lf MHz (%s cycle)\n",
+	snprintf(output_buffer, output_buffer_len, "%d: %s - thread %d, pid %d, tid %d, sid %d, pgid %d, CPU estimated at %.2Lf MHz (%s cycle)\n",
 		thread_num, run_data->thread_info[thread_num].thread_name,
 		run_data->thread_info[thread_num].thread_num,
 		run_data->thread_info[thread_num].pid, run_data->thread_info[thread_num].tid,
+		run_data->thread_info[thread_num].sid, run_data->thread_info[thread_num].pgid,
 		run_data->thread_info[thread_num].cpu_mhz,
 		subsec_string(cpu_cycle_time_buffer, run_data->thread_info[thread_num].cpu_cycle_time, 3));
-	write(1, buf, strlen(buf));
+	write(1, output_buffer, strlen(output_buffer));
 
 
 	on_parent_death(SIGINT);
