@@ -26,14 +26,6 @@ write(1, "sigpipe\n", 8);
 	comm_cleanup_pipe();
 }
 
-int comm_interrupt_pipe(void) {
-	close(config.mouth[0]);
-	close(config.mouth[1]);
-write(1, "sent interrupts\n", 16);
-
-	return 0;
-}
-
 inline int __PINGPONG_FN comm_ping_pipe(int thread_num) {
 	char dummy;
 	(void)thread_num;
