@@ -205,24 +205,24 @@ void show_stats(struct interval_stats_struct *i_stats) {
 
 	// general stats
 	snprintf(output_buffer, output_buffer_len, "%7s %12llu %11s",
-		subsec_string(temp_string1, i_stats.run_time, 1),
-		i_stats.interval_count,
-		subsec_string(temp_string2, i_stats.iteration_time, 2));
+		subsec_string(temp_string1, i_stats->run_time, 1),
+		i_stats->interval_count,
+		subsec_string(temp_string2, i_stats->iteration_time, 2));
 	output_buffer[output_buffer_len - 1] = 0;
 	write(1, output_buffer, strlen(output_buffer));
 
 	// per-thread stats
 	snprintf(output_buffer, output_buffer_len, " | %5ld / %5ld  %4.1LF%%  %4.1LF%%",
-		i_stats.rusage[0].ru_nvcsw, i_stats.rusage[0].ru_nivcsw,
-		((i_stats.rusage[0].ru_utime.tv_sec * 100.0L) + (i_stats.rusage[0].ru_utime.tv_usec / 1.0e4L) / i_stats.interval_time),
-		((i_stats.rusage[0].ru_stime.tv_sec * 100.0L) + (i_stats.rusage[0].ru_stime.tv_usec / 1.0e4L) / i_stats.interval_time)
+		i_stats->rusage[0].ru_nvcsw, i_stats->rusage[0].ru_nivcsw,
+		((i_stats->rusage[0].ru_utime.tv_sec * 100.0L) + (i_stats->rusage[0].ru_utime.tv_usec / 1.0e4L) / i_stats->interval_time),
+		((i_stats->rusage[0].ru_stime.tv_sec * 100.0L) + (i_stats->rusage[0].ru_stime.tv_usec / 1.0e4L) / i_stats->interval_time)
 		);
 	write(1, output_buffer, strlen(output_buffer));
 
 	snprintf(output_buffer, output_buffer_len, " | %5ld / %5ld  %4.1LF%%  %4.1LF%%",
-		i_stats.rusage[1].ru_nvcsw, i_stats.rusage[1].ru_nivcsw,
-		((i_stats.rusage[1].ru_utime.tv_sec * 100.0L) + (i_stats.rusage[1].ru_utime.tv_usec / 1.0e4L) / i_stats.interval_time),
-		((i_stats.rusage[1].ru_stime.tv_sec * 100.0L) + (i_stats.rusage[1].ru_stime.tv_usec / 1.0e4L) / i_stats.interval_time)
+		i_stats->rusage[1].ru_nvcsw, i_stats->rusage[1].ru_nivcsw,
+		((i_stats->rusage[1].ru_utime.tv_sec * 100.0L) + (i_stats->rusage[1].ru_utime.tv_usec / 1.0e4L) / i_stats->interval_time),
+		((i_stats->rusage[1].ru_stime.tv_sec * 100.0L) + (i_stats->rusage[1].ru_stime.tv_usec / 1.0e4L) / i_stats->interval_time)
 		);
 	write(1, output_buffer, strlen(output_buffer));
 
@@ -230,10 +230,10 @@ void show_stats(struct interval_stats_struct *i_stats) {
 /* cpu cycles/pingpong for ping
 	if (config.set_affinity == true) {
 		snprintf(output_buffer, output_buffer_len, ", ping: %d.%d cyc.",
-			(int)i_stats.cpi[0], (int)(i_stats.cpi[0] * 100.0L) % 100);
+			(int)i_stats->cpi[0], (int)(i_stats->cpi[0] * 100.0L) % 100);
 		write(1, output_buffer, strlen(output_buffer));
 		snprintf(output_buffer, output_buffer_len, ", %ld/%ld csw",
-			i_stats.rusage[0].ru_nvcsw, i_stats.rusage[0].ru_nivcsw);
+			i_stats->rusage[0].ru_nvcsw, i_stats->rusage[0].ru_nivcsw);
 		write(1, output_buffer, strlen(output_buffer));
 	}
 */
@@ -242,10 +242,10 @@ void show_stats(struct interval_stats_struct *i_stats) {
 	if (config.set_affinity == true) {
 
 		snprintf(output_buffer, output_buffer_len, ", pong: %d.%d cyc.",
-			(int)i_stats.cpi[1], (int)(i_stats.cpi[1] * 100.0L) & 100);
+			(int)i_stats->cpi[1], (int)(i_stats->cpi[1] * 100.0L) & 100);
 		write(1, output_buffer, strlen(output_buffer));
 		snprintf(output_buffer, output_buffer_len, ", %ld csw",
-			i_stats.csw[1]);
+			i_stats->csw[1]);
 		write(1, output_buffer, strlen(output_buffer));
 	}
 */
@@ -260,12 +260,12 @@ void store_last_stats(struct interval_stats_struct *i_stats) {
 	memcpy((void *)&run_data->thread_stats[1].last_rusage,
 		(const void *)&run_data->thread_stats[1].rusage, sizeof(struct rusage));
 
-	run_data->last_ping_count = i_stats.current_count;
-	run_data->last_stats_time = i_stats.current_time;
+	run_data->last_ping_count = i_stats->current_count;
+	run_data->last_stats_time = i_stats->current_time;
 	run_data->thread_stats[0].last_tsc = run_data->thread_stats[0].tsc;
 	run_data->thread_stats[1].last_tsc = run_data->thread_stats[1].tsc;
 
-	if (i_stats.current_time >= run_data->timeout_time) {
+	if (i_stats->current_time >= run_data->timeout_time) {
 		stop_handler(0);
 		return;
 	}
