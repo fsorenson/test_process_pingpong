@@ -105,17 +105,7 @@ struct config_struct {
 
 	long double sched_rr_quantum;
 
-
 	COMM_MODE_OPS;
-/*
-	int (*comm_init)();
-	int (*comm_make_pair)(int fd[2]);
-	int (*comm_pre)();
-	int (*comm_do_send)(int s);
-	int (*comm_do_recv)(int s);
-	int (*comm_cleanup)();
-*/
-//	char dummy2[8];
 };
 
 extern struct config_struct config;
