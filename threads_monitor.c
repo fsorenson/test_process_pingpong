@@ -190,13 +190,18 @@ void show_stats_header(void) {
 
 void show_stats(void) {
 #define OUTPUT_BUFFER_LEN 400
-	static char output_buffer[OUTPUT_BUFFER_LEN];
+	static char output_buffer[OUTPUT_BUFFER_LEN] = { 0 };
 	size_t output_buffer_len = OUTPUT_BUFFER_LEN;
 #undef OUTPUT_BUFFER_LEN
 #define TEMP_STRING_LEN 30
-	static char temp_string1[TEMP_STRING_LEN];
-	static char temp_string2[TEMP_STRING_LEN];
+	static char temp_string1[TEMP_STRING_LEN] = { 0 };
+	static char temp_string2[TEMP_STRING_LEN] = { 0 };
+	size_t temp_string_len = TEMP_STRING_LEN;
 #undef TEMP_STRING_LEN
+
+	memset(output_buffer, 0, output_buffer_len);
+	memset(temp_string1, 0, temp_string_len);
+	memset(temp_string2, 0, temp_string_len);
 
 	// general stats
 	snprintf(output_buffer, output_buffer_len, "%7s %12llu %11s",
