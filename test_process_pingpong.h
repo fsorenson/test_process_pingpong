@@ -94,7 +94,6 @@ struct config_struct {
 
 	int size_align_flag;
 
-
 	long monitor_check_frequency; /* milliseconds between 'check if there's a need to display stats or end */
 	long stats_interval; /* in seconds */
 	unsigned long runtime; /* in seconds */
@@ -103,9 +102,9 @@ struct config_struct {
 
 	char *sched_string;
 
-	long double sched_rr_quantum;
-
 	COMM_MODE_OPS;
+
+	long double sched_rr_quantum;
 };
 
 extern struct config_struct config;
