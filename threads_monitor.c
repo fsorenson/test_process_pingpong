@@ -136,21 +136,9 @@ static int gather_stats(struct interval_stats_struct *i_stats) {
 static struct interval_stats_struct i_stats;
 
 void show_periodic_stats(int signum) {
-#define OUTPUT_BUFFER_LEN 400
-	static char output_buffer[OUTPUT_BUFFER_LEN];
-	size_t output_buffer_len = OUTPUT_BUFFER_LEN;
-#undef OUTPUT_BUFFER_LEN
-#define TEMP_STRING_LEN 30
-	static char temp_string1[TEMP_STRING_LEN];
-	static char temp_string2[TEMP_STRING_LEN];
-	size_t temp_string_len = TEMP_STRING_LEN;
-#undef TEMP_STRING_LEN
 	(void)signum;
 
 	memset(&i_stats, 0, sizeof(struct interval_stats_struct));
-	memset(output_buffer, 0, output_buffer_len);
-	memset(temp_string1, 0, temp_string_len);
-	memset(temp_string2, 0, temp_string_len);
 
 	if (run_data->rusage_req_in_progress == true) /* already waiting for results */
 		return;
