@@ -121,4 +121,4 @@ static struct comm_mode_ops_struct comm_ops_tcp = {
 	.comm_do_pong = do_pong_tcp
 };
 
-ADD_COMM_MODE(tcp, "", &comm_ops_tcp);
+ADD_COMM_MODE(tcp, "TCP ping/pong", &comm_ops_tcp);

@@ -97,4 +97,4 @@ static struct comm_mode_ops_struct comm_ops_mq = {
 	.comm_cleanup = cleanup_mq
 };
 
-ADD_COMM_MODE(mq, "", &comm_ops_mq);
+ADD_COMM_MODE(mq, "ping/pong via message queue", &comm_ops_mq);

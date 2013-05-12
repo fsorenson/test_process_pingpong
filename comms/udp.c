@@ -51,4 +51,4 @@ static struct comm_mode_ops_struct comm_ops_udp = {
 	.comm_make_pair = make_udp_pair
 };
 
-ADD_COMM_MODE(udp, "", &comm_ops_udp);
+ADD_COMM_MODE(udp, "UDP ping/pong", &comm_ops_udp);

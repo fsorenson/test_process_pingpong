@@ -64,4 +64,4 @@ static struct comm_mode_ops_struct comm_ops_pipe = {
 	.comm_cleanup = comm_cleanup_pipe
 };
 
-ADD_COMM_MODE(pipe, "", &comm_ops_pipe);
+ADD_COMM_MODE(pipe, "pipe() ping/pong", &comm_ops_pipe);
