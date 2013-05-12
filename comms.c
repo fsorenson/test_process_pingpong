@@ -28,10 +28,18 @@ int parse_comm_mode(char *arg) {
 void __attribute__((destructor)) cleanup_comm_mode_info(void) {
 	int i;
 
-	for (i = 0 ; i < comm_mode_count ; i ++) {
-		free(comm_mode_info[i].name);
+	if (comm_mode_info != 0) {
+		for (i = 0 ; i < comm_mode_count ; i ++) {
+			if (comm_mode_info[i].help_text != 0)
+				free(comm_mode_info[i].help_text);
+			comm_mode_info[i].help_text = 0;
+			if (comm_mode_info[i].name != 0)
+				free(comm_mode_info[i].name);
+			comm_mode_info[i].name = 0;
+		}
+		free(comm_mode_info);
 	}
-	free(comm_mode_info);
+	comm_mode_info = 0;
 	comm_mode_count = 0;
 }
 
