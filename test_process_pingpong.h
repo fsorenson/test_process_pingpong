@@ -122,7 +122,7 @@ struct thread_info_struct {
 	pid_t ptid;
 	pid_t ctid;
 
-	char thread_name[28];
+	char thread_name[20];
 	void *stack;
 };
 
