@@ -10,7 +10,6 @@ int comm_pre_pipe(int thread_num) {
 	struct sigaction sa;
 	(void)thread_num;
 
-write(1, "setup sigpipe\n", 14);
 	sigemptyset(&sa.sa_mask);
 	sa.sa_flags = 0;
 	sa.sa_handler = sig_handler_pipe;
@@ -22,7 +21,6 @@ write(1, "setup sigpipe\n", 14);
 void __attribute__((noreturn)) sig_handler_pipe(int sig) {
 	(void)sig;
 
-write(1, "sigpipe\n", 8);
 	comm_cleanup_pipe();
 }
 
@@ -52,7 +50,6 @@ inline int __PINGPONG_FN comm_pong_pipe(int thread_num) {
 
 
 int __attribute__((noreturn)) comm_cleanup_pipe(void) {
-write(1, "bye\n", 4);
 	exit(0);
 }
 
