@@ -17,7 +17,6 @@
 	int (*comm_do_pong)(int s);		\
 	int (*comm_do_send)(int s);		\
 	int (*comm_do_recv)(int s);		\
-	int (*comm_interrupt)(void);		\
 	int (*comm_cleanup)(void)
 
 #define COMM_MODE_INIT_INFO \
@@ -83,7 +82,6 @@ int comm_do_pong_generic(int thread_num);
 int comm_do_send_generic(int fd);
 int comm_do_recv_generic(int fd);
 
-int comm_no_interrupt(void);
 int comm_no_cleanup(void);
 
 void comm_mode_do_initialization(struct comm_mode_init_info_struct *init_info, struct comm_mode_ops_struct *ops);

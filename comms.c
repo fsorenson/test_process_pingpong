@@ -107,7 +107,6 @@ void comm_mode_do_initialization(struct comm_mode_init_info_struct *init_info, s
 			comm_mode_info[i].comm_do_pong = ops->comm_do_pong ? ops->comm_do_pong : comm_do_pong_generic;
 			comm_mode_info[i].comm_do_send = ops->comm_do_send ? ops->comm_do_send : comm_do_send_generic;
 			comm_mode_info[i].comm_do_recv = ops->comm_do_recv ? ops->comm_do_recv : comm_do_recv_generic;
-			comm_mode_info[i].comm_interrupt = ops->comm_interrupt ? ops->comm_interrupt : comm_no_interrupt;
 			comm_mode_info[i].comm_cleanup = ops->comm_cleanup ? ops->comm_cleanup : comm_no_cleanup;
 
 
@@ -176,10 +175,6 @@ inline int comm_do_recv_generic(int fd) {
 	char dummy;
 
 	return (int)read(fd, &dummy, 1);
-}
-
-int __CONST comm_no_interrupt(void) {
-	return 0;
 }
 
 int __CONST comm_no_cleanup(void) {

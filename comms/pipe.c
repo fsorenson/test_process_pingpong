@@ -67,7 +67,6 @@ write(1, "bye\n", 4);
 static struct comm_mode_ops_struct comm_ops_pipe = {
 	.comm_make_pair = pipe,
 	.comm_pre = comm_pre_pipe,
-	.comm_interrupt = comm_interrupt_pipe,
 	.comm_do_ping = comm_ping_pipe,
 	.comm_do_pong = comm_pong_pipe,
 	.comm_cleanup = comm_cleanup_pipe

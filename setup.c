@@ -211,7 +211,6 @@ int do_comm_setup(void) {
 	config.comm_do_pong = comm_mode_info[config.comm_mode_index].comm_do_pong;
 	config.comm_do_send = comm_mode_info[config.comm_mode_index].comm_do_send;
 	config.comm_do_recv = comm_mode_info[config.comm_mode_index].comm_do_recv;
-	config.comm_interrupt = comm_mode_info[config.comm_mode_index].comm_interrupt;
 	config.comm_cleanup = comm_mode_info[config.comm_mode_index].comm_cleanup;
 
 	run_data = map_shared_area(sizeof(struct run_data_struct), config.size_align_flag);

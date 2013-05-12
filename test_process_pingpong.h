@@ -113,7 +113,6 @@ struct config_struct {
 	int (*comm_pre)();
 	int (*comm_do_send)(int s);
 	int (*comm_do_recv)(int s);
-	int (*comm_interrupt)();
 	int (*comm_cleanup)();
 */
 //	char dummy2[8];
