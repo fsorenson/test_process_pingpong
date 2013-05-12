@@ -37,22 +37,6 @@ static inline unsigned long long native_read_tscp(unsigned int *aux)
 }
 
 
-struct interval_stats_struct {
-	unsigned long long current_count;
-	unsigned long long interval_count;
-	long double current_time;
-	long double interval_time;
-	long double run_time;
-	struct rusage rusage[2];
-	unsigned long long interval_tsc[2];
-
-	long csw[2]; /* per-thread per-interval csw */
-
-	long double iteration_time; /* time for each iteration */
-	long double cpi[2]; /* cycles-per-iteration per CPU */
-	long double mhz[2]; /* approximate speed of the CPU */
-};
-
 static void monitor_cleanup(void) {
 	free(run_data->thread_info[0].stack);
 	free(run_data->thread_info[1].stack);
