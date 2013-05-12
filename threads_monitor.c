@@ -133,9 +133,9 @@ static int gather_stats(struct interval_stats_struct *i_stats) {
 	return 0;
 }
 
-static struct interval_stats_struct i_stats;
 
 void show_periodic_stats(int signum) {
+	static struct interval_stats_struct i_stats = { 0 };
 	(void)signum;
 
 	memset(&i_stats, 0, sizeof(struct interval_stats_struct));
@@ -148,8 +148,8 @@ void show_periodic_stats(int signum) {
 		return;
 
 	show_stats_header();
-	show_stats();
-	store_last_stats();
+	show_stats(&i_stats);
+	store_last_stats(&i_stats);
 }
 
 void show_stats_header(void) {
@@ -188,7 +188,7 @@ void show_stats_header(void) {
 	write(1, "\n", 1);
 }
 
-void show_stats(void) {
+void show_stats(struct interval_stats_struct *i_stats) {
 #define OUTPUT_BUFFER_LEN 400
 	static char output_buffer[OUTPUT_BUFFER_LEN] = { 0 };
 	size_t output_buffer_len = OUTPUT_BUFFER_LEN;
@@ -253,7 +253,7 @@ void show_stats(void) {
 	write(1, "\n", 1);
 }
 
-void store_last_stats(void) {
+void store_last_stats(struct interval_stats_struct *i_stats) {
 	/* cleanup things for the next time we come back */
 	memcpy((void *)&run_data->thread_stats[0].last_rusage,
 		(void *)&run_data->thread_stats[0].rusage, sizeof(struct rusage));
