@@ -166,7 +166,9 @@ unsigned int __CONST page_align_size(unsigned int len, int size_align_flag) {
 
 void *map_shared_area(unsigned int len, int size_align_flag) {
 	return mmap(NULL, page_align_size(len, size_align_flag),
-                PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0);
+                PROT_READ | PROT_WRITE,
+		MAP_SHARED | MAP_ANONYMOUS | MAP_POPULATE,
+		-1, 0);
 }
 
 integer_fixed_point_t __CONST f_to_fp(int prec, long double f) {
