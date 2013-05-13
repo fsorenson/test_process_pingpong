@@ -359,10 +359,9 @@ static int do_fork(void) {
 		pid = fork();
 		if (pid == 0) { /* child proc */ /* pong */
 			do_thread_work(thread_num);
+			exit(0);
 		} else if (pid > 0) {
 			run_data->thread_info[thread_num].pid = pid;
-
-			do_monitor_work();
 		} else {
 			printf("Error while trying to fork: %d: %s\n",
 				run_data->thread_info[thread_num].pid, strerror(errno));
@@ -419,7 +418,6 @@ static int do_clone(void) {
 		perror("clone");
 		exit(2);
 	}
-	do_monitor_work();
 
 	return 0;
 }
@@ -459,8 +457,6 @@ static int do_pthread(void) {
 		errno = ret; perror("pthread_attr_destroy"); exit(-1);
 	}
 
-	do_monitor_work();
-
 	return 0;
 }
 
@@ -477,6 +473,8 @@ int start_threads(void) {
 		printf("No thread mode specified?\n");
 		exit(-1);
 	}
+
+	do_monitor_work();
 
 	return 0;
 }
