@@ -351,12 +351,6 @@ static int do_fork(void) {
 	int thread_num = 0;
 	int pid;
 
-	run_data->thread_info[thread_num].thread_num = thread_num;
-	strncpy(run_data->thread_info[thread_num].thread_name, "ping_thread", 12);
-	run_data->stop = false;
-	run_data->rusage_req_in_progress = false;
-	run_data->rusage_req[0] = run_data->rusage_req[1] = false;
-
 	pid = fork();
 	if (pid == 0) { /* child proc */ /* ping */
 		do_thread_work(thread_num);
@@ -364,9 +358,6 @@ static int do_fork(void) {
 		run_data->thread_info[thread_num].pid = pid;
 
 		thread_num ++;
-
-		run_data->thread_info[thread_num].thread_num = thread_num;
-		strncpy(run_data->thread_info[thread_num].thread_name, "pong_thread", 12);
 
 		pid = fork();
 		if (pid == 0) { /* child proc */ /* pong */
@@ -399,10 +390,6 @@ static int do_clone(void) {
 		exit(1);
 	}
 
-
-	run_data->thread_info[thread_num].thread_num = thread_num;
-	strncpy(run_data->thread_info[thread_num].thread_name, "ping_thread", 12);
-
 //	clone_flags = CLONE_FS | CLONE_FILES | CLONE_PARENT | CLONE_VM | SIGCHLD;
 	clone_flags = CLONE_FS | CLONE_FILES | SIGCHLD;
 
@@ -413,10 +400,6 @@ static int do_clone(void) {
 		);
 
 	thread_num++;
-
-
-	run_data->thread_info[thread_num].thread_num = thread_num;
-	strncpy(run_data->thread_info[thread_num].thread_name, "pong_thread", 12);
 
 	run_data->thread_info[thread_num].tid = clone(&thread_function,
 		(char *) run_data->thread_info[thread_num].stack + STACK_SIZE, clone_flags,
@@ -446,9 +429,6 @@ static int do_pthread(void) {
 		errno = ret ; perror("pthread_attr_setdetachstate"); exit(-1);
 	}
 
-	run_data->thread_info[thread_num].thread_num = thread_num;
-	strncpy(run_data->thread_info[thread_num].thread_name, "ping_thread", 12);
-
 	if ((ret = pthread_create((pthread_t *)&run_data->thread_info[thread_num].thread_id, &attr,
 		&pthread_function, (void *)&run_data->thread_info[thread_num])) != 0) {
 		errno = ret;
@@ -457,9 +437,6 @@ static int do_pthread(void) {
 	}
 
 	thread_num ++;
-
-	run_data->thread_info[thread_num].thread_num = thread_num;
-	strncpy(run_data->thread_info[thread_num].thread_name, "pong_thread", 12);
 
 	pthread_create((pthread_t *)&run_data->thread_info[thread_num].thread_id, &attr,
 		&pthread_function, (void *)&run_data->thread_info[thread_num]);
