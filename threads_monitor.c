@@ -44,6 +44,13 @@ static void monitor_cleanup(void) {
 	munmap(run_data, sizeof(struct run_data_struct));
 }
 
+static void stop_threads(void) {
+	run_data->stop = true;
+	mb();
+
+	send_sig(run_data->thread_info[0].pid, SIGUSR1);
+	send_sig(run_data->thread_info[1].pid, SIGUSR2);
+}
 
 void stop_handler(int signum) {
 	static int visited = 0;
@@ -56,10 +63,7 @@ void stop_handler(int signum) {
 	visited++;
 
 	stop_timer();
-	run_data->stop = true;
-
-	send_sig(run_data->thread_info[0].pid, SIGUSR1);
-	send_sig(run_data->thread_info[1].pid, SIGUSR2);
+	stop_threads();
 
 	printf("Waiting for child threads to die.  Die, kids!  Die!!!\n");
 	while ((run_data->thread_info[0].pid != -1) || (run_data->thread_info[1].pid != -1)) {
