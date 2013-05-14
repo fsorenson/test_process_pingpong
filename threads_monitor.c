@@ -212,7 +212,6 @@ void show_stats(struct interval_stats_struct *i_stats) {
 		subsec_string(temp_string1, i_stats->run_time, 1),
 		i_stats->interval_count,
 		subsec_string(temp_string2, i_stats->iteration_time, 2));
-	output_buffer[output_buffer_len - 1] = 0;
 	write(1, output_buffer, strlen(output_buffer));
 
 	// per-thread stats
