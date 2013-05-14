@@ -103,6 +103,7 @@ struct config_struct {
 	char *sched_string;
 
 	COMM_MODE_OPS;
+	char dummy1[8];
 
 	long double sched_rr_quantum;
 };
