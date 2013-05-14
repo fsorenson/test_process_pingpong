@@ -331,10 +331,10 @@ int do_monitor_work(void) {
 	}
 
 	setup_timer();
-	__sync_synchronize();
+	mb();
 	run_data->start = true; /* tell the child threads to begin */
+	mb();
 	config.comm_begin();
-	__sync_synchronize();
 
 	run_data->start_time = run_data->last_stats_time = get_time();
 	run_data->timeout_time = (double)run_data->start_time + (double)config.runtime;
