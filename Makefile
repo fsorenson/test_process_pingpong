@@ -131,10 +131,17 @@ WARNINGS += --all-warnings
 
 # optimizations
 # -O -OO -O1 -O2 -O3 -Os -Ofast
-# older gcc doesn't understand '-Ofast'
 OPTIMIZATIONS =
+
+# Use this for default, although some older gcc's don't understand '-Ofast'
 OPTIMIZATIONS += -Ofast
+
+# useful for when gcc doesn't understand '-Ofast'
 #OPTIMIZATIONS += -O3
+
+# may be needed when using valgrind and other tools which want lots of information
+#OPTIMIZATIONS = -O0
+
 OPTIMIZATIONS += -fshort-enums
 OPTIMIZATIONS += -malign-double
 OPTIMIZATIONS += -fif-conversion -fif-conversion2
@@ -169,7 +176,8 @@ LDFLAGS += -Wl,--warn-multiple-gp
 
 # enable this to get debugging
 DEBUG_FLAGS=
-#DEBUG_FLAGS += -g -Og
+#DEBUG_FLAGS += -g3
+#DEBUG_FLAGS += -Og
 #DEBUG_FLAGS += -ggdb -gdwarf-3
 
 
