@@ -472,8 +472,31 @@ static int do_pthread(void) {
 	return 0;
 }
 
+static void init_threads(void) {
+
+	memset(run_data, 0, sizeof(struct run_data_struct));
+
+	run_data->stop = false;
+	run_data->rusage_req_in_progress = false;
+	run_data->rusage_req[0] = run_data->rusage_req[1] = false;
+/*
+	memset(&run_data->thread_info[0], 0, sizeof(struct thread_info_struct));
+	memset(&run_data->thread_info[1], 0, sizeof(struct thread_info_struct));
+	memset((void *)&run_data->thread_stats[0], 0, sizeof(struct thread_stats_struct));
+	memset((void *)&run_data->thread_stats[1], 0, sizeof(struct thread_stats_struct));
+*/
+	run_data->thread_info[0].thread_num = 0;
+	run_data->thread_info[1].thread_num = 1;
+	strncpy(run_data->thread_info[0].thread_name, "ping_thread", 12);
+	strncpy(run_data->thread_info[1].thread_name, "pong_thread", 12);
+
+
+}
+
 int start_threads(void) {
 	printf("parent process is %d\n", getpid());
+
+	init_threads();
 
 	if (config.thread_mode == thread_mode_fork) {
 		do_fork();
