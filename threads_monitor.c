@@ -225,13 +225,19 @@ void show_stats(struct interval_stats_struct *i_stats) {
 
 	snprintf(output_buffer, output_buffer_len, "  %2lu.%01lu%%  %2lu.%01lu%%",
 		int_fp1.i, int_fp1.dec, int_fp2.i, int_fp2.dec);
-	snprintf(output_buffer, output_buffer_len, " | %5ld / %5ld  %4.1LF%%  %4.1LF%%",
-		i_stats->rusage[1].ru_nvcsw, i_stats->rusage[1].ru_nivcsw,
-		((i_stats->rusage[1].ru_utime.tv_sec * 100.0L) + (i_stats->rusage[1].ru_utime.tv_usec / 1.0e4L) / i_stats->interval_time),
-		((i_stats->rusage[1].ru_stime.tv_sec * 100.0L) + (i_stats->rusage[1].ru_stime.tv_usec / 1.0e4L) / i_stats->interval_time)
-		);
 	write(1, output_buffer, strlen(output_buffer));
 
+	snprintf(output_buffer, output_buffer_len, " | %5ld / %5ld",
+		i_stats->rusage[1].ru_nvcsw, i_stats->rusage[1].ru_nivcsw);
+	write(1, output_buffer, strlen(output_buffer));
+
+	int_fp1 = f_to_fp(1, ((i_stats->rusage[1].ru_utime.tv_sec * 100.0L) + (i_stats->rusage[1].ru_utime.tv_usec / 1.0e4L) / i_stats->interval_time));
+	int_fp2 = f_to_fp(2, ((i_stats->rusage[1].ru_stime.tv_sec * 100.0L) + (i_stats->rusage[1].ru_stime.tv_usec / 1.0e4L) / i_stats->interval_time));
+	write(1, output_buffer, strlen(output_buffer));
+
+	snprintf(output_buffer, output_buffer_len, "  %2lu.%01lu%%  %2lu.%01lu%%",
+		int_fp1.i, int_fp1.dec, int_fp2.i, int_fp2.dec);
+	write(1, output_buffer, strlen(output_buffer));
 
 /* cpu cycles/pingpong for ping
 	if (config.set_affinity == true) {
