@@ -233,7 +233,6 @@ void show_stats(struct interval_stats_struct *i_stats) {
 
 	int_fp1 = f_to_fp(1, ((i_stats->rusage[1].ru_utime.tv_sec * 100.0L) + (i_stats->rusage[1].ru_utime.tv_usec / 1.0e4L) / i_stats->interval_time));
 	int_fp2 = f_to_fp(2, ((i_stats->rusage[1].ru_stime.tv_sec * 100.0L) + (i_stats->rusage[1].ru_stime.tv_usec / 1.0e4L) / i_stats->interval_time));
-	write(1, output_buffer, strlen(output_buffer));
 
 	snprintf(output_buffer, output_buffer_len, "  %2lu.%01lu%%  %2lu.%01lu%%",
 		int_fp1.i, int_fp1.dec, int_fp2.i, int_fp2.dec);
