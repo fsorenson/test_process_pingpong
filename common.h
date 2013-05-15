@@ -42,6 +42,9 @@ typedef enum { no = 0, false = 0, yes = 1, true = 1 } __PACKED bool;
 	pow(M_E, x)
 #endif
 
+#define PERIOD .
+#define BUILD_TIME_VAL(a,b,c) str(a) xstr(PERIOD) str(b) str(c)
+
 #define xstr(s) str(s)
 #define str(s) #s
 

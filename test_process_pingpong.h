@@ -46,6 +46,27 @@
 #define DEFAULT_MONITOR_CHECK_FREQ	250 /* milliseconds between checks */
 #define DEFAULT_EXECUTION_TIME		10 /* max time to run the test (seconds) */
 #define DEFAULT_STATS_INTERVAL		1 /* output the stats every # seconds */
+
+/* output the stats every # seconds */
+#define DEFAULT_STATS_INTERVAL_SECS	1
+#define DEFAULT_STATS_INTERVAL_USECS	0
+
+#if DEFAULT_STATS_INTERVAL_USECS > 99999
+#define PADDING
+#elif DEFAULT_STATS_INTERVAL_USECS > 9999
+#define PADDING 0
+#elif DEFAULT_STATS_INTERVAL_USECS > 999
+#define PADDING 00
+#elif DEFAULT_STATS_INTERVAL_USECS > 99
+#define PADDING 000
+#elif DEFAULT_STATS_INTERVAL_USECS > 9
+#define PADDING 0000
+#else
+#define PADDING 00000
+#endif
+
+#define DEFAULT_STATS_INTERVAL_STRING BUILD_TIME_VAL(DEFAULT_STATS_INTERVAL_SECS,PADDING,DEFAULT_STATS_INTERVAL_USECS)
+
 #define DEFAULT_STATS_SUMMARY	true /* display a summary immediately prior to exit */
 
 
