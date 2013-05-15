@@ -45,7 +45,6 @@
 #define DEFAULT_THREAD_MODE	thread_mode_thread
 #define DEFAULT_MONITOR_CHECK_FREQ	250 /* milliseconds between checks */
 #define DEFAULT_EXECUTION_TIME		10 /* max time to run the test (seconds) */
-#define DEFAULT_STATS_INTERVAL		1 /* output the stats every # seconds */
 
 /* output the stats every # seconds */
 #define DEFAULT_STATS_INTERVAL_SECS	1
@@ -66,6 +65,7 @@
 #endif
 
 #define DEFAULT_STATS_INTERVAL_STRING BUILD_TIME_VAL(DEFAULT_STATS_INTERVAL_SECS,PADDING,DEFAULT_STATS_INTERVAL_USECS)
+#define DEFAULT_STATS_INTERVAL		(struct timeval){ .tv_sec = DEFAULT_STATS_INTERVAL_SECS, .tv_usec = DEFAULT_STATS_INTERVAL_USECS }
 
 #define DEFAULT_STATS_SUMMARY	true /* display a summary immediately prior to exit */
 
@@ -116,7 +116,7 @@ struct config_struct {
 	int size_align_flag;
 
 	long monitor_check_frequency; /* milliseconds between 'check if there's a need to display stats or end */
-	long stats_interval; /* in seconds */
+	struct timeval stats_interval; /* seconds & microseconds */
 	unsigned long runtime; /* in seconds */
 
 	char *argv0;
@@ -124,7 +124,6 @@ struct config_struct {
 	char *sched_string;
 
 	COMM_MODE_OPS;
-	char dummy1[8];
 
 	long double sched_rr_quantum;
 };

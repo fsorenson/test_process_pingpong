@@ -40,7 +40,7 @@ printf(
 "\n"
 "Options:\n"
 
-"    -u, --update=#      seconds between statistics display (0 for no intermediate stats--implies '-s'); default=" xstr(DEFAULT_STATS_INTERVAL) "\n"
+"    -u, --update=#      seconds between statistics display (0 for no intermediate stats--implies '-s'); default=" DEFAULT_STATS_INTERVAL_STRING "\n"
 "    -r, --runtime=#     number of seconds to run the test (0 to run continuously); default=" xstr(DEFAULT_EXECUTION_TIME) "\n"
 "    -s, --stats         output overall statistics at the end of the run (default)\n"
 "        --nostats       do not output statistics at the end of the run\n"
@@ -137,6 +137,8 @@ int setup_defaults(char *argv0) {
 
 int parse_opts(int argc, char *argv[]) {
 	int opt = 0, long_index = 0;
+	long double arg_ld;
+	long long arg_ll;
 
 	static struct option long_options[] = {
 		{	"runtime",	required_argument,	0,	'r'	}, /* seconds to run the entire test */
@@ -148,7 +150,6 @@ int parse_opts(int argc, char *argv[]) {
 		{	"sched",	required_argument,	0,	'p'	},
 		{	0,		0,			0,	0	}
 	};
-
 
 	opterr = 0;
 	while ((opt = getopt_long(argc, argv, "m:t:p:r:u:", long_options,
@@ -167,11 +168,17 @@ int parse_opts(int argc, char *argv[]) {
 				config.runtime = strtoul(optarg, NULL, 10);
 				break;
 			case 'u':
-				config.stats_interval = strtol(optarg, NULL, 10);
-				if (config.stats_interval == 0)
+				arg_ld = strtod(optarg, NULL);
+				if (arg_ld < 0.0L) {
+					config.stats_interval.tv_sec = DEFAULT_STATS_INTERVAL.tv_sec;
+					config.stats_interval.tv_usec = DEFAULT_STATS_INTERVAL.tv_usec;
+				} else if (fpclassify(arg_ld) == FP_ZERO) {
 					config.stats_summary = true;
-				else if (config.stats_interval < 0)
-					config.stats_interval = DEFAULT_STATS_INTERVAL;
+				} else {
+					arg_ll = llrintl(arg_ld * 1.0e6L);
+					config.stats_interval.tv_sec = arg_ll / 1000000;
+					config.stats_interval.tv_usec = arg_ll % 1000000;
+				}
 				break;
 			default:
 				usage();

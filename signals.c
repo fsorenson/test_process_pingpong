@@ -79,13 +79,13 @@ void setup_timer(void) {
 	struct sigaction sa;
 	struct itimerval timer;
 
-	if (config.stats_interval == 0) /* no updates */
+	if ((config.stats_interval.tv_sec == 0) && (config.stats_interval.tv_usec == 0)) /* no updates */
 		return;
 
-	timer.it_value.tv_sec = config.stats_interval;
-	timer.it_value.tv_usec = 0;
-	timer.it_interval.tv_sec = config.stats_interval;
-	timer.it_interval.tv_usec = 0;
+	timer.it_value.tv_sec = config.stats_interval.tv_sec;
+	timer.it_value.tv_usec = config.stats_interval.tv_usec;
+	timer.it_interval.tv_sec = config.stats_interval.tv_sec;
+	timer.it_interval.tv_usec = config.stats_interval.tv_usec;
 
 	sigemptyset(&sa.sa_mask);
 	sa.sa_flags = 0;
