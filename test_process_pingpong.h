@@ -192,7 +192,7 @@ struct run_data_struct {
 	bool volatile rusage_req[2]; /* rusage request */
 	char dummy1[1];
 	unsigned long long volatile last_ping_count;
-	char dummy2[8];
+	char dummy2[4];
 	int stats_headers_count;
 #pragma pack()
 
@@ -200,7 +200,6 @@ struct run_data_struct {
 	long double timeout_time; /* should stop by this time...  set to start_time + execution time */
 
 	long double last_stats_time;
-
 
 	long double rusage_time; /* time of most recent rusage report */
 	long double last_rusage_time; /* time of last report */
