@@ -105,6 +105,7 @@ void __NORETURN do_thread_work(int thread_num) {
 	run_data->thread_info[thread_num].pgid =
 		(int)syscall(SYS_getpgid, run_data->thread_info[thread_num].pid);
 
+	setup_cpu_dma_latency(thread_num);
 	estimate_cpu_speed(thread_num);
 
 
