@@ -44,6 +44,8 @@ printf(
 "    -r, --runtime=#     number of seconds to run the test (0 to run continuously); default=" xstr(DEFAULT_EXECUTION_TIME) "\n"
 "    -s, --stats         output overall statistics at the end of the run (default)\n"
 "        --nostats       do not output statistics at the end of the run\n"
+"    -l, --latency=#	 set the cpu_dma_latency value; default=none\n"
+"        --secret_sauce  enable the advanced 'secret sauce' setting\n"
 "    -m, --mode=MODE\n"
 "        communication modes:\n"
 );
@@ -141,6 +143,7 @@ int parse_opts(int argc, char *argv[]) {
 	int opt = 0, long_index = 0;
 	long double arg_ld;
 	long long arg_ll;
+	long arg_l;
 
 	static struct option long_options[] = {
 		{	"runtime",	required_argument,	0,	'r'	}, /* seconds to run the entire test */
@@ -150,11 +153,13 @@ int parse_opts(int argc, char *argv[]) {
 		{	"thread",	required_argument,	0,	't'	},
 		{	"thread_mode",	required_argument,	0,	't'	},
 		{	"sched",	required_argument,	0,	'p'	},
+		{	"latency",	required_argument,	0,	'l'	},
+		{	"secret_sauce",	no_argument,		0,	'z'	},
 		{	0,		0,			0,	0	}
 	};
 
 	opterr = 0;
-	while ((opt = getopt_long(argc, argv, "m:t:p:r:u:", long_options,
+	while ((opt = getopt_long(argc, argv, "m:t:p:r:u:l:z", long_options,
 			&long_index)) != -1) {
 		switch (opt) {
 			case 'm':
@@ -181,6 +186,15 @@ int parse_opts(int argc, char *argv[]) {
 					config.stats_interval.tv_sec = arg_ll / 1000000;
 					config.stats_interval.tv_usec = arg_ll % 1000000;
 				}
+				break;
+			case 'z':
+				config.cpu_dma_latency = 0;
+				break;
+			case 'l':
+				arg_l = strtol(optarg, NULL, 10);
+				if (arg_l < -1)
+					arg_l = -1;
+				config.cpu_dma_latency = arg_l;
 				break;
 			default:
 				usage();
