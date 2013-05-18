@@ -45,6 +45,7 @@
 #define DEFAULT_THREAD_MODE	thread_mode_thread
 #define DEFAULT_MONITOR_CHECK_FREQ	250 /* milliseconds between checks */
 #define DEFAULT_EXECUTION_TIME		10 /* max time to run the test (seconds) */
+#define DEFAULT_STATS_HEADERS_FREQ	10 /* output this many stats reports between repetitions of the stats header information */
 
 /* output the stats every # seconds */
 #define DEFAULT_STATS_INTERVAL_SECS	1
@@ -118,6 +119,7 @@ struct config_struct {
 	long monitor_check_frequency; /* milliseconds between 'check if there's a need to display stats or end */
 	struct timeval stats_interval; /* seconds & microseconds */
 	unsigned long runtime; /* in seconds */
+	int stats_headers_frequency; /* how frequently should the stats header lines be output */
 
 	char *argv0;
 
@@ -183,6 +185,7 @@ struct run_data_struct {
 	char dummy1[1];
 	unsigned long long volatile last_ping_count;
 	char dummy2[8];
+	int stats_headers_count;
 #pragma pack()
 
 	long double start_time;

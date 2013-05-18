@@ -101,6 +101,7 @@ int setup_defaults(char *argv0) {
 	config.monitor_check_frequency	= DEFAULT_MONITOR_CHECK_FREQ;
 	config.runtime		= DEFAULT_EXECUTION_TIME;
 	config.stats_interval	= DEFAULT_STATS_INTERVAL;
+	config.stats_headers_frequency	= DEFAULT_STATS_HEADERS_FREQ;
 	config.thread_mode	= DEFAULT_THREAD_MODE;
 
 	config.comm_mode_index	= 0; /* default to whatever is first */
