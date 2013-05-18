@@ -5,10 +5,13 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
 #include <string.h>
 #include <signal.h>
 #include <sys/syscall.h>
+#include <fcntl.h>
 #include <time.h>
+#include <errno.h>
 
 static int  estimate_cpu_speed(int thread_num) {
 
@@ -66,6 +69,22 @@ static int setup_interrupt_signal(int thread_num) {
 		sigaction(SIGUSR2, &sa, NULL);
 
 	return 0;
+}
+
+static void setup_cpu_dma_latency(int thread_num) {
+	unsigned long cpu_dma_latency_val;
+
+	if (config.config.cpu_dma_latency == -1) /* no value configured */
+		return;
+	if (config.euid == 0) {
+		if ((run_data->thread_info[thread_num].cpu_latency_fd = open(CPU_DMA_LATENCY_DEVICE, O_RDWR)) < 0) {
+			printf("Error opening %s: %s\n", CPU_DMA_LATENCY_DEVICE, strerror(errno));
+
+			return;
+		}
+		cpu_dma_latency_val = config.cpu_dma_latency;
+		write(run_data->thread_info[thread_num].cpu_latency_fd, &cpu_dma_latency_val, 4);
+	}
 }
 
 void __NORETURN do_thread_work(int thread_num) {
