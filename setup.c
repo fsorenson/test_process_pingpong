@@ -111,6 +111,7 @@ int setup_defaults(char *argv0) {
 	config.comm_do_recv	= comm_do_recv_generic;
 	config.comm_cleanup	= comm_no_cleanup;
 
+	config.cpu_dma_latency	= DEFAULT_CPU_LATENCY_VALUE;
 	config.sched_policy	= DEFAULT_SCHED;
 	config.sched_prio	= DEFAULT_SCHED_PRIO;
 

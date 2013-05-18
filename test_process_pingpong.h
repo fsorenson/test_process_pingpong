@@ -47,6 +47,9 @@
 #define DEFAULT_EXECUTION_TIME		10 /* max time to run the test (seconds) */
 #define DEFAULT_STATS_HEADERS_FREQ	10 /* output this many stats reports between repetitions of the stats header information */
 
+#define DEFAULT_CPU_LATENCY_VALUE	-1 /* value to write to /dev/cpu_dma_latency */
+#define CPU_DMA_LATENCY_DEVICE		"/dev/cpu_dma_latency"
+
 /* output the stats every # seconds */
 #define DEFAULT_STATS_INTERVAL_SECS	1
 #define DEFAULT_STATS_INTERVAL_USECS	0
@@ -120,10 +123,12 @@ struct config_struct {
 	struct timeval stats_interval; /* seconds & microseconds */
 	unsigned long runtime; /* in seconds */
 	int stats_headers_frequency; /* how frequently should the stats header lines be output */
+	char dummy1[4];
 
 	char *argv0;
 
 	char *sched_string;
+	long cpu_dma_latency;
 
 	COMM_MODE_OPS;
 
@@ -144,6 +149,9 @@ struct thread_info_struct {
 	pid_t pgid;
 	pid_t ptid;
 	pid_t ctid;
+
+	int cpu_latency_fd;
+	char dummy1[12];
 
 	char thread_name[20];
 	void *stack;
