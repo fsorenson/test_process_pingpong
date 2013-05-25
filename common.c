@@ -114,6 +114,28 @@ struct timeval elapsed_time_timeval(const struct timeval start, const struct tim
 	return ret;
 }
 
+struct timeval str_to_timeval(const char *string) {
+	struct timeval tv;
+	char *ptr1, *ptr2;
+
+	tv.tv_sec = strtol(string, &ptr1, 10);
+	if ((tv.tv_sec == 0) && (ptr1 == string)) {
+		printf("unable to parse '%s'\n", string);
+		return tv;
+	}
+
+	if ((ptr1 == NULL) // apparently, it was all valid digits
+		|| (ptr1[0] != '.')) // doesn't have a decimal point, for some reason
+		return tv;
+
+	tv.tv_usec = strtol(ptr1, &ptr2, 10);
+	if ((tv.tv_usec == 0) && (ptr2 == ptr1)) {
+		printf("unable to parse post-decimal-point portion of %s\n", string);
+	}
+	return tv;
+}
+
+
 inline int rename_thread(char *thread_name) {
 	char name[17];
 	int ret;
