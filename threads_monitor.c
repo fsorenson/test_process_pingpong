@@ -468,6 +468,8 @@ static void init_threads(void) {
 	strncpy(run_data->thread_info[0].thread_name, "ping_thread", 12);
 	strncpy(run_data->thread_info[1].thread_name, "pong_thread", 12);
 
+	run_data->thread_stats[0].sched_data = map_shared_area(PROC_PID_SCHED_SIZE, config.size_align_flag);
+	run_data->thread_stats[1].sched_data = map_shared_area(PROC_PID_SCHED_SIZE, config.size_align_flag);
 
 }
 
