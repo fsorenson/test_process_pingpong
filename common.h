@@ -63,6 +63,8 @@ long double get_time(void);
 struct timespec elapsed_time(const struct timespec start, const struct timespec stop);
 struct timeval elapsed_time_timeval(const struct timeval start, const struct timeval stop);
 
+struct timeval str_to_timeval(const char *string);
+
 int do_sleep(long sec, long nsec);
 long double estimate_cpu_mhz(void);
 void set_affinity(int cpu);
