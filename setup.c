@@ -207,7 +207,6 @@ int parse_opts(int argc, char *argv[]) {
 		config.set_affinity = true;
 		config.cpu[0] = (short)strtol(argv[optind++], NULL, 10);
 		config.cpu[1] = (short)strtol(argv[optind++], NULL, 10);
-		printf("Setting affinity to cpus %d and %d\n", config.cpu[0], config.cpu[1]);
 	}
 	return 0;
 }
@@ -223,8 +222,21 @@ static void make_pairs(void) {
 }
 
 int do_comm_setup(void) {
+	if (config.verbosity >= 0) {
+		printf("Configuring to run ");
+		if (config.runtime > 0)
+			printf("for %lu seconds", config.runtime);
+		else
+			printf("indefinitely");
 
-	printf("Setting up '%s'\n", get_comm_mode_name(config.comm_mode_index));
+		printf(" in '%s' mode", get_comm_mode_name(config.comm_mode_index));
+
+		if (config.set_affinity == true)
+			printf(", with threads bound to cpus %d and %d", config.cpu[0], config.cpu[1]);
+		else
+			printf(", with no cpu affinity");
+		printf("\n");
+	}
 
 	config.comm_init = comm_mode_info[config.comm_mode_index].comm_init;
 	config.comm_make_pair = comm_mode_info[config.comm_mode_index].comm_make_pair;
@@ -239,9 +251,6 @@ int do_comm_setup(void) {
 	run_data = map_shared_area(sizeof(struct run_data_struct), config.size_align_flag);
 
 	make_pairs();
-
-	if (config.verbosity >= 0)
-		printf("Will run for %lu seconds\n", config.runtime);
 
 	set_priorities();
 
