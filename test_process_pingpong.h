@@ -50,6 +50,9 @@
 #define DEFAULT_CPU_LATENCY_VALUE	-1 /* value to write to /dev/cpu_dma_latency */
 #define CPU_DMA_LATENCY_DEVICE		"/dev/cpu_dma_latency"
 
+#define PROC_PID_SCHED_NAME		"/proc/self/sched"
+#define PROC_PID_SCHED_SIZE		3000
+
 /* output the stats every # seconds */
 #define DEFAULT_STATS_INTERVAL_SECS	1
 #define DEFAULT_STATS_INTERVAL_USECS	0
@@ -164,6 +167,9 @@ struct thread_stats_struct {
 	struct rusage rusage;
 	struct rusage last_rusage;
 	struct timespec thread_time;
+	char *sched_data;
+	int sched_data_len;
+	char dummy1[4];
 //	unsigned int thread_id;
 };
 

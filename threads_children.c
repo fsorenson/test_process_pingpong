@@ -40,6 +40,27 @@ static int send_thread_stats(int thread_num) {
 	return 0;
 }
 
+static void read_sched_proc(int thread_num) {
+	int fd;
+
+	if ((fd = open(PROC_PID_SCHED_NAME, O_RDONLY)) < 0) {
+		printf("Error opening %s: %s\n", PROC_PID_SCHED_NAME, strerror(errno));
+		return;
+	}
+	if ((run_data->thread_stats[thread_num].sched_data_len
+			= (int) read(fd, run_data->thread_stats[thread_num].sched_data, PROC_PID_SCHED_SIZE)) < 0) {
+		printf("Unable to read thread %d stats from %s: %s\n", thread_num, PROC_PID_SCHED_NAME, strerror(errno));
+	}
+	close(fd);
+printf("Thread %d creating sched output file\n", thread_num);
+	if (thread_num == 0)
+		fd = open("/tmp/thread_sched.0", O_WRONLY | O_CREAT, S_IRUSR | S_IWUSR);
+	else
+		fd = open("/tmp/thread_sched.1", O_WRONLY | O_CREAT, S_IRUSR | S_IWUSR);
+	write(fd, run_data->thread_stats[thread_num].sched_data, run_data->thread_stats[thread_num].sched_data_len);
+	close(fd);
+}
+
 static void interrupt_thread(int signum) {
 	int thread_num;
 
@@ -49,9 +70,13 @@ static void interrupt_thread(int signum) {
 		thread_num = 1;
 	}
 
+
 	if (run_data->rusage_req[thread_num] == true)
 		send_thread_stats(thread_num);
 	if (run_data->stop == true) {
+
+		read_sched_proc(thread_num);
+
 		config.comm_cleanup();
 		exit(0);
 	}
