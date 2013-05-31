@@ -7,6 +7,43 @@
 #define STAT_VALUE_WIDTH        15
 
 const char *sched_line_strings[] = {
+	"se.vruntime",
+	"se.sum_exec_runtime",
+	"se.statistics.wait_start",
+	"se.statistics.sleep_start",
+	"se.statistics.block_start",
+	"se.statistics.sleep_max",
+	"se.statistics.block_max",
+	"se.statistics.exec_max",
+	"se.statistics.slice_max",
+	"se.statistics.wait_max",
+	"se.statistics.wait_sum",
+	"se.statistics.wait_count",
+	"se.statistics.iowait_sum",
+	"se.statistics.iowait_count",
+/*
+	"se.nr_migrations",
+	"se.statistics.nr_migrations_cold",
+	"se.statistics.nr_failed_migrations_affine",
+	"se.statistics.nr_failed_migrations_running",
+	"se.statistics.nr_failed_migrations_hot",
+	"se.statistics.nr_forced_migrations",
+	"se.statistics.nr_wakeups",
+	"se.statistics.nr_wakeups_sync",
+	"se.statistics.nr_wakeups_migrate",
+	"se.statistics.nr_wakeups_local",
+	"se.statistics.nr_wakeups_remote",
+	"se.statistics.nr_wakeups_affine",
+	"se.statistics.nr_wakeups_affine_attempts",
+	"se.statistics.nr_wakeups_passive",
+	"se.statistics.nr_wakeups_idle",
+	"avg_atom",
+	"avg_per_cpu",
+*/
+	"nr_switches",
+	"nr_voluntary_switches",
+	"nr_involuntary_switches",
+	"se.load.weight"
 };
 
 struct sched_data_struct {
