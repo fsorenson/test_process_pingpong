@@ -139,6 +139,9 @@ struct config_struct {
 
 	COMM_MODE_OPS;
 
+	long double cpu_mhz;
+	long double cpu_cycle_time;
+
 	long double sched_rr_quantum;
 };
 
