@@ -79,12 +79,22 @@ int make_spin_unrolled_pair(int fd[2]) {
 			ONE_PING(mem_sync_method_val); \
 			ONE_PING(mem_sync_method_val); \
 			ONE_PING(mem_sync_method_val); \
+			ONE_PING(mem_sync_method_val); \
+			ONE_PING(mem_sync_method_val); \
+			ONE_PING(mem_sync_method_val); \
+			ONE_PING(mem_sync_method_val); \
+			ONE_PING(mem_sync_method_val); \
 		}
 
 #define PONG_LOOP_METHOD(mem_sync_method_val) \
 	PONG_LOOP_LABEL_ ## mem_sync_method_val: \
 		printf("Ponging with %s\n", MEM_SYNC_METHOD_NAME_ ## mem_sync_method_val); \
 		while (1) { \
+			ONE_PONG(mem_sync_method_val); \
+			ONE_PONG(mem_sync_method_val); \
+			ONE_PONG(mem_sync_method_val); \
+			ONE_PONG(mem_sync_method_val); \
+			ONE_PONG(mem_sync_method_val); \
 			ONE_PONG(mem_sync_method_val); \
 			ONE_PONG(mem_sync_method_val); \
 			ONE_PONG(mem_sync_method_val); \
