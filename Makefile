@@ -28,6 +28,7 @@ stab_dir = stabs
 
 LDFLAGS=
 CPPFLAGS= -iquote .
+CPPFLAGS += -fverbose-asm -frecord-gcc-switches
 CFLAGS=
 
 CPPFLAGS += -std=gnu11
