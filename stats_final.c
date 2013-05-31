@@ -2,13 +2,41 @@
 
 #include <string.h>
 
-struct line_data_struct {
+struct sched_data_struct {
 	char *key;
 	char *value1;
 	char *value2;
 };
 
-static int split_sched_lines(struct line_data_struct *line_data, char *buf1, char *buf2) {
+static int split_sched_lines(struct sched_data_struct *sched_data, char *buf1, char *buf2) {
+	unsigned long count1a, count2a;
+	unsigned long count1b, count2b;
+	char *p1, *p2;
+
+	count1a = strcspn(buf1, ": ");
+	count2a = strcspn(buf2, ": ");
+	if ((count1a <= 0) || (count2a <= 0))
+		return 0;
+	buf1[count1a] = '\0';
+	buf2[count2a] = '\0';
+	if (strcmp(buf1, buf2))
+		return 0; /* keys don't match */
+	sched_data->key = buf1;
+
+	count1a ++; count2a ++;
+
+	p1 = buf1 + count1a;
+	p2 = buf2 + count2a;
+	count1b = strspn(p1, ": ");
+	count2b = strspn(p2, ": ");
+	if ((count1b = 0) || (count2b = 0)) {
+		printf("umm.  unable to parse something\n");
+		sched_data->key = sched_data->value1 = sched_data->value2 = 0;
+		return 0;
+	}
+
+	sched_data->value1 = buf1 + count1a + count1b;
+	sched_data->value2 = buf2 + count2a + count2b;
 
 	return 1;
 }
@@ -31,23 +59,27 @@ static void parse_sched_data(void) {
 	char *sched_tok1, *sched_tok2;
 	char *save_ptr1, *save_ptr2;
 	int sched_lines;
-	struct line_data_struct *line_data;
+	struct sched_data_struct *sched_data;
 	int line_count = 0;
 	int ret;
 
 	sched_lines = count_sched_lines(run_data->thread_stats[0].sched_data);
-	line_data = calloc((size_t)sched_lines, sizeof(struct line_data_struct));
+	sched_data = calloc((size_t)sched_lines, sizeof(struct sched_data_struct));
 
 	sched_tok1 = strtok_r(run_data->thread_stats[0].sched_data, "\n", &save_ptr1);
 	sched_tok2 = strtok_r(run_data->thread_stats[1].sched_data, "\n", &save_ptr2);
 
 	while((sched_tok1 != NULL) && (sched_tok2 != NULL)) {
-		ret = split_sched_lines(&line_data[line_count], sched_tok1, sched_tok2);
-
+		ret = split_sched_lines(&sched_data[line_count], sched_tok1, sched_tok2);
+		if (ret) {
+			if (sched_data[line_count].key != 0) {
+				line_count ++;
+			}
+		}
 		sched_tok1 = strtok_r(NULL, "\n", &save_ptr1);
 		sched_tok2 = strtok_r(NULL, "\n", &save_ptr2);
 	}
-	free(line_data);
+	free(sched_data);
 }
 
 void output_final_stats(void) {
