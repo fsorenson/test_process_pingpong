@@ -1,13 +1,5 @@
-#ifndef _GNU_SOURCE
-#define _GNU_SOURCE
-#endif
-
-#include "test_process_pingpong.h"
-
-#include "comms.h"
-
-
 #include "setup.h"
+#include "comms.h"
 #include "sched.h"
 
 #include <stdio.h>

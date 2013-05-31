@@ -1,10 +1,6 @@
 #ifndef __SETUP_H__
 #define __SETUP_H__
 
-#ifndef _GNU_SOURCE
-#define _GNU_SOURCE
-#endif
-
 #include "test_process_pingpong.h"
 
 int parse_thread_mode(char *arg);
