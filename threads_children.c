@@ -1,6 +1,8 @@
 #include "threads_children.h"
-#include "test_process_pingpong.h"
 
+#include "signals.h"
+#include "setup.h"
+#include "sched.h"
 #include "units.h"
 
 #include <stdio.h>
