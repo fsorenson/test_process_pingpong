@@ -3,4 +3,6 @@
 
 #include "test_process_pingpong.h"
 
+void output_final_stats(void);
+
 #endif
