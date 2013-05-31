@@ -8,6 +8,10 @@
         by Frank Sorenson (frank@tuxrocks.com) 2013
 */
 
+#ifndef _GNU_SOURCE
+#define _GNU_SOURCE
+#endif
+
 #include "common.h"
 #include "comms.h"
 

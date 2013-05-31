@@ -5,10 +5,6 @@
         by Frank Sorenson (frank@tuxrocks.com) 2013
 */
 
-#ifndef _GNU_SOURCE
-#define _GNU_SOURCE
-#endif
-
 #include "test_process_pingpong.h"
 #include "setup.h"
 #include "threads_monitor.h"
