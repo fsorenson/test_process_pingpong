@@ -6,6 +6,9 @@
 #define STAT_NAME_WIDTH         30
 #define STAT_VALUE_WIDTH        15
 
+const char *sched_line_strings[] = {
+};
+
 struct sched_data_struct {
 	char *key;
 	char *value1;
@@ -13,6 +16,12 @@ struct sched_data_struct {
 };
 
 static int interesting_sched_stat(const char *check_str) {
+	unsigned i;
+
+	for (i = 0 ; i < sizeof(sched_line_strings)/sizeof(sched_line_strings[0]) ; i ++) {
+		if (!strcmp(sched_line_strings[i], check_str))
+			return 1;
+	}
 	return 0;
 }
 
