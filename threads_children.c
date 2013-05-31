@@ -109,7 +109,7 @@ static void setup_cpu_dma_latency(int thread_num) {
 
 			return;
 		}
-		cpu_dma_latency_val = config.cpu_dma_latency;
+		cpu_dma_latency_val = (unsigned long)config.cpu_dma_latency;
 		write(run_data->thread_info[thread_num].cpu_latency_fd, &cpu_dma_latency_val, 4);
 	}
 }
