@@ -8,6 +8,9 @@ struct sched_data_struct {
 	char *value2;
 };
 
+static int interesting_sched_stat(const char *check_str) {
+}
+
 static int split_sched_lines(struct sched_data_struct *sched_data, char *buf1, char *buf2) {
 	unsigned long count1a, count2a;
 	unsigned long count1b, count2b;
@@ -73,6 +76,12 @@ static void parse_sched_data(void) {
 		ret = split_sched_lines(&sched_data[line_count], sched_tok1, sched_tok2);
 		if (ret) {
 			if (sched_data[line_count].key != 0) {
+				if (interesting_sched_stat(sched_data[line_count].key)) {
+					printf("%-*s %-*s %-*s\n",
+						STAT_NAME_WIDTH, sched_data[line_count].key,
+						STAT_VALUE_WIDTH, sched_data[line_count].value1,
+						STAT_VALUE_WIDTH, sched_data[line_count].value2);
+				}
 				line_count ++;
 			}
 		}
