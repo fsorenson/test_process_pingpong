@@ -1,6 +1,10 @@
 #include "stats_final.h"
 
 #include <string.h>
+#include <stdio.h>
+
+#define STAT_NAME_WIDTH         30
+#define STAT_VALUE_WIDTH        15
 
 struct sched_data_struct {
 	char *key;
@@ -9,6 +13,7 @@ struct sched_data_struct {
 };
 
 static int interesting_sched_stat(const char *check_str) {
+	return 0;
 }
 
 static int split_sched_lines(struct sched_data_struct *sched_data, char *buf1, char *buf2) {
