@@ -14,6 +14,7 @@ static int mem_sync_method;
 // mem_sync_method = 2 - msync( MS_SYNC )
 // mem_sync_method = 3 - msync( MS_INVALIDATE )
 // mem_sync_method = 4 - msync( MS_ASYNC )
+//  = 5  (lock; addl $0,0(%%esp))  ... trying it out
 
 int make_spin_pair(int fd[2]) {
 	static int spin_num = 0;
@@ -43,12 +44,15 @@ int make_spin_pair(int fd[2]) {
 	msync(local_spin_var, 3, MS_SYNC)
 #define MEM_SYNC_METHOD_4 \
 	msync(local_spin_var, 4, MS_SYNC)
+#define MEM_SYNC_METHOD_5 \
+	mb2()
 
 #define MEM_SYNC_METHOD_NAME_0 "no memory sync"
 #define MEM_SYNC_METHOD_NAME_1 "mb()"
 #define MEM_SYNC_METHOD_NAME_2 "msync( MS_SYNC )"
 #define MEM_SYNC_METHOD_NAME_3 "msync( MS_INVALIDATE )"
 #define MEM_SYNC_METHOD_NAME_4 "msync( MS_ASYNC )"
+#define MEM_SYNC_METHOD_NAME_5 "less expensive"
 
 #define do_mem_sync_method(val) \
 	MEM_SYNC_METHOD_##val
@@ -84,7 +88,7 @@ inline int __PINGPONG_FN do_ping_spin(int thread_num) {
 	static void *sync_mem_method_table[] = {
 		&&PING_LOOP_LABEL_0, &&PING_LOOP_LABEL_1,
 		&&PING_LOOP_LABEL_2, &&PING_LOOP_LABEL_3,
-		&&PING_LOOP_LABEL_4 };
+		&&PING_LOOP_LABEL_4, &&PING_LOOP_LABEL_5 };
 	(void)thread_num;
 
 	local_spin_var = spin_var;
@@ -96,6 +100,7 @@ inline int __PINGPONG_FN do_ping_spin(int thread_num) {
 	PING_LOOP_METHOD(2);
 	PING_LOOP_METHOD(3);
 	PING_LOOP_METHOD(4);
+	PING_LOOP_METHOD(5);
 
 }
 
@@ -104,7 +109,7 @@ inline int __PINGPONG_FN do_pong_spin(int thread_num) {
 	static void *sync_mem_method_table[] = {
 		&&PONG_LOOP_LABEL_0, &&PONG_LOOP_LABEL_1,
 		&&PONG_LOOP_LABEL_2, &&PONG_LOOP_LABEL_3,
-		&&PONG_LOOP_LABEL_4 };
+		&&PONG_LOOP_LABEL_4, &&PONG_LOOP_LABEL_5 };
 	(void)thread_num;
 
 	local_spin_var = spin_var;
@@ -116,6 +121,7 @@ inline int __PINGPONG_FN do_pong_spin(int thread_num) {
 	PONG_LOOP_METHOD(2);
 	PONG_LOOP_METHOD(3);
 	PONG_LOOP_METHOD(4);
+	PONG_LOOP_METHOD(5);
 }
 
 int __CONST cleanup_spin(void) {
