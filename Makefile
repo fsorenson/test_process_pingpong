@@ -253,6 +253,7 @@ ifneq ($(HAVE_EVENTFD),)
 comms += eventfd
 endif
 comms += spin yield race nop
+comms += spin_unrolled
 comms += namedpipe
 #comms += benaphore
 
