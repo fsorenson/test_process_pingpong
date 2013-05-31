@@ -1,5 +1,5 @@
-
 #include "threads_monitor.h"
+
 #include "threads_children.h"
 #include "stats_final.h"
 #include "setup.h"
@@ -67,6 +67,8 @@ void stop_handler(int signum) {
 	}
 
 	config.comm_cleanup();
+
+	output_final_stats();
 
 	monitor_cleanup();
 
