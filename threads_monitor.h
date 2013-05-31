@@ -2,10 +2,6 @@
 #define __THREADS_MONITOR_H__
 
 
-#ifndef _GNU_SOURCE
-#define _GNU_SOURCE
-#endif
-
 #include "test_process_pingpong.h"
 #include "signals.h"
 #include "setup.h"

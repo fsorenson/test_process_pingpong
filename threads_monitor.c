@@ -1,9 +1,4 @@
 
-#ifndef _GNU_SOURCE
-#define _GNU_SOURCE
-#endif
-
-#include "test_process_pingpong.h"
 #include "threads_monitor.h"
 #include "threads_children.h"
 #include "setup.h"
