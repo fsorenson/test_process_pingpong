@@ -120,8 +120,10 @@ int setup_defaults(char *argv0) {
 	config.num_cpus = (short)num_cpus();
 	config.num_online_cpus = (short)num_online_cpus();
 
-	config.min_stack = get_min_stack_size();
+	config.cpu_mhz = estimate_cpu_mhz();
+	config.cpu_cycle_time = 1 / config.cpu_mhz / 1e6L;
 
+	config.min_stack = get_min_stack_size();
 
 	config.cpu[0] = -1;
 	config.cpu[1] = -1;

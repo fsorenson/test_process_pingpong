@@ -114,9 +114,9 @@ static void setup_cpu_dma_latency(int thread_num) {
 	}
 }
 
+
 void __NORETURN do_thread_work(int thread_num) {
 #define OUTPUT_BUFFER_LEN 200
-	char cpu_cycle_time_buffer[50];
 	char output_buffer[OUTPUT_BUFFER_LEN];
 	size_t output_buffer_len = OUTPUT_BUFFER_LEN;
 #undef OUTPUT_BUFFER_LEN
@@ -133,9 +133,15 @@ void __NORETURN do_thread_work(int thread_num) {
 		(int)syscall(SYS_getpgid, run_data->thread_info[thread_num].pid);
 
 	setup_cpu_dma_latency(thread_num);
-	estimate_cpu_speed(thread_num);
+//	estimate_cpu_speed(thread_num);
 
 
+	snprintf(output_buffer, output_buffer_len, "%d: %s - thread %d, pid %d, tid %d, sid %d, pgid %d\n",
+		thread_num, run_data->thread_info[thread_num].thread_name,
+		run_data->thread_info[thread_num].thread_num,
+		run_data->thread_info[thread_num].pid, run_data->thread_info[thread_num].tid,
+		run_data->thread_info[thread_num].sid, run_data->thread_info[thread_num].pgid);
+/*
 	snprintf(output_buffer, output_buffer_len, "%d: %s - thread %d, pid %d, tid %d, sid %d, pgid %d, CPU estimated at %.2Lf MHz (%s cycle)\n",
 		thread_num, run_data->thread_info[thread_num].thread_name,
 		run_data->thread_info[thread_num].thread_num,
@@ -143,6 +149,7 @@ void __NORETURN do_thread_work(int thread_num) {
 		run_data->thread_info[thread_num].sid, run_data->thread_info[thread_num].pgid,
 		run_data->thread_info[thread_num].cpu_mhz,
 		subsec_string(cpu_cycle_time_buffer, run_data->thread_info[thread_num].cpu_cycle_time, 3));
+*/
 	write(1, output_buffer, strlen(output_buffer));
 
 
