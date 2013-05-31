@@ -228,6 +228,7 @@ f += common
 f += units
 f += sched
 f += threads_monitor threads_children
+f += stats_final
 f += signals
 f += setup
 #f += tcp udp pipe socket_pair sem eventfd futex spin nop mq
