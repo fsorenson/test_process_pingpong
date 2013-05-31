@@ -1,5 +1,4 @@
 #include "signals.h"
-
 #include "threads_monitor.h"
 
 #include <stdlib.h>

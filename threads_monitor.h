@@ -1,11 +1,9 @@
 #ifndef __THREADS_MONITOR_H__
 #define __THREADS_MONITOR_H__
 
-
 #include "test_process_pingpong.h"
 #include "signals.h"
 #include "setup.h"
-
 
 #include "units.h"
 #include "sched.h"
