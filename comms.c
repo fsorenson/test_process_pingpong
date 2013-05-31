@@ -142,7 +142,7 @@ bool comm_mode_verify_all(void) {
 }
 
 
-char *get_comm_mode_name(int comm_mode_index) {
+char * __PURE get_comm_mode_name(int comm_mode_index) {
 	return comm_mode_info[comm_mode_index].name;
 }
 
