@@ -96,14 +96,11 @@ static int split_sched_lines(struct sched_data_struct *sched_data, char *buf1, c
 
 static int __PURE count_sched_lines(const char *buf) {
 	int count = 0;
-	int index = 0;
-	char *p;
+	size_t index = 0;
 
-	while (buf + index != NULL) {
-		count ++;
-		p = strchr(buf + index, '\n');
-		if (p != NULL)
-			index ++;
+	while (buf[index] != '\0') {
+		if (buf[index++] == '\n')
+			count ++;
 	}
 	return count;
 }
