@@ -78,12 +78,10 @@ static int split_sched_lines(struct sched_data_struct *sched_data, char *buf1, c
 
 	count1a ++; count2a ++;
 
-	p1 = buf1 + count1a;
-	p2 = buf2 + count2a;
-	count1b = strspn(p1, ": ");
-	count2b = strspn(p2, ": ");
-	if ((count1b = 0) || (count2b = 0)) {
-		printf("umm.  unable to parse something\n");
+	count1b = strspn(&buf1[count1a], ": ");
+	count2b = strspn(&buf2[count2a], ": ");
+
+	if ((count1b == 0) || (count2b == 0)) {
 		sched_data->key = sched_data->value1 = sched_data->value2 = 0;
 		return 0;
 	}
