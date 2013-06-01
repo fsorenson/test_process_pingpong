@@ -54,7 +54,7 @@ static void read_sched_proc(int thread_num) {
 		printf("Unable to read thread %d stats from %s: %s\n", thread_num, PROC_PID_SCHED_NAME, strerror(errno));
 	}
 	close(fd);
-printf("Thread %d creating sched output file\n", thread_num);
+//printf("Thread %d creating sched output file\n", thread_num);
 	if (thread_num == 0)
 		fd = open("/tmp/thread_sched.0", O_WRONLY | O_CREAT, S_IRUSR | S_IWUSR);
 	else
