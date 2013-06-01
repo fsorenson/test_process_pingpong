@@ -7,7 +7,8 @@
 
 #include "test_process_pingpong.h"
 #include "setup.h"
-#include "threads_monitor.h"
+#include "threads_startup.h"
+
 #include "signals.h"
 
 #include "units.h"
