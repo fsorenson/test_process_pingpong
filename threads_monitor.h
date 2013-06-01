@@ -36,6 +36,4 @@ void child_handler(int signum);
 
 int do_monitor_work(void);
 
-int start_threads(void);
-
 #endif
