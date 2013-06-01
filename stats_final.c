@@ -65,7 +65,6 @@ static int interesting_sched_stat(const char *check_str) {
 static int split_sched_lines(struct sched_data_struct *sched_data, char *buf1, char *buf2) {
 	unsigned long count1a, count2a;
 	unsigned long count1b, count2b;
-	char *p1, *p2;
 
 	count1a = strcspn(buf1, ": ");
 	count2a = strcspn(buf2, ": ");
