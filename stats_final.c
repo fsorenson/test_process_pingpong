@@ -139,6 +139,5 @@ static void parse_sched_data(void) {
 }
 
 void output_final_stats(void) {
-
 	parse_sched_data();
 }
