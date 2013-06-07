@@ -313,13 +313,15 @@ $(objs_dir)/%.o: %.c  $(deps_dir)/%.d
 	@mkdir -p $(@D)
 	@mkdir -p stabs
 	@$(CC) $(CPPFLAGS) $(CFLAGS) $(WARNINGS) -c $< -o $@ \
-		-Wa,-adhlmns=$(stab_dir)/$(addsuffix .s,$(basename $(notdir $@))) -g -fverbose-asm -masm=intel
+		-Wa,-adhlmns=$(stab_dir)/$(addsuffix .s,$(basename $(notdir $@))) -g -fverbose-asm -masm=att
+#		-Wa,-adhlmns=$(stab_dir)/$(addsuffix .s,$(basename $(notdir $@))) -g -fverbose-asm -masm=intel
 
 $(objs_dir)/%.o: $(comms_dir)/%.c $(deps_dir)/%.d
 	@mkdir -p $(@D)
 	@mkdir -p stabs
 	@$(CC) $(CPPFLAGS) $(CFLAGS) $(WARNINGS) -c $< -o $@ \
-		-Wa,-adhlmns=$(stab_dir)/$(addsuffix .s,$(basename $(notdir $@))) -g -fverbose-asm -masm=intel
+		-Wa,-adhlmns=$(stab_dir)/$(addsuffix .s,$(basename $(notdir $@))) -g -fverbose-asm -masm=att
+#		-Wa,-adhlmns=$(stab_dir)/$(addsuffix .s,$(basename $(notdir $@))) -g -fverbose-asm -masm=intel
 
 
 
