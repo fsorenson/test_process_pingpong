@@ -8,9 +8,6 @@
 #include "units.h"
 #include "sched.h"
 
-
-/* thread startup, execution, handlers, etc */
-
 void child_handler(int signum);
 
 int do_monitor_work(void);
