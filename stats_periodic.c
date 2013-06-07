@@ -25,3 +25,39 @@ void show_periodic_stats() {
 	show_stats(&i_stats);
 	store_last_stats(&i_stats);
 }
+
+void show_stats_header(void) {
+#define OUTPUT_BUFFER_LEN 400
+	static char output_buffer[OUTPUT_BUFFER_LEN];
+	size_t output_buffer_len = OUTPUT_BUFFER_LEN;
+#undef OUTPUT_BUFFER_LEN
+
+	// original format
+	// 83.000 s - 64962 iterations -> 15.393 us, ping: 40945.64 cycles, pong: 40945.100 cycles
+
+	// header
+	snprintf(output_buffer, output_buffer_len,
+		"%7s %12s %11s", "", "", "");
+	snprintf(output_buffer + strlen(output_buffer), output_buffer_len - strlen(output_buffer),
+		" %s %s",
+		" ___________ PING ___________ ",
+		" ___________ PONG ___________ "
+		);
+	write(1, output_buffer, strlen(output_buffer));
+	write(1, "\n", 1);
+
+	snprintf(output_buffer, output_buffer_len,
+		"%7s %12s %11s",
+		"time", "cycles/sec", "cycle time");
+
+	// per-thread header
+	snprintf(output_buffer + strlen(output_buffer), output_buffer_len - strlen(output_buffer),
+		" | %13s  %5s  %5s",
+		" vol/inv csw", "user", "sys");
+	snprintf(output_buffer + strlen(output_buffer), output_buffer_len - strlen(output_buffer),
+		" | %13s  %5s  %5s",
+		" vol/inv csw", "user", "sys");
+	write(1, output_buffer, strlen(output_buffer));
+
+	write(1, "\n", 1);
+}

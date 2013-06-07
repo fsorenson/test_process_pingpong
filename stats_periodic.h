@@ -20,4 +20,5 @@ struct interval_stats_struct {
 };
 
 void show_periodic_stats(void);
+void show_stats_header(void);
 #endif
