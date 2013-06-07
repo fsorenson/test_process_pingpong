@@ -1,6 +1,7 @@
 #include "threads_monitor.h"
 
 #include "threads_children.h"
+#include "stats_periodic.h"
 #include "stats_final.h"
 #include "setup.h"
 #include "comms.h"
