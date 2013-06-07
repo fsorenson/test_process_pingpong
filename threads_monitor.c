@@ -48,7 +48,16 @@ static void stop_threads(void) {
 	send_sig(run_data->thread_info[1].pid, SIGUSR2);
 }
 
-void stop_handler(int signum) {
+static void stop_timer(void) {
+	struct itimerval ntimeout;
+
+	signal(SIGALRM, SIG_IGN); /* ignore the timer if it alarms */
+	ntimeout.it_interval.tv_sec = ntimeout.it_interval.tv_usec = 0;
+	ntimeout.it_value.tv_sec  = ntimeout.it_value.tv_usec = 0;
+	setitimer(ITIMER_REAL, &ntimeout, NULL);        /* stop timer */
+}
+
+static void stop_handler(int signum) {
 	static int visited = 0;
 	(void)signum;
 
@@ -75,8 +84,15 @@ void stop_handler(int signum) {
 	exit(0);
 }
 
+static void setup_stop_handler(void) {
+	struct sigaction sa;
 
+	run_data->stop = false;
 
+	sigemptyset(&sa.sa_mask);
+	sa.sa_flags = 0;
+	sa.sa_handler = &stop_handler;
+	sigaction(SIGINT, &sa, NULL);
 static int gather_stats(struct interval_stats_struct *i_stats) {
 
 	i_stats->current_count = run_data->ping_count;
@@ -192,7 +208,7 @@ int do_monitor_work(void) {
 
 	setup_child_signals();
 	setup_crash_handler();
-	setup_stop_signal();
+	setup_stop_handler();
 
 	sigfillset(&signal_mask);
 	sigdelset(&signal_mask, SIGCHLD);
@@ -203,7 +219,7 @@ int do_monitor_work(void) {
 		do_sleep(0, 5000000);
 	}
 
-	setup_timer();
+	setup_monitor_timer();
 	mb();
 	run_data->start = true; /* tell the child threads to begin */
 	mb();

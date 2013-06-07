@@ -11,7 +11,6 @@
 
 /* thread startup, execution, handlers, etc */
 
-void stop_handler(int signum);
 void child_handler(int signum);
 
 int do_monitor_work(void);
