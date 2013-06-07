@@ -7,9 +7,6 @@ void print_backtrace(int signum);
 void print_backtrace_die(int signum);
 void print_backtrace2(int signum);
 
-void setup_timer(void);
-void stop_timer(void);
-
 void setup_stop_signal(void);
 void setup_child_signals(void);
 void setup_crash_handler(void);

@@ -65,48 +65,6 @@ void __NORETURN print_backtrace_die(int signum) {
 	exit(-1);
 }
 
-void stop_timer(void) {
-	struct itimerval ntimeout;
-
-	signal(SIGALRM, SIG_IGN); /* ignore the timer if it alarms */
-	ntimeout.it_interval.tv_sec = ntimeout.it_interval.tv_usec = 0;
-	ntimeout.it_value.tv_sec  = ntimeout.it_value.tv_usec = 0;
-	setitimer(ITIMER_REAL, &ntimeout, NULL);	/* stop timer */
-}
-
-void setup_timer(void) {
-	struct sigaction sa;
-	struct itimerval timer;
-
-	if ((config.stats_interval.tv_sec == 0) && (config.stats_interval.tv_usec == 0)) /* no updates */
-		return;
-
-	timer.it_value.tv_sec = config.stats_interval.tv_sec;
-	timer.it_value.tv_usec = config.stats_interval.tv_usec;
-	timer.it_interval.tv_sec = config.stats_interval.tv_sec;
-	timer.it_interval.tv_usec = config.stats_interval.tv_usec;
-
-	sigemptyset(&sa.sa_mask);
-	sa.sa_flags = 0;
-	sa.sa_handler = &show_periodic_stats;
-
-	sigaction(SIGALRM, &sa, NULL);
-	setitimer(ITIMER_REAL, &timer, 0);
-
-	return;
-}
-void setup_stop_signal(void) {
-	struct sigaction sa;
-
-	run_data->stop = false;
-
-	sigemptyset(&sa.sa_mask);
-	sa.sa_flags = 0;
-	sa.sa_handler = &stop_handler;
-	sigaction(SIGINT, &sa, NULL);
-
-	return;
-}
 void setup_child_signals(void) {
 	struct sigaction sa;
 
