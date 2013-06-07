@@ -12,7 +12,6 @@
 /* thread startup, execution, handlers, etc */
 
 void show_stats(struct interval_stats_struct *i_stats);
-void store_last_stats(struct interval_stats_struct *i_stats);
 
 void stop_handler(int signum);
 void child_handler(int signum);

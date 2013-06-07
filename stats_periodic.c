@@ -61,3 +61,16 @@ void show_stats_header(void) {
 
 	write(1, "\n", 1);
 }
+
+void store_last_stats(struct interval_stats_struct *i_stats) {
+	/* cleanup things for the next time we come back */
+	memcpy((void *)&run_data->thread_stats[0].last_rusage,
+		(void *)&run_data->thread_stats[0].rusage, sizeof(struct rusage));
+	memcpy((void *)&run_data->thread_stats[1].last_rusage,
+		(const void *)&run_data->thread_stats[1].rusage, sizeof(struct rusage));
+
+	run_data->last_ping_count = i_stats->current_count;
+	run_data->last_stats_time = i_stats->current_time;
+	run_data->thread_stats[0].last_tsc = run_data->thread_stats[0].tsc;
+	run_data->thread_stats[1].last_tsc = run_data->thread_stats[1].tsc;
+}
