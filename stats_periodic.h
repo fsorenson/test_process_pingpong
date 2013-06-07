@@ -19,4 +19,5 @@ struct interval_stats_struct {
 	long double mhz[2]; /* approximate speed of the CPU */
 };
 
+void show_periodic_stats(void);
 #endif

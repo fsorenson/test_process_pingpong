@@ -136,24 +136,11 @@ static int gather_stats(struct interval_stats_struct *i_stats) {
 }
 
 
-void show_periodic_stats(int signum) {
-	static struct interval_stats_struct i_stats = { 0 };
 	(void)signum;
 
-	memset(&i_stats, 0, sizeof(struct interval_stats_struct));
 
-	if (run_data->rusage_req_in_progress == true) /* already waiting for results */
-		return;
-	gather_stats(&i_stats);
-
-	if (run_data->stop == true) /* don't worry about output...  let's just pack up and go home */
 		return;
 
-	if (run_data->stats_headers_count++ % config.stats_headers_frequency == 0)
-		show_stats_header();
-
-	show_stats(&i_stats);
-	store_last_stats(&i_stats);
 }
 
 void show_stats_header(void) {

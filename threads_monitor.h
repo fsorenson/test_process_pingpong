@@ -11,7 +11,6 @@
 
 /* thread startup, execution, handlers, etc */
 
-void show_periodic_stats(int signum);
 void show_stats_header(void);
 void show_stats(struct interval_stats_struct *i_stats);
 void store_last_stats(struct interval_stats_struct *i_stats);
