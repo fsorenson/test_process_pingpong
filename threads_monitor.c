@@ -97,24 +97,38 @@ static void setup_stop_handler(void) {
 }
 
 
+static void monitor_interrupt(int signum) {
 	(void)signum;
 
+	show_periodic_stats();
 
-		return;
-
-}
-
-
-
-	write(1, "\n", 1);
-}
-
-
-
-	if (i_stats->current_time >= run_data->timeout_time) {
+	if (run_data->last_stats_time >= run_data->timeout_time) {
 		stop_handler(0);
 		return;
 	}
+
+}
+
+static void setup_monitor_timer(void) {
+	struct sigaction sa;
+	struct itimerval timer;
+
+	if ((config.stats_interval.tv_sec == 0) && (config.stats_interval.tv_usec == 0)) /* no updates */
+		return;
+
+	timer.it_value.tv_sec = config.stats_interval.tv_sec;
+	timer.it_value.tv_usec = config.stats_interval.tv_usec;
+	timer.it_interval.tv_sec = config.stats_interval.tv_sec;
+	timer.it_interval.tv_usec = config.stats_interval.tv_usec;
+
+	sigemptyset(&sa.sa_mask);
+	sa.sa_flags = 0;
+	sa.sa_handler = &monitor_interrupt;
+
+	sigaction(SIGALRM, &sa, NULL);
+	setitimer(ITIMER_REAL, &timer, 0);
+
+	return;
 }
 
 void child_handler(int signum) {
