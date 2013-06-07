@@ -62,6 +62,78 @@ void show_stats_header(void) {
 	write(1, "\n", 1);
 }
 
+void show_stats(struct interval_stats_struct *i_stats) {
+#define OUTPUT_BUFFER_LEN 400
+	static char output_buffer[OUTPUT_BUFFER_LEN] = { 0 };
+	size_t output_buffer_len = OUTPUT_BUFFER_LEN;
+#undef OUTPUT_BUFFER_LEN
+#define TEMP_STRING_LEN 30
+	static char temp_string1[TEMP_STRING_LEN] = { 0 };
+	static char temp_string2[TEMP_STRING_LEN] = { 0 };
+	size_t temp_string_len = TEMP_STRING_LEN;
+#undef TEMP_STRING_LEN
+	integer_fixed_point_t int_fp1, int_fp2;
+
+	memset(output_buffer, 0, output_buffer_len);
+	memset(temp_string1, 0, temp_string_len);
+	memset(temp_string2, 0, temp_string_len);
+
+	// general stats
+	snprintf(output_buffer, output_buffer_len, "%7s %12llu %11s",
+		subsec_string(temp_string1, i_stats->run_time, 1),
+		i_stats->interval_count,
+		subsec_string(temp_string2, i_stats->iteration_time, 2));
+	write(1, output_buffer, strlen(output_buffer));
+
+	// per-thread stats
+	snprintf(output_buffer, output_buffer_len, " | %5ld / %5ld",
+		i_stats->rusage[0].ru_nvcsw, i_stats->rusage[0].ru_nivcsw);
+	write(1, output_buffer, strlen(output_buffer));
+
+	int_fp1 = f_to_fp(1, ((i_stats->rusage[0].ru_utime.tv_sec * 100.0L) + (i_stats->rusage[0].ru_utime.tv_usec / 1.0e4L) / i_stats->interval_time));
+	int_fp2 = f_to_fp(1, ((i_stats->rusage[0].ru_stime.tv_sec * 100.0L) + (i_stats->rusage[0].ru_stime.tv_usec / 1.0e4L) / i_stats->interval_time));
+
+	snprintf(output_buffer, output_buffer_len, "  %2lu.%01lu%%  %2lu.%01lu%%",
+		int_fp1.i, int_fp1.dec, int_fp2.i, int_fp2.dec);
+	write(1, output_buffer, strlen(output_buffer));
+
+	snprintf(output_buffer, output_buffer_len, " | %5ld / %5ld",
+		i_stats->rusage[1].ru_nvcsw, i_stats->rusage[1].ru_nivcsw);
+	write(1, output_buffer, strlen(output_buffer));
+
+	int_fp1 = f_to_fp(1, ((i_stats->rusage[1].ru_utime.tv_sec * 100.0L) + (i_stats->rusage[1].ru_utime.tv_usec / 1.0e4L) / i_stats->interval_time));
+	int_fp2 = f_to_fp(2, ((i_stats->rusage[1].ru_stime.tv_sec * 100.0L) + (i_stats->rusage[1].ru_stime.tv_usec / 1.0e4L) / i_stats->interval_time));
+
+	snprintf(output_buffer, output_buffer_len, "  %2lu.%01lu%%  %2lu.%01lu%%",
+		int_fp1.i, int_fp1.dec, int_fp2.i, int_fp2.dec);
+	write(1, output_buffer, strlen(output_buffer));
+
+/* cpu cycles/pingpong for ping
+	if (config.set_affinity == true) {
+		snprintf(output_buffer, output_buffer_len, ", ping: %d.%d cyc.",
+			(int)i_stats->cpi[0], (int)(i_stats->cpi[0] * 100.0L) % 100);
+		write(1, output_buffer, strlen(output_buffer));
+		snprintf(output_buffer, output_buffer_len, ", %ld/%ld csw",
+			i_stats->rusage[0].ru_nvcsw, i_stats->rusage[0].ru_nivcsw);
+		write(1, output_buffer, strlen(output_buffer));
+	}
+*/
+
+/* cpu cycles/pingpong for pong
+	if (config.set_affinity == true) {
+
+		snprintf(output_buffer, output_buffer_len, ", pong: %d.%d cyc.",
+			(int)i_stats->cpi[1], (int)(i_stats->cpi[1] * 100.0L) & 100);
+		write(1, output_buffer, strlen(output_buffer));
+		snprintf(output_buffer, output_buffer_len, ", %ld csw",
+			i_stats->csw[1]);
+		write(1, output_buffer, strlen(output_buffer));
+	}
+*/
+
+	write(1, "\n", 1);
+}
+
 void store_last_stats(struct interval_stats_struct *i_stats) {
 	/* cleanup things for the next time we come back */
 	memcpy((void *)&run_data->thread_stats[0].last_rusage,

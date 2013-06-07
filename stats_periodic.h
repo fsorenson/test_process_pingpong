@@ -21,5 +21,7 @@ struct interval_stats_struct {
 
 void show_periodic_stats(void);
 void show_stats_header(void);
+void show_stats(struct interval_stats_struct *i_stats);
 void store_last_stats(struct interval_stats_struct *i_stats);
+
 #endif
