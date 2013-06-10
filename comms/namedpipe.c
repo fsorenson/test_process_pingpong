@@ -13,6 +13,8 @@
 
 const char *namedpipe_names[] = { "/tmp/ping_namedpipe", "/tmp/pong_namedpipe" };
 
+static int fds[2];
+
 int comm_makepair_namedpipe(int fd[2]) {
 	static int namedpipe_num = 0;
 	int ret;
@@ -26,15 +28,17 @@ int comm_makepair_namedpipe(int fd[2]) {
 			printf("Unable to create a fifo: %s\n", strerror(errno));
 			exit(1);
 		}
+
+		if ((fds[0] = open(namedpipe_names[0], O_RDWR)) < 0) {
+			printf("Error opening fifo %s: %s\n", namedpipe_names[0], strerror(errno));
+		}
+		fcntl(fds[0], F_SETFL, O_DIRECT);
+		if ((fds[1] = open(namedpipe_names[1], O_RDWR)) < 0) {
+			printf("Error opening fifo %s: %s\n", namedpipe_names[1], strerror(errno));
+		}
+		fcntl(fds[1], F_SETFL, O_DIRECT);
 	}
-	if ((fd[0] = open(namedpipe_names[namedpipe_num], O_RDWR)) < 0) {
-		printf("Error opening fifo %s: %s\n", namedpipe_names[0], strerror(errno));
-	}
-	fcntl(fd[0], F_SETFL, O_DIRECT);
-	if ((fd[1] = open(namedpipe_names[namedpipe_num ^ 1], O_RDWR)) < 0) {
-		printf("Error opening fifo %s: %s\n", namedpipe_names[1], strerror(errno));
-	}
-	fcntl(fd[1], F_SETFL, O_DIRECT);
+	fd[0] = fd[1] = 0;
 
 	namedpipe_num ++;
 
@@ -49,8 +53,8 @@ inline int __PINGPONG_FN comm_ping_namedpipe(int thread_num) {
 	while (1) {
 		run_data->ping_count ++;
 
-		while (write(config.mouth[0], &dummy, 1) != 1) ;
-		while (read(config.ear[0], &dummy, 1) != 1) ;
+		while (write(fds[0], &dummy, 1) != 1) ;
+		while (read(fds[1], &dummy, 1) != 1) ;
 	}
 }
 
@@ -60,12 +64,14 @@ inline int __PINGPONG_FN comm_pong_namedpipe(int thread_num) {
 
 	while (1) {
 
-		while (read(config.ear[1], &dummy, 1) != 1) ;
-		while (write(config.mouth[1], "X", 1) != 1) ;
+		while (read(fds[0], &dummy, 1) != 1) ;
+		while (write(fds[1], "X", 1) != 1) ;
 	}
 }
 
 int __attribute__((noreturn)) comm_cleanup_namedpipe(void) {
+	close(fds[0]);
+	close(fds[1]);
 	unlink(namedpipe_names[0]);
 	unlink(namedpipe_names[1]);
 	exit(0);
