@@ -173,6 +173,20 @@ void output_final_stats(void) {
 		(unsigned long long)((long double)i_stats.interval_count / i_stats.interval_time));
 	write(1, output_buffer, strlen(output_buffer));
 
+	if (config.set_affinity == true) {
+		i_stats.interval_tsc[0] = run_data->thread_stats[0].tsc - run_data->thread_stats[0].start_tsc;
+		i_stats.interval_tsc[1] = run_data->thread_stats[1].tsc - run_data->thread_stats[1].start_tsc;
+		i_stats.mhz[0] = i_stats.interval_tsc[0] / i_stats.interval_time / 1000 / 1000;
+		i_stats.mhz[1] = i_stats.interval_tsc[1] / i_stats.interval_time / 1000 / 1000;
+
+		i_stats.cpi[0] = (long double)i_stats.interval_tsc[0] / (long double)i_stats.interval_count;
+		i_stats.cpi[1] = (long double)i_stats.interval_tsc[1] / (long double)i_stats.interval_count;
+	} else {
+		i_stats.interval_tsc[0] = i_stats.interval_tsc[1] = 0;
+		i_stats.mhz[0] = i_stats.mhz[1] = 0;
+		i_stats.cpi[0] = i_stats.cpi[1] = 0;
+	}
+
 	write(1, "\n", 1);
 
 	parse_sched_data();
