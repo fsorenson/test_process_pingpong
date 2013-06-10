@@ -168,6 +168,11 @@ void output_final_stats(void) {
 		subsec_string(temp_string2, i_stats.iteration_time, 2));
 	write(1, output_buffer, strlen(output_buffer));
 
+
+	snprintf(output_buffer, output_buffer_len, "Pings/second: %llu\n",
+		(unsigned long long)((long double)i_stats.interval_count / i_stats.interval_time));
+	write(1, output_buffer, strlen(output_buffer));
+
 	write(1, "\n", 1);
 
 	parse_sched_data();
