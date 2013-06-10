@@ -1,5 +1,7 @@
 #include "stats_final.h"
 
+#include "stats_common.h"
+#include "units.h"
 #include <string.h>
 #include <stdio.h>
 
