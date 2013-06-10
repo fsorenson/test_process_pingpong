@@ -140,7 +140,7 @@ void show_periodic_stats_data(struct interval_stats_struct *i_stats) {
 	// general stats
 	snprintf(output_buffer, output_buffer_len, "%7s %12llu %11s",
 		subsec_string(temp_string1, i_stats->run_time, 1),
-		i_stats->interval_count,
+		(unsigned long long)((long double)i_stats->interval_count / i_stats->interval_time),
 		subsec_string(temp_string2, i_stats->iteration_time, 2));
 	write(1, output_buffer, strlen(output_buffer));
 
