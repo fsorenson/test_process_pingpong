@@ -14,7 +14,7 @@ struct interval_stats_struct {
 
 	long csw[2]; /* per-thread per-interval csw */
 
-	long double iteration_time; /* time for each iteration */
+	long double iteration_time; /* time for each ping/pong iteration */
 	long double cpi[2]; /* cycles-per-iteration per CPU */
 	long double mhz[2]; /* approximate speed of the CPU */
 };
