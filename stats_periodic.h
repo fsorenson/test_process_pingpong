@@ -2,6 +2,7 @@
 #define __STATS_PERIODIC_H__
 
 #include "test_process_pingpong.h"
+#include "stats_common.h"
 
 int gather_periodic_stats(struct interval_stats_struct *i_stats);
 void show_periodic_stats(void);
