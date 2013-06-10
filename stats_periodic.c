@@ -7,7 +7,7 @@
 #include <string.h>
 #include <signal.h>
 
-static int gather_stats(struct interval_stats_struct *i_stats) {
+int gather_periodic_stats(struct interval_stats_struct *i_stats) {
 
 	i_stats->current_count = run_data->ping_count;
 	i_stats->current_time = get_time();
@@ -66,26 +66,26 @@ static int gather_stats(struct interval_stats_struct *i_stats) {
 }
 
 
-void show_periodic_stats() {
+void show_periodic_stats(void) {
 	static struct interval_stats_struct i_stats = { 0 };
 
 	memset(&i_stats, 0, sizeof(struct interval_stats_struct));
 
 	if (run_data->rusage_req_in_progress == true) /* already waiting for results */
 		return;
-	gather_stats(&i_stats);
+	gather_periodic_stats(&i_stats);
 
 	if (run_data->stop == true) /* don't worry about output...  let's just pack up and go home */
 		return;
 
 	if (run_data->stats_headers_count++ % config.stats_headers_frequency == 0)
-		show_stats_header();
+		show_periodic_stats_header();
 
-	show_stats(&i_stats);
+	show_periodic_stats_data(&i_stats);
 	store_last_stats(&i_stats);
 }
 
-void show_stats_header(void) {
+void show_periodic_stats_header(void) {
 #define OUTPUT_BUFFER_LEN 400
 	static char output_buffer[OUTPUT_BUFFER_LEN];
 	size_t output_buffer_len = OUTPUT_BUFFER_LEN;
@@ -121,7 +121,7 @@ void show_stats_header(void) {
 	write(1, "\n", 1);
 }
 
-void show_stats(struct interval_stats_struct *i_stats) {
+void show_periodic_stats_data(struct interval_stats_struct *i_stats) {
 #define OUTPUT_BUFFER_LEN 400
 	static char output_buffer[OUTPUT_BUFFER_LEN] = { 0 };
 	size_t output_buffer_len = OUTPUT_BUFFER_LEN;

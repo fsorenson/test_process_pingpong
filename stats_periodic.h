@@ -19,9 +19,10 @@ struct interval_stats_struct {
 	long double mhz[2]; /* approximate speed of the CPU */
 };
 
+int gather_periodic_stats(struct interval_stats_struct *i_stats);
 void show_periodic_stats(void);
-void show_stats_header(void);
-void show_stats(struct interval_stats_struct *i_stats);
+void show_periodic_stats_header(void);
+void show_periodic_stats_data(struct interval_stats_struct *i_stats);
 void store_last_stats(struct interval_stats_struct *i_stats);
 
 #endif
