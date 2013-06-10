@@ -139,5 +139,25 @@ static void parse_sched_data(void) {
 }
 
 void output_final_stats(void) {
+#define OUTPUT_BUFFER_LEN 400
+	static char output_buffer[OUTPUT_BUFFER_LEN];
+	size_t output_buffer_len = OUTPUT_BUFFER_LEN;
+#undef OUTPUT_BUFFER_LEN
+	static struct interval_stats_struct i_stats = { 0 };
+
+	memset(&i_stats, 0, sizeof(struct interval_stats_struct));
+
+	write(1, "\n", 1);
+
+	i_stats.current_count = run_data->ping_count;
+	i_stats.current_time = get_time();
+
+	i_stats.interval_time = i_stats.run_time = i_stats.current_time - run_data->start_time;
+	snprintf(output_buffer, output_buffer_len, "Elapsed time: %7s\n",
+		subsec_string(temp_string1, i_stats.interval_time, 1));
+	write(1, output_buffer, strlen(output_buffer));
+
+	write(1, "\n", 1);
+
 	parse_sched_data();
 }
