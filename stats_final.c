@@ -162,6 +162,12 @@ void output_final_stats(void) {
 	snprintf(output_buffer, output_buffer_len, "Ping/pong count: %llu\n", i_stats.interval_count);
 	write(1, output_buffer, strlen(output_buffer));
 
+
+	i_stats.iteration_time = i_stats.interval_time / i_stats.interval_count;
+	snprintf(output_buffer, output_buffer_len, "Ping/pong time: %s\n",
+		subsec_string(temp_string2, i_stats.iteration_time, 2));
+	write(1, output_buffer, strlen(output_buffer));
+
 	write(1, "\n", 1);
 
 	parse_sched_data();
