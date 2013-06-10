@@ -214,9 +214,6 @@ struct run_data_struct {
 
 	long double last_stats_time;
 
-	long double rusage_time; /* time of most recent rusage report */
-	long double last_rusage_time; /* time of last report */
-
 	struct thread_info_struct thread_info[2];
 	struct thread_stats_struct volatile thread_stats[2];
 };
