@@ -173,6 +173,21 @@ void output_final_stats(void) {
 		(unsigned long long)((long double)i_stats.interval_count / i_stats.interval_time));
 	write(1, output_buffer, strlen(output_buffer));
 
+
+	i_stats.rusage[0].ru_nvcsw = run_data->thread_stats[0].rusage.ru_nvcsw;
+	i_stats.rusage[0].ru_nivcsw = run_data->thread_stats[0].rusage.ru_nivcsw;
+	i_stats.rusage[1].ru_nvcsw = run_data->thread_stats[1].rusage.ru_nvcsw;
+	i_stats.rusage[1].ru_nivcsw = run_data->thread_stats[1].rusage.ru_nivcsw;
+
+	i_stats.csw[0] = i_stats.rusage[0].ru_nvcsw + i_stats.rusage[0].ru_nivcsw;
+	i_stats.csw[1] = i_stats.rusage[1].ru_nvcsw + i_stats.rusage[1].ru_nivcsw;
+
+	i_stats.rusage[0].ru_utime = run_data->thread_stats[0].last_rusage.ru_utime;
+	i_stats.rusage[0].ru_stime = run_data->thread_stats[0].last_rusage.ru_stime;
+
+	i_stats.rusage[1].ru_utime = run_data->thread_stats[1].last_rusage.ru_utime;
+	i_stats.rusage[1].ru_stime = run_data->thread_stats[1].last_rusage.ru_stime;
+
 	if (config.set_affinity == true) {
 		i_stats.interval_tsc[0] = run_data->thread_stats[0].tsc - run_data->thread_stats[0].start_tsc;
 		i_stats.interval_tsc[1] = run_data->thread_stats[1].tsc - run_data->thread_stats[1].start_tsc;
