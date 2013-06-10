@@ -157,6 +157,11 @@ void output_final_stats(void) {
 		subsec_string(temp_string1, i_stats.interval_time, 1));
 	write(1, output_buffer, strlen(output_buffer));
 
+
+	i_stats.interval_count = i_stats.current_count;
+	snprintf(output_buffer, output_buffer_len, "Ping/pong count: %llu\n", i_stats.interval_count);
+	write(1, output_buffer, strlen(output_buffer));
+
 	write(1, "\n", 1);
 
 	parse_sched_data();
