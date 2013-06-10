@@ -17,15 +17,21 @@ int comm_makepair_namedpipe(int fd[2]) {
 	static int namedpipe_num = 0;
 	int ret;
 
-	if ((ret = mkfifo(namedpipe_names[namedpipe_num], 0666)) < 0) {
-		printf("Unable to create a fifo: %s\n", strerror(errno));
-		exit(1);
+	if (namedpipe_num == 0) {
+		if ((ret = mkfifo(namedpipe_names[0], 0666)) < 0) {
+			printf("Unable to create a fifo: %s\n", strerror(errno));
+			exit(1);
+		}
+		if ((ret = mkfifo(namedpipe_names[1], 0666)) < 0) {
+			printf("Unable to create a fifo: %s\n", strerror(errno));
+			exit(1);
+		}
 	}
-	if ((fd[0] = open(namedpipe_names[0], O_RDWR)) < 0) {
+	if ((fd[0] = open(namedpipe_names[namedpipe_num], O_RDWR)) < 0) {
 		printf("Error opening fifo %s: %s\n", namedpipe_names[0], strerror(errno));
 	}
 	fcntl(fd[0], F_SETFL, O_DIRECT);
-	if ((fd[1] = open(namedpipe_names[1], O_RDWR)) < 0) {
+	if ((fd[1] = open(namedpipe_names[namedpipe_num ^ 1], O_RDWR)) < 0) {
 		printf("Error opening fifo %s: %s\n", namedpipe_names[1], strerror(errno));
 	}
 	fcntl(fd[1], F_SETFL, O_DIRECT);
