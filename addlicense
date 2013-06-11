@@ -1,0 +1,10 @@
+#!/bin/bash
+
+LICENSE_FILE=license_header.txt
+LICENSE_LEN=$(wc -l $LICENSE_FILE | awk '{print $1}')
+
+for f in $* ; do
+	head -$LICENSE_LEN $f | diff -q $LICENSE_FILE - >/dev/null || ( (cat $LICENSE_FILE ; echo ; cat $f) > /tmp/license.tmp ; mv /tmp/license.tmp $f)
+done
+
+
