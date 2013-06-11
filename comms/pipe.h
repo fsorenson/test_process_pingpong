@@ -20,7 +20,7 @@
 
 
 #ifndef __PIPE_H__
-#define __MPIPE_H__Q_H__
+#define __PIPE_H__
 
 #include "test_process_pingpong.h"
 
