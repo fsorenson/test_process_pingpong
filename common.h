@@ -75,6 +75,8 @@ typedef enum { no = 0, false = 0, yes = 1, true = 1 } __PACKED bool;
 #define rmb()   asm volatile("lfence":::"memory")
 #define wmb()   asm volatile("sfence"::: "memory")
 #define mb2()	asm volatile ("" : : : "memory");
+#define nop() __asm__ __volatile__ ("nop")
+
 //__sync_synchronize()
 
 
