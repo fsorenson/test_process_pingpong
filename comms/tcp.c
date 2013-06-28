@@ -114,7 +114,7 @@ int make_tcp_pair(int fd[2]) {
 	return 0;
 }
 
-inline int __PINGPONG_FN do_ping_tcp(int thread_num) {
+inline void __PINGPONG_FN do_ping_tcp(int thread_num) {
 	char dummy = 'X';
 	(void)thread_num;
 
@@ -126,7 +126,7 @@ inline int __PINGPONG_FN do_ping_tcp(int thread_num) {
 	}
 }
 
-inline int __PINGPONG_FN do_pong_tcp(int thread_num) {
+inline void __PINGPONG_FN do_pong_tcp(int thread_num) {
 	char dummy = 'X';
 	(void)thread_num;
 

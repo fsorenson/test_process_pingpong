@@ -32,11 +32,11 @@
 
 int make_nop_pair(int fd[2]);
 
-int do_ping_nop1(int thread_num);
-int do_ping_nop2(int thread_num);
-int do_ping_nop3(int thread_num);
-int do_ping_nop4(int thread_num);
-int do_pong_nop(int thread_num);
+void do_ping_nop1(int thread_num);
+void do_ping_nop2(int thread_num);
+void do_ping_nop3(int thread_num);
+void do_ping_nop4(int thread_num);
+void do_pong_nop(int thread_num);
 
 int cleanup_nop(void);
 

@@ -66,7 +66,7 @@ int comm_makepair_namedpipe(int fd[2]) {
 	return 0;
 }
 
-inline int __PINGPONG_FN comm_ping_namedpipe(int thread_num) {
+inline void __PINGPONG_FN comm_ping_namedpipe(int thread_num) {
 	char dummy;
 	(void)thread_num;
 
@@ -79,7 +79,7 @@ inline int __PINGPONG_FN comm_ping_namedpipe(int thread_num) {
 	}
 }
 
-inline int __PINGPONG_FN comm_pong_namedpipe(int thread_num) {
+inline void __PINGPONG_FN comm_pong_namedpipe(int thread_num) {
 	char dummy;
 	(void)thread_num;
 

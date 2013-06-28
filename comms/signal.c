@@ -77,7 +77,7 @@ int do_pre_signal(int thread_num) {
 	return 0;
 }
 
-inline int __PINGPONG_FN do_ping_signal(int thread_num) {
+inline void __PINGPONG_FN do_ping_signal(int thread_num) {
         sigset_t signal_mask;
 	(void) thread_num;
 
@@ -98,7 +98,7 @@ inline int __PINGPONG_FN do_ping_signal(int thread_num) {
 	}
 }
 
-inline int __PINGPONG_FN do_pong_signal(int thread_num) {
+inline void __PINGPONG_FN do_pong_signal(int thread_num) {
 	(void) thread_num;
 
 	while (1) {

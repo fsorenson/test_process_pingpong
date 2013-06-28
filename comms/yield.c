@@ -56,7 +56,7 @@ int make_yield_pair(int fd[2]) {
 	return 0;
 }
 
-inline int __PINGPONG_FN do_ping_yield(int thread_num) {
+inline void __PINGPONG_FN do_ping_yield(int thread_num) {
 	(void)thread_num;
 
 	while (1) {
@@ -70,7 +70,7 @@ inline int __PINGPONG_FN do_ping_yield(int thread_num) {
 	}
 }
 
-inline int __PINGPONG_FN do_pong_yield(int thread_num) {
+inline void __PINGPONG_FN do_pong_yield(int thread_num) {
 	(void)thread_num;
 
 	while (1) {
@@ -83,7 +83,7 @@ inline int __PINGPONG_FN do_pong_yield(int thread_num) {
 }
 
 
-inline int __PINGPONG_FN do_ping_yield_nop(int thread_num) {
+inline void __PINGPONG_FN do_ping_yield_nop(int thread_num) {
 	(void)thread_num;
 
 	while (1) {
@@ -92,7 +92,7 @@ inline int __PINGPONG_FN do_ping_yield_nop(int thread_num) {
 	}
 }
 
-inline int __PINGPONG_FN do_pong_yield_nop(int thread_num) {
+inline void __PINGPONG_FN do_pong_yield_nop(int thread_num) {
 	(void)thread_num;
 
 	while (1) {

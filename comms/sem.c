@@ -61,7 +61,7 @@ int do_begin_sem(void) {
 	return sem_post(sems[0]);
 }
 
-inline int __PINGPONG_FN do_ping_sem(int thread_num) {
+inline void __PINGPONG_FN do_ping_sem(int thread_num) {
 	(void)thread_num;
 
 	while (1) {
@@ -72,7 +72,7 @@ inline int __PINGPONG_FN do_ping_sem(int thread_num) {
 	}
 }
 
-inline int __PINGPONG_FN do_pong_sem(int thread_num) {
+inline void __PINGPONG_FN do_pong_sem(int thread_num) {
 	(void)thread_num;
 
 	while (1) {
@@ -81,7 +81,7 @@ inline int __PINGPONG_FN do_pong_sem(int thread_num) {
 	}
 }
 
-inline int __PINGPONG_FN do_ping_busysem(int thread_num) {
+inline void __PINGPONG_FN do_ping_busysem(int thread_num) {
 	(void)thread_num;
 
 	while (1) {
@@ -92,7 +92,7 @@ inline int __PINGPONG_FN do_ping_busysem(int thread_num) {
 	}
 }
 
-inline int __PINGPONG_FN do_pong_busysem(int thread_num) {
+inline void __PINGPONG_FN do_pong_busysem(int thread_num) {
 	(void)thread_num;
 
 	while (1) {

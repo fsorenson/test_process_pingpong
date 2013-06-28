@@ -43,7 +43,7 @@ int make_eventfd_pair(int fd[2]) {
         return 0;
 }
 
-int __PINGPONG_FN do_ping_eventfd(int thread_num) {
+inline void __PINGPONG_FN do_ping_eventfd(int thread_num) {
 	int mouth;
 	int ear;
 	eventfd_t efd_value;
@@ -61,7 +61,7 @@ int __PINGPONG_FN do_ping_eventfd(int thread_num) {
 	}
 }
 
-int __PINGPONG_FN do_pong_eventfd(int thread_num) {
+inline void __PINGPONG_FN do_pong_eventfd(int thread_num) {
 	int mouth;
 	int ear;
 	eventfd_t efd_value;

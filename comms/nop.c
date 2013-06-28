@@ -59,7 +59,7 @@ int make_nop_pair(int fd[2]) {
 * the other also does nothing, but sleeps too...
 * lazy, good-for-nothing threads
 */
-inline int __PINGPONG_FN do_ping_nop1(int thread_num) {
+inline void __PINGPONG_FN do_ping_nop1(int thread_num) {
 	(void) thread_num;
 
 	*nop_var = 1;
@@ -72,7 +72,7 @@ inline int __PINGPONG_FN do_ping_nop1(int thread_num) {
 		__asm__ __volatile__("");
 	}
 }
-inline int __PINGPONG_FN do_ping_nop2(int thread_num) {
+inline void __PINGPONG_FN do_ping_nop2(int thread_num) {
 	(void) thread_num;
 
 	*nop_var = 1;
@@ -83,7 +83,7 @@ inline int __PINGPONG_FN do_ping_nop2(int thread_num) {
 		__asm__ __volatile__("");
 	}
 }
-inline int __PINGPONG_FN do_ping_nop3(int thread_num) {
+inline void __PINGPONG_FN do_ping_nop3(int thread_num) {
 	(void) thread_num;
 
 	*nop_var = 1;
@@ -94,7 +94,7 @@ inline int __PINGPONG_FN do_ping_nop3(int thread_num) {
 		__asm__ __volatile__("");
 	}
 }
-inline int __PINGPONG_FN do_ping_nop4(int thread_num) {
+inline void __PINGPONG_FN do_ping_nop4(int thread_num) {
 	(void) thread_num;
 
 	while (1) {
@@ -102,7 +102,7 @@ inline int __PINGPONG_FN do_ping_nop4(int thread_num) {
 	}
 }
 
-inline int __PINGPONG_FN do_pong_nop(int thread_num) {
+inline void __PINGPONG_FN do_pong_nop(int thread_num) {
 	(void) thread_num;
 
 	while (1) {

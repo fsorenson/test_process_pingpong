@@ -45,7 +45,7 @@ int make_race_pair(int fd[2]) {
 }
 
 
-inline int __PINGPONG_FN do_ping_race1(int thread_num) {
+inline void __PINGPONG_FN do_ping_race1(int thread_num) {
 	(void)thread_num;
 
 	while (1) {
@@ -55,7 +55,7 @@ inline int __PINGPONG_FN do_ping_race1(int thread_num) {
 	}
 }
 
-inline int __PINGPONG_FN do_ping_race2(int thread_num) {
+inline void __PINGPONG_FN do_ping_race2(int thread_num) {
 	(void)thread_num;
 
 	while (1) {
@@ -65,14 +65,14 @@ inline int __PINGPONG_FN do_ping_race2(int thread_num) {
 	}
 }
 
-inline int __PINGPONG_FN do_pong_race1(int thread_num) {
+inline void __PINGPONG_FN do_pong_race1(int thread_num) {
 	(void)thread_num;
 	while (1) {
 		*race_var = 0;
 	}
 }
 
-inline int __PINGPONG_FN do_pong_race2(int thread_num) {
+inline void __PINGPONG_FN do_pong_race2(int thread_num) {
 	(void)thread_num;
 	while (1) {
 		run_data->ping_count ++;

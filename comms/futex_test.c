@@ -61,7 +61,7 @@ int make_futex_test_pair(int fd[2]) {
 	return 0;
 }
 
-inline int __PINGPONG_FN do_ping_futex_test(int thread_num) {
+inline void __PINGPONG_FN do_ping_futex_test(int thread_num) {
 
 	while (1) {
 		run_data->ping_count ++;
@@ -78,7 +78,7 @@ printf("Thread %d, B, value=%d\n", thread_num, *futex_value);
 
 }
 
-inline int __PINGPONG_FN do_pong_futex_test(int thread_num) {
+inline void __PINGPONG_FN do_pong_futex_test(int thread_num) {
 
 	while (1) {
 

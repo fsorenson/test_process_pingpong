@@ -27,8 +27,8 @@
 
 int make_futex_test_pair(int fd[2]);
 
-int do_ping_futex_test(int fd);
-int do_pong_futex_test(int fd);
+void do_ping_futex_test(int fd);
+void do_pong_futex_test(int fd);
 int do_send_futex_test(int fd);
 int do_recv_futex_test(int fd);
 

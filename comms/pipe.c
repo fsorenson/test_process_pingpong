@@ -45,7 +45,7 @@ void __attribute__((noreturn)) sig_handler_pipe(int sig) {
 	comm_cleanup_pipe();
 }
 
-inline int __PINGPONG_FN comm_ping_pipe(int thread_num) {
+inline void __PINGPONG_FN comm_ping_pipe(int thread_num) {
 	char dummy;
 	(void)thread_num;
 
@@ -58,7 +58,7 @@ inline int __PINGPONG_FN comm_ping_pipe(int thread_num) {
 	}
 }
 
-inline int __PINGPONG_FN comm_pong_pipe(int thread_num) {
+inline void __PINGPONG_FN comm_pong_pipe(int thread_num) {
 	char dummy;
 	(void)thread_num;
 

@@ -78,7 +78,7 @@ int make_inotify_pair(int fd[2]) {
 	return 0;
 }
 
-inline int __PINGPONG_FN do_ping_inotify(int thread_num) {
+inline void __PINGPONG_FN do_ping_inotify(int thread_num) {
 	struct inotify_event *ino_event;
 	long long counter;
 	long long length;
@@ -107,7 +107,7 @@ inline int __PINGPONG_FN do_ping_inotify(int thread_num) {
 	}
 }
 
-inline int __PINGPONG_FN do_pong_inotify(int thread_num) {
+inline void __PINGPONG_FN do_pong_inotify(int thread_num) {
 	struct inotify_event *ino_event;
 	long long counter;
 	long long length;
