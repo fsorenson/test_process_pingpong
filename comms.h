@@ -34,8 +34,8 @@
 	int (*comm_make_pair)(int fd[2]);	\
 	int (*comm_pre)(int s);			\
 	int (*comm_begin)(void);		\
-	int (*comm_do_ping)(int s);		\
-	int (*comm_do_pong)(int s);		\
+	void (*comm_do_ping)(int s);		\
+	void (*comm_do_pong)(int s);		\
 	int (*comm_do_send)(int s);		\
 	int (*comm_do_recv)(int s);		\
 	int (*comm_cleanup)(void)
@@ -98,8 +98,8 @@ int comm_no_init(void);
 int comm_no_pre(int thread_num);
 int comm_no_begin(void);
 
-int comm_do_ping_generic(int thread_num);
-int comm_do_pong_generic(int thread_num);
+void comm_do_ping_generic(int thread_num);
+void comm_do_pong_generic(int thread_num);
 int comm_do_send_generic(int fd);
 int comm_do_recv_generic(int fd);
 
