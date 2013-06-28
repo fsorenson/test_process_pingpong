@@ -13,6 +13,8 @@ LIBS += -lrt
 #CC := diet $(CC)
 #LIBS += -lcompat
 
+GCC_COMPAT_004001=y
+
 
 base_dir = $(CURDIR)
 base_dir_name = $(notdir $(base_dir))
@@ -27,12 +29,16 @@ deps_dir = deps
 stab_dir = stabs
 
 LDFLAGS=
-CPPFLAGS= -iquote .
-CPPFLAGS += -fverbose-asm -frecord-gcc-switches
 CFLAGS=
 
-CPPFLAGS += -std=gnu11
-#CPPFLAGS += -std=c99
+CPPFLAGS = -iquote .
+CPPFLAGS += -fverbose-asm
+
+ifeq ($(GCC_COMPAT_004001),y)
+ CPPFLAGS += -std=c99
+else
+ CPPFLAGS += -std=gnu11 -frecord-gcc-switches
+endif
 
 # only enable if 'static' is really what we want
 #CPPFLAGS += -static
@@ -100,20 +106,19 @@ WARNINGS += -Wcomment -Wmultichar
 
 # these reviewed, and do not appear to be covered by above flags
 WARNINGS += -Wswitch-default -Wswitch-enum -Winit-self
-WARNINGS += -Wpacked -Wpadded -Wwrite-strings -Wlogical-op
-WARNINGS += -Wstrict-overflow -Wconversion
+WARNINGS += -Wpacked -Wpadded -Wwrite-strings
+
 WARNINGS += -Wmissing-declarations -Wredundant-decls -Wdeclaration-after-statement
 WARNINGS += -Wmissing-prototypes -Wstrict-prototypes -Wunused-parameter
 WARNINGS += -Wold-style-definition
 WARNINGS += -Wbad-function-cast -Wcast-qual -Wcast-align
 WARNINGS += -Wundef -Wendif-labels -Wshadow
 
-WARNINGS += -Wsuggest-attribute=pure -Wsuggest-attribute=const -Wsuggest-attribute=noreturn
 WARNINGS += -Winline -Wnested-externs
-WARNINGS += -Wtrampolines -Wstack-protector
+WARNINGS += -Wstack-protector
 WARNINGS += -Wdisabled-optimization -Wunsafe-loop-optimizations
 
-WARNINGS += -Wunsuffixed-float-constants -Wdouble-promotion -Wfloat-equal
+WARNINGS += -Wfloat-equal
 
 #additional format options NOT in Wall:
 WARNINGS += -Wformat-y2k -Wno-format-extra-args -Wno-format-zero-length -Wformat-nonliteral -Wformat-security -Wformat=2
@@ -128,17 +133,20 @@ WARNINGS += -Wmissing-format-attribute
 WARNINGS += --all-warnings
 #WARNINGS += -Wc++-compat 
 
+ifneq ($(GCC_COMPAT_004001),y)
+ WARNINGS += -Wstrict-overflow -Wlogical-op -Wtrampolines -Wunsuffixed-float-constants -Wdouble-promotion
+ WARNINGS += -Wsuggest-attribute=pure -Wsuggest-attribute=const -Wsuggest-attribute=noreturn
+endif
 
 
 # optimizations
 # -O -OO -O1 -O2 -O3 -Os -Ofast
-OPTIMIZATIONS =
-
-# Use this for default, although some older gcc's don't understand '-Ofast'
-OPTIMIZATIONS += -Ofast
-
-# useful for when gcc doesn't understand '-Ofast'
-#OPTIMIZATIONS += -O3
+# Use '-Ofast' if our gcc is recent enough, otherwise, fall back to '-O3'
+ifeq ($(GCC_COMPAT_004001),y)
+ OPTIMIZATIONS = -O3
+else
+ OPTIMIZATIONS = -Ofast
+endif
 
 # may be needed when using valgrind and other tools which want lots of information
 #OPTIMIZATIONS = -O0
@@ -146,18 +154,23 @@ OPTIMIZATIONS += -Ofast
 OPTIMIZATIONS += -fshort-enums
 OPTIMIZATIONS += -malign-double
 OPTIMIZATIONS += -fif-conversion -fif-conversion2
-OPTIMIZATIONS += -finline-functions -finline-functions-called-once -finline-small-functions
+OPTIMIZATIONS += -finline-functions -finline-functions-called-once
 OPTIMIZATIONS += -fargument-alias
 
 # testing
 OPTIMIZATIONS += -falign-functions -falign-loops -falign-jumps -falign-labels
-OPTIMIZATIONS += -fdevirtualize -fexpensive-optimizations
-OPTIMIZATIONS += -fstrict-overflow
+OPTIMIZATIONS += -fexpensive-optimizations
 OPTIMIZATIONS += -fvariable-expansion-in-unroller -funswitch-loops
 #OPTIMIZATIONS += 
 
+ifneq ($(GCC_COMPAT_004001),y)
+ OPTIMIZATIONS += -finline-small-functions -fstrict-overflow -fdevirtualize
+endif
+
 
 #OPTIMIZATIONS += -fwhole-program
+
+
 
 #CFLAGS += -fweb -flto
 
