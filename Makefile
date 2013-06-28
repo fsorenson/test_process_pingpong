@@ -18,7 +18,7 @@ GCC_COMPAT_004001=y
 
 base_dir = $(CURDIR)
 base_dir_name = $(notdir $(base_dir))
-parent_dir = $(shell dirname $(base_dir))
+parent_dir := $(shell dirname $(base_dir))
 #$(info base_dir = $(base_dir))
 #$(info base_dir_name = $(base_dir_name))
 #$(info parent_dir = $(parent_dir))
@@ -53,7 +53,7 @@ endif
 #CFLAGS += -march=corei7 -mtune=corei7
 
 # check for eventfd.h
-HAVE_EVENTFD = $(shell [[ -f /usr/include/sys/eventfd.h ]] && echo "-DHAVE_EVENTFD_H")
+HAVE_EVENTFD := $(shell [[ -f /usr/include/sys/eventfd.h ]] && echo "-DHAVE_EVENTFD_H")
 
 
 COMPILE_DEBUG =
