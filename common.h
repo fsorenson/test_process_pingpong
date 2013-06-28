@@ -69,6 +69,9 @@ typedef enum { no = 0, false = 0, yes = 1, true = 1 } __PACKED bool;
 #define xstr(s) str(s)
 #define str(s) #s
 
+#if __STDC_VERSION__ == 199901L
+#define asm __asm__
+#endif
 
 // memory barriers
 #define mb()    asm volatile("mfence":::"memory")
