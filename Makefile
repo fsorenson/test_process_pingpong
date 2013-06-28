@@ -152,7 +152,6 @@ endif
 #OPTIMIZATIONS = -O0
 
 OPTIMIZATIONS += -fshort-enums
-OPTIMIZATIONS += -malign-double
 OPTIMIZATIONS += -fif-conversion -fif-conversion2
 OPTIMIZATIONS += -finline-functions -finline-functions-called-once
 OPTIMIZATIONS += -fargument-alias
