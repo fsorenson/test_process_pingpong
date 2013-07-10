@@ -94,7 +94,7 @@ static void stop_handler(int signum) {
 
 	printf("Waiting for child threads to die.  Die, kids!  Die!!!\n");
 	while ((run_data->thread_info[0].pid != -1) || (run_data->thread_info[1].pid != -1)) {
-		do_sleep(0, 5000000);
+		do_sleep(0, WAIT_SLEEP_NS);
 	}
 
 	config.comm_cleanup();
@@ -196,7 +196,7 @@ int do_monitor_work(void) {
 	sigdelset(&signal_mask, SIGINT);
 
 	while ((run_data->ready[0] != true) || (run_data->ready[1] != true)) {
-		do_sleep(0, 5000000);
+		do_sleep(0, WAIT_SLEEP_NS);
 	}
 
 	setup_monitor_timer();
