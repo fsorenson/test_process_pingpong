@@ -33,6 +33,7 @@
 #include <time.h>
 #include <errno.h>
 #include <math.h>
+#include <stdarg.h>
 
 
 inline int get_min_stack_size(void) {
@@ -69,6 +70,35 @@ static __inline__ __attribute__((always_inline)) unsigned long long __rdtsc(void
 	__asm__ __volatile__("rdtsc" : "=A"(retval));
 	return retval;
 }
+
+int safe_write(int fd, char *buffer, int buffer_len, const char *fmt, ...) {
+	va_list ap;
+	int ret;
+	int str_len;
+
+	va_start(ap, fmt);
+	ret = vsnprintf(buffer, buffer_len, fmt, ap);
+	va_end(ap);
+
+	str_len = strlen(buffer);
+	if ((ret < 0) || (ret >= buffer_len) || (str_len >= buffer_len) || (ret != str_len)) {
+		char out_buf[100];
+		snprintf(out_buf, 100, "Error with vsnprintf...  snprintf returned %d, but strlen is %d\n",
+			ret, str_len);
+		write(1, out_buf, strlen(out_buf));
+	}
+
+	ret = write(fd, buffer, str_len);
+	if (ret < 0) {
+		char out_buf[200];
+		snprintf(out_buf, 200, "Error with write(%d)...  expected to write %d: %s\n",
+			fd, str_len, strerror(errno));
+		write(1, out_buf, strlen(out_buf));
+	}
+
+	return ret;
+}
+
 
 int do_sleep(long sec, long nsec) {
 	struct timespec ts;

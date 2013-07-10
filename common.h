@@ -91,6 +91,9 @@ struct timeval elapsed_time_timeval(const struct timeval start, const struct tim
 
 struct timeval str_to_timeval(const char *string);
 
+int safe_write(int fd, char *buffer, int buffer_len, const char *fmt, ...)
+	__attribute__((format(printf, 4, 5) )) ;
+
 int do_sleep(long sec, long nsec);
 long double estimate_cpu_mhz(void);
 void set_affinity(int cpu);
