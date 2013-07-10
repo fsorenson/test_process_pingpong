@@ -101,6 +101,8 @@
 
 #define DEFAULT_STATS_SUMMARY	true /* display a summary immediately prior to exit */
 
+#define WAIT_SLEEP_NS 5000000
+
 
 typedef enum {
 	thread_mode_fork, thread_mode_thread, thread_mode_pthread, thread_mode_context
