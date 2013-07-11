@@ -164,35 +164,36 @@ void output_final_stats(void) {
 	static char output_buffer[OUTPUT_BUFFER_LEN];
 	size_t output_buffer_len = OUTPUT_BUFFER_LEN;
 #undef OUTPUT_BUFFER_LEN
+#define TEMP_STRING_LEN 30
+	static char temp_string1[TEMP_STRING_LEN] = { 0 };
+	static char temp_string2[TEMP_STRING_LEN] = { 0 };
+	size_t temp_string_len = TEMP_STRING_LEN;
+#undef TEMP_STRING_LEN
 	static struct interval_stats_struct i_stats = { 0 };
 
 	memset(&i_stats, 0, sizeof(struct interval_stats_struct));
 
-	write(1, "\n", 1);
+	safe_write(1, output_buffer, output_buffer_len, "\n");
 
 	i_stats.current_count = run_data->ping_count;
 	i_stats.current_time = get_time();
 
 	i_stats.interval_time = i_stats.run_time = i_stats.current_time - run_data->start_time;
-	snprintf(output_buffer, output_buffer_len, "Elapsed time: %7s\n",
+	safe_write(1, output_buffer, output_buffer_len, "Elapsed time: %7s\n",
 		subsec_string(temp_string1, i_stats.interval_time, 1));
-	write(1, output_buffer, strlen(output_buffer));
 
 
 	i_stats.interval_count = i_stats.current_count;
-	snprintf(output_buffer, output_buffer_len, "Ping/pong count: %llu\n", i_stats.interval_count);
-	write(1, output_buffer, strlen(output_buffer));
+	safe_write(1, output_buffer, output_buffer_len, "Ping/pong count: %llu\n", i_stats.interval_count);
 
 
 	i_stats.iteration_time = i_stats.interval_time / i_stats.interval_count;
-	snprintf(output_buffer, output_buffer_len, "Ping/pong time: %s\n",
+	safe_write(1, output_buffer, output_buffer_len, "Ping/pong time: %s\n",
 		subsec_string(temp_string2, i_stats.iteration_time, 2));
-	write(1, output_buffer, strlen(output_buffer));
 
 
-	snprintf(output_buffer, output_buffer_len, "Pings/second: %llu\n",
+	safe_write(1, output_buffer, output_buffer_len, "Pings/second: %llu\n",
 		(unsigned long long)((long double)i_stats.interval_count / i_stats.interval_time));
-	write(1, output_buffer, strlen(output_buffer));
 
 
 	i_stats.rusage[0].ru_nvcsw = run_data->thread_stats[0].rusage.ru_nvcsw;

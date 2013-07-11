@@ -156,14 +156,13 @@ void __NORETURN do_thread_work(int thread_num) {
 	setup_cpu_dma_latency(thread_num);
 //	estimate_cpu_speed(thread_num);
 
-
-	snprintf(output_buffer, output_buffer_len, "%d: %s - thread %d, pid %d, tid %d, sid %d, pgid %d\n",
+	safe_write(1, output_buffer, output_buffer_len, "%d: %s - thread %d, pid %d, tid %d, sid %d, pgid %d\n",
 		thread_num, run_data->thread_info[thread_num].thread_name,
 		run_data->thread_info[thread_num].thread_num,
 		run_data->thread_info[thread_num].pid, run_data->thread_info[thread_num].tid,
 		run_data->thread_info[thread_num].sid, run_data->thread_info[thread_num].pgid);
 /*
-	snprintf(output_buffer, output_buffer_len, "%d: %s - thread %d, pid %d, tid %d, sid %d, pgid %d, CPU estimated at %.2Lf MHz (%s cycle)\n",
+	safe_write(1, output_buffer, output_buffer_len, "%d: %s - thread %d, pid %d, tid %d, sid %d, pgid %d, CPU estimated at %.2Lf MHz (%s cycle)\n",
 		thread_num, run_data->thread_info[thread_num].thread_name,
 		run_data->thread_info[thread_num].thread_num,
 		run_data->thread_info[thread_num].pid, run_data->thread_info[thread_num].tid,
@@ -171,7 +170,6 @@ void __NORETURN do_thread_work(int thread_num) {
 		run_data->thread_info[thread_num].cpu_mhz,
 		subsec_string(cpu_cycle_time_buffer, run_data->thread_info[thread_num].cpu_cycle_time, 3));
 */
-	write(1, output_buffer, strlen(output_buffer));
 
 
 	on_parent_death(SIGINT);
