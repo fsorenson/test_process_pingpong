@@ -29,7 +29,8 @@
 #include <errno.h>
 
 int volatile *spin_var;
-static int mem_sync_method;
+static int mem_sync_method_ping = -1;
+static int mem_sync_method_pong = -1;
 // mem_sync_method = 0 - no memory sync
 // mem_sync_method = 1 - mb()
 // mem_sync_method = 2 - msync( MS_SYNC )
