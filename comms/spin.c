@@ -31,12 +31,23 @@
 int volatile *spin_var;
 static int mem_sync_method_ping = -1;
 static int mem_sync_method_pong = -1;
-// mem_sync_method = 0 - no memory sync
-// mem_sync_method = 1 - mb()
-// mem_sync_method = 2 - msync( MS_SYNC )
-// mem_sync_method = 3 - msync( MS_INVALIDATE )
-// mem_sync_method = 4 - msync( MS_ASYNC )
+
+#define MEM_SYNC_METHOD_NAME_0 "no memory sync"
+#define MEM_SYNC_METHOD_NAME_1 "mb()"
+#define MEM_SYNC_METHOD_NAME_2 "msync( MS_SYNC )"
+#define MEM_SYNC_METHOD_NAME_3 "msync( MS_INVALIDATE )"
+#define MEM_SYNC_METHOD_NAME_4 "msync( MS_ASYNC )"
+#define MEM_SYNC_METHOD_NAME_5 "less expensive"
 //  = 5  (lock; addl $0,0(%%esp))  ... trying it out
+
+static const char *sync_method_string[] = {
+	MEM_SYNC_METHOD_NAME_0,
+	MEM_SYNC_METHOD_NAME_1,
+	MEM_SYNC_METHOD_NAME_2,
+	MEM_SYNC_METHOD_NAME_3,
+	MEM_SYNC_METHOD_NAME_4,
+	MEM_SYNC_METHOD_NAME_5
+};
 
 #define MEM_SYNC_METHOD_0 \
 	asm("")
@@ -51,26 +62,8 @@ static int mem_sync_method_pong = -1;
 #define MEM_SYNC_METHOD_5 \
 	mb2()
 
-#define MEM_SYNC_METHOD_NAME_0 "no memory sync"
-#define MEM_SYNC_METHOD_NAME_1 "mb()"
-#define MEM_SYNC_METHOD_NAME_2 "msync( MS_SYNC )"
-#define MEM_SYNC_METHOD_NAME_3 "msync( MS_INVALIDATE )"
-#define MEM_SYNC_METHOD_NAME_4 "msync( MS_ASYNC )"
-#define MEM_SYNC_METHOD_NAME_5 "less expensive"
-
 #define do_mem_sync_method(val) \
 	MEM_SYNC_METHOD_##val
-
-static const char *sync_method_string[] = {
-	MEM_SYNC_METHOD_NAME_0,
-	MEM_SYNC_METHOD_NAME_1,
-	MEM_SYNC_METHOD_NAME_2,
-	MEM_SYNC_METHOD_NAME_3,
-	MEM_SYNC_METHOD_NAME_4,
-	MEM_SYNC_METHOD_NAME_5
-};
-
-
 
 int make_spin_pair(int fd[2]) {
 	static int spin_num = 0;
