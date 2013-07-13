@@ -95,7 +95,9 @@ int make_spin_unrolled_pair(int fd[2]) {
 	PING_LOOP_LABEL_ ## mem_sync_method_val: \
 		printf("Pinging with %s\n", MEM_SYNC_METHOD_NAME_ ## mem_sync_method_val); \
 		while (1) { \
+	PING_LOOP_LABEL_ ## mem_sync_method_val ## _PING_0: \
 			ONE_PING(mem_sync_method_val); \
+	PING_LOOP_LABEL_ ## mem_sync_method_val ## _PING_1: \
 			ONE_PING(mem_sync_method_val); \
 			ONE_PING(mem_sync_method_val); \
 			ONE_PING(mem_sync_method_val); \
@@ -136,7 +138,23 @@ inline void __PINGPONG_FN do_ping_spin_unrolled(int thread_num) {
 		&&PING_LOOP_LABEL_0, &&PING_LOOP_LABEL_1,
 		&&PING_LOOP_LABEL_2, &&PING_LOOP_LABEL_3,
 		&&PING_LOOP_LABEL_4 };
+	static struct {
+		void *ping0_label;
+		void *ping1_label;
+	} ping_stride_labels[] = {
+		{ &&PING_LOOP_LABEL_0_PING_0, &&PING_LOOP_LABEL_0_PING_1 },
+		{ &&PING_LOOP_LABEL_1_PING_0, &&PING_LOOP_LABEL_1_PING_1 },
+		{ &&PING_LOOP_LABEL_2_PING_0, &&PING_LOOP_LABEL_2_PING_1 },
+		{ &&PING_LOOP_LABEL_3_PING_0, &&PING_LOOP_LABEL_3_PING_1 },
+		{ &&PING_LOOP_LABEL_4_PING_0, &&PING_LOOP_LABEL_4_PING_1 }
+	};
 	(void)thread_num;
+
+printf("size of ping for mem sync method 0 is %lu\n", ping_stride_labels[0].ping1_label - ping_stride_labels[0].ping0_label);
+printf("size of ping for mem sync method 1 is %lu\n", ping_stride_labels[1].ping1_label - ping_stride_labels[1].ping0_label);
+printf("size of ping for mem sync method 2 is %lu\n", ping_stride_labels[2].ping1_label - ping_stride_labels[2].ping0_label);
+printf("size of ping for mem sync method 3 is %lu\n", ping_stride_labels[3].ping1_label - ping_stride_labels[3].ping0_label);
+printf("size of ping for mem sync method 4 is %lu\n", ping_stride_labels[4].ping1_label - ping_stride_labels[4].ping0_label);
 
 	local_spin_unrolled_var = spin_unrolled_var;
 	goto *sync_mem_method_table[mem_sync_method];
