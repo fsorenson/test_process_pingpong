@@ -105,7 +105,7 @@ int make_spin_pair(int fd[2]) {
 		}
 
 inline void __PINGPONG_FN do_ping_spin(int thread_num) {
-	void *local_spin_var;
+	volatile void *local_spin_var;
 	static void *sync_mem_method_table[] = {
 		&&PING_LOOP_LABEL_0, &&PING_LOOP_LABEL_1,
 		&&PING_LOOP_LABEL_2, &&PING_LOOP_LABEL_3,
