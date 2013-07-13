@@ -59,6 +59,7 @@ printf(
 "        --nostats       do not output statistics at the end of the run\n"
 "    -l, --latency=#	 set the cpu_dma_latency value; default=none\n"
 "        --secret_sauce  enable the advanced 'secret sauce' setting\n"
+"    -o, --option=       set a communication-mode-specific option (for modes with options)\n"
 "    -m, --mode=MODE\n"
 "        communication modes:\n"
 );
@@ -67,6 +68,9 @@ printf(
 		printf(
 "            %15s  -  %s\n", comm_mode_info[i].name,
 		comm_mode_info[i].help_text ? comm_mode_info[i].help_text : "");
+		if (comm_mode_info[i].comm_show_options != NULL) {
+			comm_mode_info[i].comm_show_options("\t\t\t\t");
+		}
 	}
 
 	printf(
@@ -154,6 +158,7 @@ int setup_defaults(char *argv0) {
 
 int parse_opts(int argc, char *argv[]) {
 	int opt = 0, long_index = 0;
+	char *comm_option_string = 0;
 	long double arg_ld;
 	long long arg_ll;
 	long arg_l;
@@ -167,12 +172,13 @@ int parse_opts(int argc, char *argv[]) {
 		{	"thread_mode",	required_argument,	0,	't'	},
 		{	"sched",	required_argument,	0,	'p'	},
 		{	"latency",	required_argument,	0,	'l'	},
+		{	"option",	required_argument,	0,	'o'	},
 		{	"secret_sauce",	no_argument,		0,	'z'	},
 		{	0,		0,			0,	0	}
 	};
 
 	opterr = 0;
-	while ((opt = getopt_long(argc, argv, "m:t:p:r:u:l:z", long_options,
+	while ((opt = getopt_long(argc, argv, "m:t:p:r:u:l:zo:", long_options,
 			&long_index)) != -1) {
 		switch (opt) {
 			case 'm':
@@ -203,6 +209,9 @@ int parse_opts(int argc, char *argv[]) {
 			case 'z':
 				config.cpu_dma_latency = 0;
 				break;
+			case 'o':
+				comm_option_string = optarg;
+				break;
 			case 'l':
 				arg_l = strtol(optarg, NULL, 10);
 				if (arg_l < -1)
@@ -214,6 +223,9 @@ int parse_opts(int argc, char *argv[]) {
 				exit(-1);
 				break;
 		}
+	}
+	if (comm_option_string != NULL) {
+		comm_mode_info[config.comm_mode_index].comm_parse_options(comm_option_string);
 	}
 
 	if (optind == argc - 2) { /* should contain the cpu #s */

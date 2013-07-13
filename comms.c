@@ -136,6 +136,8 @@ void comm_mode_do_initialization(struct comm_mode_init_info_struct *init_info, s
 			comm_mode_info[i].comm_do_send = ops->comm_do_send ? ops->comm_do_send : comm_do_send_generic;
 			comm_mode_info[i].comm_do_recv = ops->comm_do_recv ? ops->comm_do_recv : comm_do_recv_generic;
 			comm_mode_info[i].comm_cleanup = ops->comm_cleanup ? ops->comm_cleanup : comm_no_cleanup;
+			comm_mode_info[i].comm_show_options = ops->comm_show_options ? ops->comm_show_options : comm_show_no_options;
+			comm_mode_info[i].comm_parse_options = ops->comm_parse_options ? ops->comm_parse_options : comm_parse_no_options;
 
 
 			comm_mode_info[i].initialized = true;
@@ -206,5 +208,17 @@ inline int comm_do_recv_generic(int fd) {
 }
 
 int __CONST comm_no_cleanup(void) {
+	return 0;
+}
+int comm_show_no_options(const char *indent_string) {
+	(void)indent_string;
+	return 0;
+}
+int __CONST comm_parse_no_options(const char *option_string) {
+	(void)option_string;
+
+	/* config.comm_mode_index should have been set previous to calling this */
+	printf("Comm mode '%s' has no options.\n", get_comm_mode_name(config.comm_mode_index));
+
 	return 0;
 }
