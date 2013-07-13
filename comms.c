@@ -96,7 +96,6 @@ void comm_mode_add(const char *comm_name) {
 		}
 	}
 
-
 	comm_mode_info[comm_mode_count].name = strdup(comm_name);
 	comm_mode_info[comm_mode_count].comm_mode_index = comm_mode_count;
 	comm_mode_info[comm_mode_count].initialized = false;

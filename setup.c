@@ -107,8 +107,6 @@ int parse_thread_mode(char *arg) {
 	return 0;
 }
 
-
-
 int setup_defaults(char *argv0) {
 /* default settings */
 	config.argv0 = argv0;

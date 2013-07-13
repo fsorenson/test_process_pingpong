@@ -29,7 +29,6 @@ int parse_opts(int argc, char *argv[]);
 
 int setup_defaults(char *argv0);
 
-
 int do_comm_setup(void);
 
 #endif /* __SETUP_H__ */
