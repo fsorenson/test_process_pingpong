@@ -59,6 +59,7 @@ printf(
 "        --nostats       do not output statistics at the end of the run\n"
 "    -l, --latency=#	 set the cpu_dma_latency value; default=none\n"
 "        --secret_sauce  enable the advanced 'secret sauce' setting\n"
+"    -o, --option=       set a communication-mode-specific option (for modes with options)\n"
 "    -m, --mode=MODE\n"
 "        communication modes:\n"
 );
@@ -67,6 +68,9 @@ printf(
 		printf(
 "            %15s  -  %s\n", comm_mode_info[i].name,
 		comm_mode_info[i].help_text ? comm_mode_info[i].help_text : "");
+		if (comm_mode_info[i].comm_show_options != NULL) {
+			comm_mode_info[i].comm_show_options("\t\t\t\t");
+		}
 	}
 
 	printf(
