@@ -129,8 +129,8 @@ int make_spin_unrolled_pair(int fd[2]) {
 //#pragma GCC optimize("unroll-all-loops,-param max-unroll-times=100")
 //#pragma GCC option (@max-average-unrolled-insns{"10000"})
 
-//inline int __PINGPONG_FN __attribute__((optimize("-funroll-all-loops,--param max-unroll-times=3"))) do_ping_spin_unrolled(int thread_num) {
-inline int __PINGPONG_FN do_ping_spin_unrolled(int thread_num) {
+//inline void __PINGPONG_FN __attribute__((optimize("-funroll-all-loops,--param max-unroll-times=3"))) do_ping_spin_unrolled(int thread_num) {
+inline void __PINGPONG_FN do_ping_spin_unrolled(int thread_num) {
 	void *local_spin_unrolled_var;
 	static void *sync_mem_method_table[] = {
 		&&PING_LOOP_LABEL_0, &&PING_LOOP_LABEL_1,
@@ -150,7 +150,7 @@ inline int __PINGPONG_FN do_ping_spin_unrolled(int thread_num) {
 }
 #pragma GCC pop_options
 
-inline int __PINGPONG_FN do_pong_spin_unrolled(int thread_num) {
+inline void __PINGPONG_FN do_pong_spin_unrolled(int thread_num) {
 	void *local_spin_unrolled_var;
 	static void *sync_mem_method_table[] = {
 		&&PONG_LOOP_LABEL_0, &&PONG_LOOP_LABEL_1,
