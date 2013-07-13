@@ -170,6 +170,7 @@ void output_final_stats(void) {
 	size_t temp_string_len = TEMP_STRING_LEN;
 #undef TEMP_STRING_LEN
 	static struct interval_stats_struct i_stats = { 0 };
+	integer_fixed_point_t int_fp1, int_fp2;
 
 	memset(&i_stats, 0, sizeof(struct interval_stats_struct));
 
@@ -224,6 +225,14 @@ void output_final_stats(void) {
 		i_stats.cpi[0] = i_stats.cpi[1] = 0;
 	}
 
+        int_fp1 = f_to_fp(1, ((i_stats.rusage[0].ru_utime.tv_sec * 100.0L) +
+		(i_stats.rusage[0].ru_utime.tv_usec / 1.0e4L) / i_stats.interval_time));
+
+
+/*
+				  ___________ PING ___________   ___________ PONG ___________
+     time   cycles/sec  cycle time |   vol/inv csw   user    sys |   vol/inv csw   user    sys
+*/
 	write(1, "\n", 1);
 
 	parse_sched_data();
