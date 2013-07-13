@@ -167,6 +167,37 @@ int __CONST cleanup_spin(void) {
 	return 0;
 }
 
+int comm_spin_parse_options(const char *option_string) {
+	int max_value = (sizeof(sync_method_string) / sizeof(sync_method_string[0])) - 1;
+	long value;
+	char *p_remainder;
+
+	value = strtol(option_string, &p_remainder, 10);
+	if (((value < 0) || (value > max_value)) || (option_string == p_remainder)) {
+		printf("Unable to correctly parse '%s'...  expected an integer from 0-%d\n",
+			option_string, max_value);
+		exit(1);
+	}
+	mem_sync_method_ping = value;
+
+	if (*p_remainder == '\0') {
+		mem_sync_method_pong = value;
+	} else if (*p_remainder == ',') {
+		p_remainder ++;
+		value = strtol(p_remainder, NULL, 10);
+		if ((value < 0) || (value > max_value)) {
+			printf("Option value %ld is outside the appropriate range (0-%d)\n", value, max_value);
+			exit(1);
+		}
+		mem_sync_method_pong = value;
+	} else {
+		printf("Unrecognized option value specified ('%s').  Pong falling back to use '%s' as with ping\n",
+			p_remainder, sync_method_string[mem_sync_method_ping]);
+	}
+	return 0;
+}
+
+
 static struct comm_mode_ops_struct comm_ops_spin = {
 	.comm_make_pair		= make_spin_pair,
 	.comm_do_ping		= do_ping_spin,
