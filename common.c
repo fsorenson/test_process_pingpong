@@ -71,6 +71,13 @@ static __inline__ __attribute__((always_inline)) unsigned long long __rdtsc(void
 	return retval;
 }
 
+inline volatile void *bytecopy(volatile void *const dest, volatile void const *const src, size_t bytes) {
+	while (bytes-- > (size_t) 0)
+		((volatile unsigned char *)dest)[bytes] = ((volatile unsigned char const *)src)[bytes];
+
+	return dest;
+}
+
 int safe_write(int fd, char *buffer, int buffer_len, const char *fmt, ...) {
 	va_list ap;
 	int ret;

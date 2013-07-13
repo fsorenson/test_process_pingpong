@@ -202,11 +202,21 @@ void show_periodic_stats_data(struct interval_stats_struct *i_stats) {
 }
 
 void store_last_stats(struct interval_stats_struct *i_stats) {
+//	volatile struct rusage *src_rusage, *dest_rusage;
+	volatile void *dst_addr = &run_data->thread_stats[0].last_rusage;
+	volatile void *src_addr = &run_data->thread_stats[0].rusage;
 	/* cleanup things for the next time we come back */
-	memcpy((void *)&run_data->thread_stats[0].last_rusage,
+//	src_rusage = &un_data->thread_stats[0].rusage;
+//	dest_rusage = &run_data->thread_stats[0].last_rusage;
+
+	bytecopy(dst_addr, src_addr, sizeof(struct rusage));
+/*
+	memcpy((volatile void *)&run_data->thread_stats[0].last_rusage,
 		(void *)&run_data->thread_stats[0].rusage, sizeof(struct rusage));
-	memcpy((void *)&run_data->thread_stats[1].last_rusage,
-		(const void *)&run_data->thread_stats[1].rusage, sizeof(struct rusage));
+*/
+	dst_addr = &run_data->thread_stats[1].last_rusage;
+	src_addr = &run_data->thread_stats[1].rusage;
+	bytecopy(dst_addr, src_addr, sizeof(struct rusage));
 
 	run_data->last_ping_count = i_stats->current_count;
 	run_data->last_stats_time = i_stats->current_time;

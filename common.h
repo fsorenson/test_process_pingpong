@@ -28,6 +28,7 @@
 
 #include <stdint.h>
 #include <math.h>
+#include <sys/types.h>
 
 #define __CONST		__attribute__((const))
 #define __PURE		__attribute__((pure))
@@ -90,7 +91,7 @@ struct timespec elapsed_time(const struct timespec start, const struct timespec 
 struct timeval elapsed_time_timeval(const struct timeval start, const struct timeval stop);
 
 struct timeval str_to_timeval(const char *string);
-
+volatile void *bytecopy(volatile void *const dest, volatile void const *const src, size_t bytes);
 int safe_write(int fd, char *buffer, int buffer_len, const char *fmt, ...)
 	__attribute__((format(printf, 4, 5) )) ;
 
