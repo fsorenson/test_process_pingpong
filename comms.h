@@ -38,11 +38,14 @@
 	void (*comm_do_pong)(int s);		\
 	int (*comm_do_send)(int s);		\
 	int (*comm_do_recv)(int s);		\
+	int (*comm_show_options)(const char *);	\
+	int (*comm_parse_options)(const char *);	\
 	int (*comm_cleanup)(void)
 
 #define COMM_MODE_INIT_INFO \
 	char *name;				\
 	char *help_text;			\
+	char *option_string;			\
 	char *source_file
 
 struct comm_mode_ops_struct {
