@@ -131,7 +131,7 @@ inline void __PINGPONG_FN do_ping_spin(int thread_num) {
 
 	local_spin_var = spin_var;
 
-	goto *sync_mem_method_table[mem_sync_method];
+	goto *sync_mem_method_table[mem_sync_method_ping];
 
 	PING_LOOP_METHOD(0);
 	PING_LOOP_METHOD(1);
@@ -152,7 +152,7 @@ inline void __PINGPONG_FN do_pong_spin(int thread_num) {
 
 	local_spin_var = spin_var;
 
-	goto *sync_mem_method_table[mem_sync_method];
+	goto *sync_mem_method_table[mem_sync_method_pong];
 
 	PONG_LOOP_METHOD(0);
 	PONG_LOOP_METHOD(1);
