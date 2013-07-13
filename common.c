@@ -103,9 +103,14 @@ int safe_write(int fd, char *buffer, int buffer_len, const char *fmt, ...) {
 int do_sleep(long sec, long nsec) {
 	struct timespec ts;
 
-	ts.tv_sec = sec;
-	ts.tv_nsec = nsec;
-	clock_nanosleep(CLOCK_REALTIME, 0, &ts, NULL);
+	clock_gettime(CLOCK_REALTIME, &ts);
+	ts.tv_sec += sec;
+	ts.tv_nsec += nsec;
+	if (ts.tv_nsec >= 1000000000) {
+		ts.tv_nsec -= 1000000000;
+		ts.tv_sec ++;
+	}
+	clock_nanosleep(CLOCK_REALTIME, TIMER_ABSTIME, &ts, NULL);
 
 	return 0;
 }
