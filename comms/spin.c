@@ -213,6 +213,8 @@ static struct comm_mode_ops_struct comm_ops_spin = {
 	.comm_make_pair		= make_spin_pair,
 	.comm_do_ping		= do_ping_spin,
 	.comm_do_pong		= do_pong_spin,
+	.comm_show_options	= comm_spin_show_options,
+	.comm_parse_options	= comm_spin_parse_options,
 	.comm_cleanup		= cleanup_spin
 };
 
