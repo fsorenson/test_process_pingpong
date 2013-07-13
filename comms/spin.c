@@ -37,7 +37,7 @@ static int mem_sync_method_pong = -1;
 #define MEM_SYNC_METHOD_NAME_2 "msync( MS_SYNC )"
 #define MEM_SYNC_METHOD_NAME_3 "msync( MS_INVALIDATE )"
 #define MEM_SYNC_METHOD_NAME_4 "msync( MS_ASYNC )"
-#define MEM_SYNC_METHOD_NAME_5 "less expensive"
+#define MEM_SYNC_METHOD_NAME_5 "asm memory clobber"
 //  = 5  (lock; addl $0,0(%%esp))  ... trying it out
 
 static const char *sync_method_string[] = {
