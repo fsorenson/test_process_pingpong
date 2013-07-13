@@ -167,6 +167,17 @@ int __CONST cleanup_spin(void) {
 	return 0;
 }
 
+int comm_spin_show_options(const char *indent_string) {
+	int sync_method_count = sizeof(sync_method_string) / sizeof(sync_method_string[0]);
+	int i;
+
+	printf("%s options which may be specified for both ping/pong (use '##') or each (use '##,##'):\n", indent_string);
+	for (i = 0 ; i < sync_method_count ; i ++) {
+		printf("%s %d - %s\n", indent_string, i, sync_method_string[i]);
+	}
+	return 0;
+}
+
 int comm_spin_parse_options(const char *option_string) {
 	int max_value = (sizeof(sync_method_string) / sizeof(sync_method_string[0])) - 1;
 	long value;
