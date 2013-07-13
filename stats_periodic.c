@@ -116,30 +116,26 @@ void show_periodic_stats_header(void) {
 	// 83.000 s - 64962 iterations -> 15.393 us, ping: 40945.64 cycles, pong: 40945.100 cycles
 
 	// header
-	snprintf(output_buffer, output_buffer_len,
+	safe_write(1, output_buffer, output_buffer_len,
 		"%7s %12s %11s", "", "", "");
-	snprintf(output_buffer + strlen(output_buffer), output_buffer_len - strlen(output_buffer),
+	safe_write(1, output_buffer, output_buffer_len,
 		" %s %s",
 		" ___________ PING ___________ ",
 		" ___________ PONG ___________ "
 		);
-	write(1, output_buffer, strlen(output_buffer));
-	write(1, "\n", 1);
-
-	snprintf(output_buffer, output_buffer_len,
+	safe_write(1, output_buffer, output_buffer_len, "\n");
+	safe_write(1, output_buffer, output_buffer_len,
 		"%7s %12s %11s",
 		"time", "cycles/sec", "cycle time");
 
 	// per-thread header
-	snprintf(output_buffer + strlen(output_buffer), output_buffer_len - strlen(output_buffer),
+	safe_write(1, output_buffer + strlen(output_buffer), output_buffer_len - strlen(output_buffer),
 		" | %13s  %5s  %5s",
 		" vol/inv csw", "user", "sys");
-	snprintf(output_buffer + strlen(output_buffer), output_buffer_len - strlen(output_buffer),
+	safe_write(1, output_buffer + strlen(output_buffer), output_buffer_len - strlen(output_buffer),
 		" | %13s  %5s  %5s",
 		" vol/inv csw", "user", "sys");
-	write(1, output_buffer, strlen(output_buffer));
-
-	write(1, "\n", 1);
+	safe_write(1, output_buffer, output_buffer_len, "\n");
 }
 
 void show_periodic_stats_data(struct interval_stats_struct *i_stats) {
