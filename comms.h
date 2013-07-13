@@ -107,6 +107,8 @@ int comm_do_send_generic(int fd);
 int comm_do_recv_generic(int fd);
 
 int comm_no_cleanup(void);
+int comm_show_no_options(const char *indent_string);
+int comm_parse_no_options(const char *option_string);
 
 void comm_mode_do_initialization(struct comm_mode_init_info_struct *init_info, struct comm_mode_ops_struct *ops);
 void comm_mode_mark_initialized(char *comm_mode_name);
