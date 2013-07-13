@@ -38,24 +38,6 @@ static int mem_sync_method_pong = -1;
 // mem_sync_method = 4 - msync( MS_ASYNC )
 //  = 5  (lock; addl $0,0(%%esp))  ... trying it out
 
-int make_spin_pair(int fd[2]) {
-	static int spin_num = 0;
-
-	if (spin_num == 0) {
-		spin_var = mmap(NULL, sizeof(int),
-			PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0);
-		*spin_var = 0;
-		mem_sync_method = 0;
-	}
-
-	fd[0] = spin_num;
-	fd[1] = spin_num;
-
-	spin_num ++;
-	return 0;
-}
-
-
 #define MEM_SYNC_METHOD_0 \
 	asm("")
 #define MEM_SYNC_METHOD_1 \
@@ -78,6 +60,40 @@ int make_spin_pair(int fd[2]) {
 
 #define do_mem_sync_method(val) \
 	MEM_SYNC_METHOD_##val
+
+static const char *sync_method_string[] = {
+	MEM_SYNC_METHOD_NAME_0,
+	MEM_SYNC_METHOD_NAME_1,
+	MEM_SYNC_METHOD_NAME_2,
+	MEM_SYNC_METHOD_NAME_3,
+	MEM_SYNC_METHOD_NAME_4,
+	MEM_SYNC_METHOD_NAME_5
+};
+
+
+
+int make_spin_pair(int fd[2]) {
+	static int spin_num = 0;
+
+	if (spin_num == 0) {
+		spin_var = mmap(NULL, sizeof(int),
+			PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0);
+		*spin_var = 0;
+		if (mem_sync_method_ping == -1) {
+			printf("No memory sync method specified.  Defaulting to '%s'\n", sync_method_string[0]);
+			mem_sync_method_ping = 0;
+			mem_sync_method_pong = 0;
+		}
+	}
+
+	fd[0] = spin_num;
+	fd[1] = spin_num;
+
+	spin_num ++;
+	return 0;
+}
+
+
 
 #define PING_LOOP_METHOD(val) \
 	PING_LOOP_LABEL_ ## val: \
