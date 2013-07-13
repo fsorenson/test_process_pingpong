@@ -166,7 +166,11 @@ int comm_spin_show_options(const char *indent_string) {
 
 	printf("%s options which may be specified for both ping/pong (use '##') or each (use '##,##'):\n", indent_string);
 	for (i = 0 ; i < sync_method_count ; i ++) {
-		printf("%s %d - %s\n", indent_string, i, sync_method_string[i]);
+		if (! (i % 2) )
+			printf("%s", indent_string);
+		printf(" %d - %-20s", i, sync_method_string[i]);
+		if (i % 2)
+			printf("\n");
 	}
 	return 0;
 }
