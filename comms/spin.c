@@ -183,6 +183,8 @@ int comm_spin_show_options(const char *indent_string) {
 		if (i % 2)
 			printf("\n");
 	}
+	if (sync_method_count % 2)
+		printf("\n");
 	return 0;
 }
 
