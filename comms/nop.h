@@ -30,13 +30,12 @@
 * lazy, good-for-nothing threads
 */
 
+int comm_nop_show_options(const char *indent_string);
+int comm_nop_parse_options(const char *option_string);
+
 int make_nop_pair(int fd[2]);
 
-void do_ping_nop1(int thread_num);
-void do_ping_nop2(int thread_num);
-void do_ping_nop3(int thread_num);
-void do_ping_nop4(int thread_num);
-void do_ping_nop5(int thread_num);
+void do_ping_nop(int thread_num);
 void do_pong_nop(int thread_num);
 
 int cleanup_nop(void);

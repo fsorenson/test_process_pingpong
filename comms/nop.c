@@ -29,10 +29,56 @@
 #include <signal.h>
 #include <sched.h>
 #include <time.h>
+#include <stdio.h>
 
 volatile int *nop_var;
 
+static int nop_variety = -1;
+
 struct timespec nop_ts;
+
+static const char *nop_variety_string[] = {
+	"set, then test variable",
+	"only set variable",
+	"only test variable",
+	"only increments counter",
+	"loop-unrolled increment"
+};
+
+static int nop_variety_count = sizeof(nop_variety_string) / sizeof(nop_variety_string[0]);
+
+int comm_nop_show_options(const char *indent_string) {
+	int i;
+
+	printf("%sThe following options specify the laziness of the ping process (pong only sleeps)\n", indent_string);
+	for (i = 0 ; i < nop_variety_count ; i ++) {
+		if (! (i % 2) )
+			printf("%s", indent_string);
+		printf(" %d - %-25s", i, nop_variety_string[i]);
+		if (i % 2)
+			printf("\n");
+	}
+	if (nop_variety_count % 2)
+		printf("\n");
+	return 0;
+}
+
+int comm_nop_parse_options(const char *option_string) {
+	int max_value = nop_variety_count - 1;
+	long value;
+	char *p_remainder;
+
+	value = strtol(option_string, &p_remainder, 10);
+	if ((value < 0) || (value > max_value) || (option_string == p_remainder)) {
+		printf("Unable to parse '%s' -- expected an integer from 0-%d\n",
+			option_string, max_value);
+		exit(1);
+	}
+
+	nop_variety = value;
+
+	return 0;
+}
 
 int make_nop_pair(int fd[2]) {
 	static int nop_num = 0;
@@ -44,6 +90,11 @@ int make_nop_pair(int fd[2]) {
 
 		nop_ts.tv_sec = 0;
 		nop_ts.tv_nsec = 1000000;
+
+		if (nop_variety == -1) {
+			printf("No 'nop' ping laziness specified.  Defaulting to '%s'\n", nop_variety_string[0]);
+			nop_variety = 0;
+		}
 	}
 
 	fd[0] = nop_num;
@@ -59,113 +110,79 @@ int make_nop_pair(int fd[2]) {
 * the other also does nothing, but sleeps too...
 * lazy, good-for-nothing threads
 */
-inline void __PINGPONG_FN do_ping_nop1(int thread_num) {
+//inline void __attribute__((optimize("O0")))  do_ping_nop(int thread_num) { // this can be used during debugging
+inline void __PINGPONG_FN do_ping_nop(int thread_num) {
 	(void) thread_num;
 
 	*nop_var = 1;
-	while (1) {
-		run_data->ping_count ++;
 
-		*nop_var = *nop_var;
-		__asm__ __volatile__("");
-		do { } while (*nop_var != *nop_var);
-		__asm__ __volatile__("");
-	}
-}
-inline void __PINGPONG_FN do_ping_nop2(int thread_num) {
-	(void) thread_num;
+	switch (nop_variety) {
+		case 0:
+			while (1) {
+				run_data->ping_count ++;
 
-	*nop_var = 1;
-	while (1) {
-		run_data->ping_count ++;
+				*nop_var = *nop_var;
+				__asm__ __volatile__("");
+				do { } while (*nop_var != *nop_var);
+				__asm__ __volatile__("");
+			}
+		case 1:
+			while (1) {
+				run_data->ping_count ++;
 
-		do {} while (unlikely(*nop_var != 1));
-		__asm__ __volatile__("");
-	}
-}
-inline void __PINGPONG_FN do_ping_nop3(int thread_num) {
-	(void) thread_num;
+				do {} while (unlikely(*nop_var != 1));
+				__asm__ __volatile__("");
+			}
+		case 2:
+			while (1) {
+				run_data->ping_count ++;
 
-	*nop_var = 1;
-	while (1) {
-		run_data->ping_count ++;
+				*nop_var = 1;
+				__asm__ __volatile__("");
+			}
+		case 3:
+			while (1) {
+				run_data->ping_count ++;
+			}
+		case 4: {
+			run_data->ping_count ++;
+			asm("addq $1, %rdx");
+			asm("movq %rdx, (%rax)");
+			asm("addq $0x1,%rdx");		// increment
+			asm("movq %rdx,(%rax)");	// store
+			asm("addq $0x1,%rdx");		// increment
+			asm("movq %rdx,(%rax)");	// store
+			asm("addq $0x1,%rdx");		// increment
+			asm("movq %rdx,(%rax)");	// store
 
-		*nop_var = 1;
-		__asm__ __volatile__("");
-	}
-}
-inline void __PINGPONG_FN do_ping_nop4(int thread_num) {
-	(void) thread_num;
-
-	while (1) {
-		run_data->ping_count ++;
-	}
-}
-//inline void __PINGPONG_FN do_ping_nop5(int thread_num) {
-inline void __attribute__((optimize("O0"))) do_ping_nop5(int thread_num) {
-	unsigned long long *ping_count;
-	(void) thread_num;
-
-	ping_count = run_data->ping_count;
-
-	*ping_count ++;
-
-	ping_count = run_data->ping_count;
-/*
-406404:       48 8b 05 55 91 20 00    mov    0x209155(%rip),%rax        # 60f560 <run_data>
-40640b:       48 8b 00                mov    (%rax),%rax
-40640e:       48 89 44 24 f8          mov    %rax,-0x8(%rsp)
-
-*ping_count ++;
-406413:       48 83 44 24 f8 08       addq   $0x8,-0x8(%rsp)
-
-run_data->ping_count ++;
-406419:       48 8b 05 40 91 20 00    mov    0x209140(%rip),%rax        # 60f560 <run_data>
-406420:       48 8b 10                mov    (%rax),%rdx
-406423:       48 83 c2 01             add    $0x1,%rdx
-406427:       48 89 10                mov    %rdx,(%rax)
-*/
-
-	__asm__ __volatile__ (
-		"lock; incl %0"
-		:"=m" (run_data)
-		:"m" (run_data));
-	__asm__ __volatile__ ("lock; incl %0" : "=m" (run_data) : "m" (run_data));
-	__asm__ __volatile__ ("lock; incl %0" : "=m" (run_data) : "m" (run_data));
-	__asm__ __volatile__ ("lock; incl %0" : "=m" (run_data) : "m" (run_data));
-
-	run_data->ping_count ++;
 //	asm("mov run_data->ping_count,%rax");
 //	asm("mov (%rax),%rdx");
-	while (1) {
-//		asm("mov (%rax),%rdx");
-//		asm("add $0x1,%rdx");
-//		asm("mov %rdx,(%rax)");
+			while (1) {
 
-	__asm__ __volatile__ ("lock; incl %0" : "=m" (run_data) : "m" (run_data));
-	__asm__ __volatile__ ("lock; incl %0" : "=m" (run_data) : "m" (run_data));
-	__asm__ __volatile__ ("lock; incl %0" : "=m" (run_data) : "m" (run_data));
-	__asm__ __volatile__ ("lock; incl %0" : "=m" (run_data) : "m" (run_data));
-	__asm__ __volatile__ ("lock; incl %0" : "=m" (run_data) : "m" (run_data));
-	__asm__ __volatile__ ("lock; incl %0" : "=m" (run_data) : "m" (run_data));
-	__asm__ __volatile__ ("lock; incl %0" : "=m" (run_data) : "m" (run_data));
-	__asm__ __volatile__ ("lock; incl %0" : "=m" (run_data) : "m" (run_data));
-	__asm__ __volatile__ ("lock; incl %0" : "=m" (run_data) : "m" (run_data));
-	__asm__ __volatile__ ("lock; incl %0" : "=m" (run_data) : "m" (run_data));
-
-
-//		asm("add 1,%%rdx" : "=a"(run_data->ping_count) : "a"(run_data->ping_count));
-//		asm("add 1,%%rdx" : "=a"(run_data->ping_count) : "a"(run_data->ping_count));
-/*
-		asm("add 1,%rdx");
-		asm("mov %rdx,(%rax)");
-		asm("add 1,%rdx");
-		asm("mov %rdx,(%rax)");
-		asm("add 1,%rdx");
-		asm("mov %rdx,(%rax)");
-		asm("add 1,%rdx");
-		asm("mov %rdx,(%rax)");
-*/
+				asm("addq $0x1,%rdx");		// increment
+				asm("movq %rdx,(%rax)");	// store
+				asm("addq $0x1,%rdx");		// increment
+				asm("movq %rdx,(%rax)");	// store
+				asm("addq $0x1,%rdx");		// increment
+				asm("movq %rdx,(%rax)");	// store
+				asm("addq $0x1,%rdx");		// increment
+				asm("movq %rdx,(%rax)");	// store
+				asm("addq $0x1,%rdx");		// increment
+				asm("movq %rdx,(%rax)");	// store
+				asm("addq $0x1,%rdx");		// increment
+				asm("movq %rdx,(%rax)");	// store
+				asm("addq $0x1,%rdx");		// increment
+				asm("movq %rdx,(%rax)");	// store
+				asm("addq $0x1,%rdx");		// increment
+				asm("movq %rdx,(%rax)");	// store
+				asm("addq $0x1,%rdx");		// increment
+				asm("movq %rdx,(%rax)");	// store
+				asm("addq $0x1,%rdx");		// increment
+				asm("movq %rdx,(%rax)");	// store
+			}
+		}
+		default:
+			exit(1);
 	}
 }
 
@@ -181,43 +198,13 @@ int __CONST cleanup_nop(void) {
 	return 0;
 }
 
-static struct comm_mode_ops_struct comm_ops_nop1 = {
-	.comm_make_pair = make_nop_pair,
-	.comm_do_ping = do_ping_nop1,
+static struct comm_mode_ops_struct comm_ops_nop = {
+	.comm_show_options	= comm_nop_show_options,
+	.comm_parse_options	= comm_nop_parse_options,
+	.comm_make_pair		= make_nop_pair,
+	.comm_do_ping = do_ping_nop,
 	.comm_do_pong = do_pong_nop,
 	.comm_cleanup = cleanup_nop
 };
 
-static struct comm_mode_ops_struct comm_ops_nop2 = {
-	.comm_make_pair = make_nop_pair,
-	.comm_do_ping = do_ping_nop2,
-	.comm_do_pong = do_pong_nop,
-	.comm_cleanup = cleanup_nop
-};
-
-static struct comm_mode_ops_struct comm_ops_nop3 = {
-	.comm_make_pair = make_nop_pair,
-	.comm_do_ping = do_ping_nop3,
-	.comm_do_pong = do_pong_nop,
-	.comm_cleanup = cleanup_nop
-};
-
-static struct comm_mode_ops_struct comm_ops_nop4 = {
-	.comm_make_pair = make_nop_pair,
-	.comm_do_ping = do_ping_nop4,
-	.comm_do_pong = do_pong_nop,
-	.comm_cleanup = cleanup_nop
-};
-
-static struct comm_mode_ops_struct comm_ops_nop5 = {
-	.comm_make_pair = make_nop_pair,
-	.comm_do_ping = do_ping_nop5,
-	.comm_do_pong = do_pong_nop,
-	.comm_cleanup = cleanup_nop
-};
-
-ADD_COMM_MODE(nop1, "first thread only sets the variable, then tests it (second thread sleeps)", &comm_ops_nop1);
-ADD_COMM_MODE(nop2, "first thread only sets the variable (second thread sleeps", &comm_ops_nop2);
-ADD_COMM_MODE(nop3, "first thread only tests the variable (second thread sleeps)", &comm_ops_nop3);
-ADD_COMM_MODE(nop4, "both threads literally do nothing, but one even sleeps while doing it", &comm_ops_nop4);
-ADD_COMM_MODE(nop5, "unrolled; both threads literally do nothing, but one even sleeps while doing it", &comm_ops_nop5);
+ADD_COMM_MODE(nop, "no ping/pong - first thread does various levels of nothing, second thread sleeps", &comm_ops_nop);
