@@ -49,6 +49,8 @@ static const char *sync_method_string[] = {
 	MEM_SYNC_METHOD_NAME_5
 };
 
+static int sync_method_count = sizeof(sync_method_string) / sizeof(sync_method_string[0]);
+
 #define MEM_SYNC_METHOD_0 \
 	asm("")
 #define MEM_SYNC_METHOD_1 \
@@ -161,7 +163,6 @@ int __CONST cleanup_spin(void) {
 }
 
 int comm_spin_show_options(const char *indent_string) {
-	int sync_method_count = sizeof(sync_method_string) / sizeof(sync_method_string[0]);
 	int i;
 
 	printf("%s options which may be specified for both ping/pong (use '##') or each (use '##,##'):\n", indent_string);
@@ -176,7 +177,7 @@ int comm_spin_show_options(const char *indent_string) {
 }
 
 int comm_spin_parse_options(const char *option_string) {
-	int max_value = (sizeof(sync_method_string) / sizeof(sync_method_string[0])) - 1;
+	int max_value = sync_method_count - 1;
 	long value;
 	char *p_remainder;
 
