@@ -37,7 +37,8 @@ static int mem_sync_method_pong = -1;
 #define MEM_SYNC_METHOD_NAME_2 "msync( MS_SYNC )"
 #define MEM_SYNC_METHOD_NAME_3 "msync( MS_INVALIDATE )"
 #define MEM_SYNC_METHOD_NAME_4 "msync( MS_ASYNC )"
-#define MEM_SYNC_METHOD_NAME_5 "asm memory clobber"
+#define MEM_SYNC_METHOD_NAME_5 "__sync_synchronize"
+#define MEM_SYNC_METHOD_NAME_6 "asm memory clobber"
 //  = 5  (lock; addl $0,0(%%esp))  ... trying it out
 
 static const char *sync_method_string[] = {
@@ -46,7 +47,8 @@ static const char *sync_method_string[] = {
 	MEM_SYNC_METHOD_NAME_2,
 	MEM_SYNC_METHOD_NAME_3,
 	MEM_SYNC_METHOD_NAME_4,
-	MEM_SYNC_METHOD_NAME_5
+	MEM_SYNC_METHOD_NAME_5,
+	MEM_SYNC_METHOD_NAME_6
 };
 
 static int sync_method_count = sizeof(sync_method_string) / sizeof(sync_method_string[0]);
@@ -62,6 +64,8 @@ static int sync_method_count = sizeof(sync_method_string) / sizeof(sync_method_s
 #define MEM_SYNC_METHOD_4 \
 	msync(local_spin_var, 4, MS_SYNC)
 #define MEM_SYNC_METHOD_5 \
+	__sync_synchronize()
+#define MEM_SYNC_METHOD_6 \
 	mb2()
 
 #define do_mem_sync_method(val) \
@@ -121,7 +125,9 @@ inline void __PINGPONG_FN do_ping_spin(int thread_num) {
 	static void *sync_mem_method_table[] = {
 		&&PING_LOOP_LABEL_0, &&PING_LOOP_LABEL_1,
 		&&PING_LOOP_LABEL_2, &&PING_LOOP_LABEL_3,
-		&&PING_LOOP_LABEL_4, &&PING_LOOP_LABEL_5 };
+		&&PING_LOOP_LABEL_4, &&PING_LOOP_LABEL_5,
+		&&PING_LOOP_LABEL_6
+		};
 	(void)thread_num;
 
 	local_spin_var = spin_var;
@@ -134,6 +140,7 @@ inline void __PINGPONG_FN do_ping_spin(int thread_num) {
 	PING_LOOP_METHOD(3);
 	PING_LOOP_METHOD(4);
 	PING_LOOP_METHOD(5);
+	PING_LOOP_METHOD(6);
 
 }
 
@@ -142,7 +149,9 @@ inline void __PINGPONG_FN do_pong_spin(int thread_num) {
 	static void *sync_mem_method_table[] = {
 		&&PONG_LOOP_LABEL_0, &&PONG_LOOP_LABEL_1,
 		&&PONG_LOOP_LABEL_2, &&PONG_LOOP_LABEL_3,
-		&&PONG_LOOP_LABEL_4, &&PONG_LOOP_LABEL_5 };
+		&&PONG_LOOP_LABEL_4, &&PONG_LOOP_LABEL_5,
+		&&PONG_LOOP_LABEL_6
+		};
 	(void)thread_num;
 
 	local_spin_var = spin_var;
@@ -155,6 +164,7 @@ inline void __PINGPONG_FN do_pong_spin(int thread_num) {
 	PONG_LOOP_METHOD(3);
 	PONG_LOOP_METHOD(4);
 	PONG_LOOP_METHOD(5);
+	PONG_LOOP_METHOD(6);
 }
 
 int __CONST cleanup_spin(void) {
