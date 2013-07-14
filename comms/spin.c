@@ -41,18 +41,6 @@ static int mem_sync_method_pong = -1;
 #define MEM_SYNC_METHOD_NAME_6 "asm memory clobber"
 //  = 5  (lock; addl $0,0(%%esp))  ... trying it out
 
-static const char *sync_method_string[] = {
-	MEM_SYNC_METHOD_NAME_0,
-	MEM_SYNC_METHOD_NAME_1,
-	MEM_SYNC_METHOD_NAME_2,
-	MEM_SYNC_METHOD_NAME_3,
-	MEM_SYNC_METHOD_NAME_4,
-	MEM_SYNC_METHOD_NAME_5,
-	MEM_SYNC_METHOD_NAME_6
-};
-
-static int sync_method_count = sizeof(sync_method_string) / sizeof(sync_method_string[0]);
-
 #define MEM_SYNC_METHOD_0 \
 	asm("")
 #define MEM_SYNC_METHOD_1 \
@@ -70,6 +58,64 @@ static int sync_method_count = sizeof(sync_method_string) / sizeof(sync_method_s
 
 #define do_mem_sync_method(val) \
 	MEM_SYNC_METHOD_##val
+
+static const char *sync_method_string[] = {
+	MEM_SYNC_METHOD_NAME_0,
+	MEM_SYNC_METHOD_NAME_1,
+	MEM_SYNC_METHOD_NAME_2,
+	MEM_SYNC_METHOD_NAME_3,
+	MEM_SYNC_METHOD_NAME_4,
+	MEM_SYNC_METHOD_NAME_5,
+	MEM_SYNC_METHOD_NAME_6
+};
+
+static int sync_method_count = sizeof(sync_method_string) / sizeof(sync_method_string[0]);
+
+int comm_spin_show_options(const char *indent_string) {
+	int i;
+
+	printf("%s options which may be specified for both ping/pong (use '##') or each (use '##,##'):\n", indent_string);
+	for (i = 0 ; i < sync_method_count ; i ++) {
+		if (! (i % 2) )
+			printf("%s", indent_string);
+		printf(" %d - %-20s", i, sync_method_string[i]);
+		if (i % 2)
+			printf("\n");
+	}
+	if (sync_method_count % 2)
+		printf("\n");
+	return 0;
+}
+
+int comm_spin_parse_options(const char *option_string) {
+	int max_value = sync_method_count - 1;
+	long value;
+	char *p_remainder;
+
+	value = strtol(option_string, &p_remainder, 10);
+	if (((value < 0) || (value > max_value)) || (option_string == p_remainder)) {
+		printf("Unable to correctly parse '%s'...  expected an integer from 0-%d\n",
+			option_string, max_value);
+		exit(1);
+	}
+	mem_sync_method_ping = value;
+
+	if (*p_remainder == '\0') {
+		mem_sync_method_pong = value;
+	} else if (*p_remainder == ',') {
+		p_remainder ++;
+		value = strtol(p_remainder, NULL, 10);
+		if ((value < 0) || (value > max_value)) {
+			printf("Option value %ld is outside the appropriate range (0-%d)\n", value, max_value);
+			exit(1);
+		}
+		mem_sync_method_pong = value;
+	} else {
+		printf("Unrecognized option value specified ('%s').  Pong falling back to use '%s' as with ping\n",
+			p_remainder, sync_method_string[mem_sync_method_ping]);
+	}
+	return 0;
+}
 
 int make_spin_pair(int fd[2]) {
 	static int spin_num = 0;
@@ -171,53 +217,6 @@ int __CONST cleanup_spin(void) {
 	munmap((void *)spin_var, sizeof(int));
 	return 0;
 }
-
-int comm_spin_show_options(const char *indent_string) {
-	int i;
-
-	printf("%s options which may be specified for both ping/pong (use '##') or each (use '##,##'):\n", indent_string);
-	for (i = 0 ; i < sync_method_count ; i ++) {
-		if (! (i % 2) )
-			printf("%s", indent_string);
-		printf(" %d - %-20s", i, sync_method_string[i]);
-		if (i % 2)
-			printf("\n");
-	}
-	if (sync_method_count % 2)
-		printf("\n");
-	return 0;
-}
-
-int comm_spin_parse_options(const char *option_string) {
-	int max_value = sync_method_count - 1;
-	long value;
-	char *p_remainder;
-
-	value = strtol(option_string, &p_remainder, 10);
-	if (((value < 0) || (value > max_value)) || (option_string == p_remainder)) {
-		printf("Unable to correctly parse '%s'...  expected an integer from 0-%d\n",
-			option_string, max_value);
-		exit(1);
-	}
-	mem_sync_method_ping = value;
-
-	if (*p_remainder == '\0') {
-		mem_sync_method_pong = value;
-	} else if (*p_remainder == ',') {
-		p_remainder ++;
-		value = strtol(p_remainder, NULL, 10);
-		if ((value < 0) || (value > max_value)) {
-			printf("Option value %ld is outside the appropriate range (0-%d)\n", value, max_value);
-			exit(1);
-		}
-		mem_sync_method_pong = value;
-	} else {
-		printf("Unrecognized option value specified ('%s').  Pong falling back to use '%s' as with ping\n",
-			p_remainder, sync_method_string[mem_sync_method_ping]);
-	}
-	return 0;
-}
-
 
 static struct comm_mode_ops_struct comm_ops_spin = {
 	.comm_make_pair		= make_spin_pair,
