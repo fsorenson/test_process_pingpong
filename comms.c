@@ -131,8 +131,8 @@ void comm_mode_do_initialization(struct comm_mode_init_info_struct *init_info, s
 			comm_mode_info[i].comm_pre = ops->comm_pre != NULL ? ops->comm_pre : comm_no_pre;
 			comm_mode_info[i].comm_begin = ops->comm_begin != NULL ? ops->comm_begin : comm_no_begin;
 			comm_mode_info[i].comm_make_pair = ops->comm_make_pair;
-			comm_mode_info[i].comm_do_ping = ops->comm_do_ping ? ops->comm_do_ping : comm_do_ping_generic;
-			comm_mode_info[i].comm_do_pong = ops->comm_do_pong ? ops->comm_do_pong : comm_do_pong_generic;
+			comm_mode_info[i].comm_ping = ops->comm_ping ? ops->comm_ping : comm_ping_generic;
+			comm_mode_info[i].comm_pong = ops->comm_pong ? ops->comm_pong : comm_pong_generic;
 			comm_mode_info[i].comm_do_send = ops->comm_do_send ? ops->comm_do_send : comm_do_send_generic;
 			comm_mode_info[i].comm_do_recv = ops->comm_do_recv ? ops->comm_do_recv : comm_do_recv_generic;
 			comm_mode_info[i].comm_cleanup = ops->comm_cleanup ? ops->comm_cleanup : comm_no_cleanup;
@@ -182,7 +182,7 @@ int __CONST comm_no_begin(void) {
 	return 0;
 }
 
-inline void __PINGPONG_FN comm_do_ping_generic(int thread_num) {
+inline void __PINGPONG_FN comm_ping_generic(int thread_num) {
 	while (1) {
 		run_data->ping_count ++;
 
@@ -190,7 +190,7 @@ inline void __PINGPONG_FN comm_do_ping_generic(int thread_num) {
 		while (config.comm_do_recv(config.ear[thread_num]) != 1);
 	}
 }
-inline void __PINGPONG_FN comm_do_pong_generic(int thread_num) {
+inline void __PINGPONG_FN comm_pong_generic(int thread_num) {
 	while (1) {
 		while (config.comm_do_recv(config.ear[thread_num]) != 1);
 		while (config.comm_do_send(config.mouth[thread_num]) != 1);

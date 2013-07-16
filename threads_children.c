@@ -196,9 +196,9 @@ void __NORETURN do_thread_work(int thread_num) {
 	}
 
 	if (thread_num == 0) {
-		config.comm_do_ping(thread_num);
+		config.comm_ping(thread_num);
 	} else {
-		config.comm_do_pong(thread_num);
+		config.comm_pong(thread_num);
 	}
 
 

@@ -122,8 +122,8 @@ int setup_defaults(char *argv0) {
 	config.thread_mode	= DEFAULT_THREAD_MODE;
 
 	config.comm_mode_index	= 0; /* default to whatever is first */
-	config.comm_do_ping	= comm_do_ping_generic;
-	config.comm_do_pong	= comm_do_pong_generic;
+	config.comm_ping	= comm_ping_generic;
+	config.comm_pong	= comm_pong_generic;
 	config.comm_do_send	= comm_do_send_generic;
 	config.comm_do_recv	= comm_do_recv_generic;
 	config.comm_cleanup	= comm_no_cleanup;
@@ -267,8 +267,8 @@ int do_comm_setup(void) {
 	config.comm_make_pair = comm_mode_info[config.comm_mode_index].comm_make_pair;
 	config.comm_pre = comm_mode_info[config.comm_mode_index].comm_pre;
 	config.comm_begin = comm_mode_info[config.comm_mode_index].comm_begin;
-	config.comm_do_ping = comm_mode_info[config.comm_mode_index].comm_do_ping;
-	config.comm_do_pong = comm_mode_info[config.comm_mode_index].comm_do_pong;
+	config.comm_ping = comm_mode_info[config.comm_mode_index].comm_ping;
+	config.comm_pong = comm_mode_info[config.comm_mode_index].comm_pong;
 	config.comm_do_send = comm_mode_info[config.comm_mode_index].comm_do_send;
 	config.comm_do_recv = comm_mode_info[config.comm_mode_index].comm_do_recv;
 	config.comm_cleanup = comm_mode_info[config.comm_mode_index].comm_cleanup;
