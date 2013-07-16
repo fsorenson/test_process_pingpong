@@ -56,7 +56,7 @@ int make_yield_pair(int fd[2]) {
 	return 0;
 }
 
-inline void __PINGPONG_FN do_ping_yield(int thread_num) {
+inline void __PINGPONG_FN comm_ping_yield(int thread_num) {
 	(void)thread_num;
 
 	while (1) {
@@ -70,7 +70,7 @@ inline void __PINGPONG_FN do_ping_yield(int thread_num) {
 	}
 }
 
-inline void __PINGPONG_FN do_pong_yield(int thread_num) {
+inline void __PINGPONG_FN comm_pong_yield(int thread_num) {
 	(void)thread_num;
 
 	while (1) {
@@ -83,7 +83,7 @@ inline void __PINGPONG_FN do_pong_yield(int thread_num) {
 }
 
 
-inline void __PINGPONG_FN do_ping_yield_nop(int thread_num) {
+inline void __PINGPONG_FN comm_ping_yield_nop(int thread_num) {
 	(void)thread_num;
 
 	while (1) {
@@ -92,7 +92,7 @@ inline void __PINGPONG_FN do_ping_yield_nop(int thread_num) {
 	}
 }
 
-inline void __PINGPONG_FN do_pong_yield_nop(int thread_num) {
+inline void __PINGPONG_FN comm_pong_yield_nop(int thread_num) {
 	(void)thread_num;
 
 	while (1) {
@@ -101,15 +101,15 @@ inline void __PINGPONG_FN do_pong_yield_nop(int thread_num) {
 }
 
 static struct comm_mode_ops_struct comm_ops_yield = {
-	.comm_make_pair = make_yield_pair,
-	.comm_do_ping = do_ping_yield,
-	.comm_do_pong = do_pong_yield
+	.comm_make_pair		= make_yield_pair,
+	.comm_ping		= comm_ping_yield,
+	.comm_pong		= comm_pong_yield
 };
 
 static struct comm_mode_ops_struct comm_ops_yield_nop = {
-	.comm_make_pair = make_yield_pair,
-	.comm_do_ping = do_ping_yield_nop,
-	.comm_do_pong = do_pong_yield_nop
+	.comm_make_pair		= make_yield_pair,
+	.comm_ping		= comm_ping_yield_nop,
+	.comm_pong		= comm_pong_yield_nop
 };
 
 ADD_COMM_MODE(yield, "each thread calls sched_yield() until their turn to pingpong", &comm_ops_yield);

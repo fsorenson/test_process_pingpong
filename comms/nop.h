@@ -35,8 +35,8 @@ int comm_nop_parse_options(const char *option_string);
 
 int make_nop_pair(int fd[2]);
 
-void do_ping_nop(int thread_num);
-void do_pong_nop(int thread_num);
+void comm_ping_nop(int thread_num);
+void comm_pong_nop(int thread_num);
 
 int cleanup_nop(void);
 

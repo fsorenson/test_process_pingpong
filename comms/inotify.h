@@ -29,8 +29,8 @@
 
 int make_inotify_pair(int fd[2]);
 
-void do_ping_inotify(int thread_num);
-void do_pong_inotify(int thread_num);
+void comm_ping_inotify(int thread_num);
+void comm_pong_inotify(int thread_num);
 
 int cleanup_inotify(void);
 

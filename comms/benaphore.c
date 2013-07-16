@@ -102,10 +102,10 @@ int cleanup_ben(void) {
 
 
 static struct comm_mode_ops_struct comm_ops_ben = {
-	.comm_make_pair         = make_ben_pair,
-	.comm_do_ping           = do_ping_ben,
-	.comm_do_pong           = do_pong_ben,
-	.comm_cleanup           = cleanup_ben
+	.comm_make_pair		= make_ben_pair,
+	.comm_ping		= do_ping_ben,
+	.comm_pong		= do_pong_ben,
+	.comm_cleanup		= cleanup_ben
 };
 
 

@@ -131,9 +131,9 @@ int make_spin_unrolled_pair(int fd[2]) {
 //#pragma GCC optimize("unroll-all-loops,-param max-unroll-times=100")
 //#pragma GCC option (@max-average-unrolled-insns{"10000"})
 
-//inline void __PINGPONG_FN __attribute__((optimize("-funroll-all-loops,--param max-unroll-times=3"))) do_ping_spin_unrolled(int thread_num) {
-inline void __PINGPONG_FN do_ping_spin_unrolled(int thread_num) {
-	void *local_spin_unrolled_var;
+//inline void __PINGPONG_FN __attribute__((optimize("-funroll-all-loops,--param max-unroll-times=3"))) comm_ping_spin_unrolled(int thread_num) {
+inline void __PINGPONG_FN comm_ping_spin_unrolled(int thread_num) {
+	volatile void *local_spin_unrolled_var;
 	static void *sync_mem_method_table[] = {
 		&&PING_LOOP_LABEL_0, &&PING_LOOP_LABEL_1,
 		&&PING_LOOP_LABEL_2, &&PING_LOOP_LABEL_3,
@@ -168,8 +168,8 @@ printf("size of ping for mem sync method 4 is %lu\n", ping_stride_labels[4].ping
 }
 #pragma GCC pop_options
 
-inline void __PINGPONG_FN do_pong_spin_unrolled(int thread_num) {
-	void *local_spin_unrolled_var;
+inline void __PINGPONG_FN comm_pong_spin_unrolled(int thread_num) {
+	volatile void *local_spin_unrolled_var;
 	static void *sync_mem_method_table[] = {
 		&&PONG_LOOP_LABEL_0, &&PONG_LOOP_LABEL_1,
 		&&PONG_LOOP_LABEL_2, &&PONG_LOOP_LABEL_3,
@@ -194,8 +194,8 @@ int __CONST cleanup_spin_unrolled(void) {
 
 static struct comm_mode_ops_struct comm_ops_spin_unrolled = {
 	.comm_make_pair		= make_spin_unrolled_pair,
-	.comm_do_ping		= do_ping_spin_unrolled,
-	.comm_do_pong		= do_pong_spin_unrolled,
+	.comm_ping		= comm_ping_spin_unrolled,
+	.comm_pong		= comm_pong_spin_unrolled,
 	.comm_cleanup		= cleanup_spin_unrolled
 };
 

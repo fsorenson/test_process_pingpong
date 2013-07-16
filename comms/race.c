@@ -45,7 +45,7 @@ int make_race_pair(int fd[2]) {
 }
 
 
-inline void __PINGPONG_FN do_ping_race1(int thread_num) {
+inline void __PINGPONG_FN comm_ping_race1(int thread_num) {
 	(void)thread_num;
 
 	while (1) {
@@ -55,7 +55,7 @@ inline void __PINGPONG_FN do_ping_race1(int thread_num) {
 	}
 }
 
-inline void __PINGPONG_FN do_ping_race2(int thread_num) {
+inline void __PINGPONG_FN comm_ping_race2(int thread_num) {
 	(void)thread_num;
 
 	while (1) {
@@ -65,14 +65,14 @@ inline void __PINGPONG_FN do_ping_race2(int thread_num) {
 	}
 }
 
-inline void __PINGPONG_FN do_pong_race1(int thread_num) {
+inline void __PINGPONG_FN comm_pong_race1(int thread_num) {
 	(void)thread_num;
 	while (1) {
 		*race_var = 0;
 	}
 }
 
-inline void __PINGPONG_FN do_pong_race2(int thread_num) {
+inline void __PINGPONG_FN comm_pong_race2(int thread_num) {
 	(void)thread_num;
 	while (1) {
 		run_data->ping_count ++;
@@ -87,16 +87,16 @@ int __CONST cleanup_race(void) {
 }
 
 static struct comm_mode_ops_struct comm_ops_race1 = {
-	.comm_make_pair = make_race_pair,
-	.comm_do_ping = do_ping_race1,
-	.comm_do_pong = do_pong_race1,
-	.comm_cleanup = cleanup_race
+	.comm_make_pair		= make_race_pair,
+	.comm_ping		= comm_ping_race1,
+	.comm_pong		= comm_pong_race1,
+	.comm_cleanup		= cleanup_race
 };
 static struct comm_mode_ops_struct comm_ops_race2 = {
-	.comm_make_pair = make_race_pair,
-	.comm_do_ping = do_ping_race2,
-	.comm_do_pong = do_pong_race2,
-	.comm_cleanup = cleanup_race
+	.comm_make_pair		= make_race_pair,
+	.comm_ping		= comm_ping_race2,
+	.comm_pong		= comm_pong_race2,
+	.comm_cleanup		= cleanup_race
 };
 
 ADD_COMM_MODE(race1, "both threads repeatedly write their own value--no pingpong", &comm_ops_race1);

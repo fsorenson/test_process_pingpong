@@ -166,7 +166,7 @@ int make_spin_pair(int fd[2]) {
 			} while (0); \
 		}
 
-inline void __PINGPONG_FN do_ping_spin(int thread_num) {
+inline void __PINGPONG_FN comm_ping_spin(int thread_num) {
 	volatile void *local_spin_var;
 	static void *sync_mem_method_table[] = {
 		&&PING_LOOP_LABEL_0, &&PING_LOOP_LABEL_1,
@@ -190,7 +190,7 @@ inline void __PINGPONG_FN do_ping_spin(int thread_num) {
 
 }
 
-inline void __PINGPONG_FN do_pong_spin(int thread_num) {
+inline void __PINGPONG_FN comm_pong_spin(int thread_num) {
 	void *local_spin_var;
 	static void *sync_mem_method_table[] = {
 		&&PONG_LOOP_LABEL_0, &&PONG_LOOP_LABEL_1,
@@ -220,8 +220,8 @@ int __CONST cleanup_spin(void) {
 
 static struct comm_mode_ops_struct comm_ops_spin = {
 	.comm_make_pair		= make_spin_pair,
-	.comm_do_ping		= do_ping_spin,
-	.comm_do_pong		= do_pong_spin,
+	.comm_ping		= comm_ping_spin,
+	.comm_pong		= comm_pong_spin,
 	.comm_show_options	= comm_spin_show_options,
 	.comm_parse_options	= comm_spin_parse_options,
 	.comm_cleanup		= cleanup_spin

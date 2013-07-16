@@ -110,8 +110,8 @@ int make_nop_pair(int fd[2]) {
 * the other also does nothing, but sleeps too...
 * lazy, good-for-nothing threads
 */
-//inline void __attribute__((optimize("O0")))  do_ping_nop(int thread_num) { // this can be used during debugging
-inline void __PINGPONG_FN do_ping_nop(int thread_num) {
+//inline void __attribute__((optimize("O0")))  comm_ping_nop(int thread_num) { // this can be used during debugging
+inline void __PINGPONG_FN comm_ping_nop(int thread_num) {
 	(void) thread_num;
 
 	*nop_var = 1;
@@ -186,7 +186,7 @@ inline void __PINGPONG_FN do_ping_nop(int thread_num) {
 	}
 }
 
-inline void __PINGPONG_FN do_pong_nop(int thread_num) {
+inline void __PINGPONG_FN comm_pong_nop(int thread_num) {
 	(void) thread_num;
 
 	while (1) {
@@ -202,9 +202,9 @@ static struct comm_mode_ops_struct comm_ops_nop = {
 	.comm_show_options	= comm_nop_show_options,
 	.comm_parse_options	= comm_nop_parse_options,
 	.comm_make_pair		= make_nop_pair,
-	.comm_do_ping = do_ping_nop,
-	.comm_do_pong = do_pong_nop,
-	.comm_cleanup = cleanup_nop
+	.comm_ping		= comm_ping_nop,
+	.comm_pong		= comm_pong_nop,
+	.comm_cleanup		= cleanup_nop
 };
 
 ADD_COMM_MODE(nop, "no ping/pong - first thread does various levels of nothing, second thread sleeps", &comm_ops_nop);

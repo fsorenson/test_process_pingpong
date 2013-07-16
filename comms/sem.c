@@ -61,7 +61,7 @@ int do_begin_sem(void) {
 	return sem_post(sems[0]);
 }
 
-inline void __PINGPONG_FN do_ping_sem(int thread_num) {
+inline void __PINGPONG_FN comm_ping_sem(int thread_num) {
 	(void)thread_num;
 
 	while (1) {
@@ -72,7 +72,7 @@ inline void __PINGPONG_FN do_ping_sem(int thread_num) {
 	}
 }
 
-inline void __PINGPONG_FN do_pong_sem(int thread_num) {
+inline void __PINGPONG_FN comm_pong_sem(int thread_num) {
 	(void)thread_num;
 
 	while (1) {
@@ -81,7 +81,7 @@ inline void __PINGPONG_FN do_pong_sem(int thread_num) {
 	}
 }
 
-inline void __PINGPONG_FN do_ping_busysem(int thread_num) {
+inline void __PINGPONG_FN comm_ping_busysem(int thread_num) {
 	(void)thread_num;
 
 	while (1) {
@@ -92,7 +92,7 @@ inline void __PINGPONG_FN do_ping_busysem(int thread_num) {
 	}
 }
 
-inline void __PINGPONG_FN do_pong_busysem(int thread_num) {
+inline void __PINGPONG_FN comm_pong_busysem(int thread_num) {
 	(void)thread_num;
 
 	while (1) {
@@ -111,19 +111,19 @@ int cleanup_sem(void) {
 }
 
 static struct comm_mode_ops_struct comm_ops_sem = {
-	.comm_make_pair = make_sem_pair,
-	.comm_begin = do_begin_sem,
-	.comm_do_ping = do_ping_sem,
-	.comm_do_pong = do_pong_sem,
-	.comm_cleanup = cleanup_sem
+	.comm_make_pair		= make_sem_pair,
+	.comm_begin		= do_begin_sem,
+	.comm_ping		= comm_ping_sem,
+	.comm_pong		= comm_pong_sem,
+	.comm_cleanup		= cleanup_sem
 };
 
 static struct comm_mode_ops_struct comm_ops_busysem = {
-	.comm_make_pair = make_sem_pair,
-	.comm_begin = do_begin_sem,
-	.comm_do_ping = do_ping_busysem,
-	.comm_do_pong = do_pong_busysem,
-	.comm_cleanup = cleanup_sem
+	.comm_make_pair		= make_sem_pair,
+	.comm_begin		= do_begin_sem,
+	.comm_ping		= comm_ping_busysem,
+	.comm_pong		= comm_pong_busysem,
+	.comm_cleanup		= cleanup_sem
 };
 
 ADD_COMM_MODE(sem, "wait on a semaphore", &comm_ops_sem);

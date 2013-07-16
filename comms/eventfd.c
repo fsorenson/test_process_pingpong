@@ -43,7 +43,7 @@ int make_eventfd_pair(int fd[2]) {
         return 0;
 }
 
-inline void __PINGPONG_FN do_ping_eventfd(int thread_num) {
+inline void __PINGPONG_FN comm_ping_eventfd(int thread_num) {
 	int mouth;
 	int ear;
 	eventfd_t efd_value;
@@ -61,7 +61,7 @@ inline void __PINGPONG_FN do_ping_eventfd(int thread_num) {
 	}
 }
 
-inline void __PINGPONG_FN do_pong_eventfd(int thread_num) {
+inline void __PINGPONG_FN comm_pong_eventfd(int thread_num) {
 	int mouth;
 	int ear;
 	eventfd_t efd_value;
@@ -88,9 +88,9 @@ inline int do_recv_eventfd(int fd) {
 }
 
 static struct comm_mode_ops_struct comm_ops_eventfd = {
-	.comm_make_pair = make_eventfd_pair,
-	.comm_do_ping = do_ping_eventfd,
-	.comm_do_pong = do_pong_eventfd
+	.comm_make_pair		= make_eventfd_pair,
+	.comm_ping		= comm_ping_eventfd,
+	.comm_pong		= comm_pong_eventfd
 };
 
 ADD_COMM_MODE(eventfd, "", &comm_ops_eventfd);

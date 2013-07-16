@@ -28,14 +28,16 @@
 
 #include "test_process_pingpong.h"
 
+int comm_sem_show_options(const char *indent_string);
+int comm_sem_parse_options(const char *option_string);
 
 int make_sem_pair(int fd[2]);
 int do_begin_sem(void);
 
-void do_ping_sem(int thread_num);
-void do_pong_sem(int thread_num);
-void do_ping_busysem(int thread_num);
-void do_pong_busysem(int thread_num);
+void comm_ping_sem(int thread_num);
+void comm_pong_sem(int thread_num);
+void comm_ping_busysem(int thread_num);
+void comm_pong_busysem(int thread_num);
 
 int do_send_sem(int fd);
 int do_recv_sem(int fd);

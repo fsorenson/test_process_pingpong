@@ -40,8 +40,8 @@
 
 int make_eventfd_pair(int fd[2]);
 
-void do_ping_eventfd(int thread_num);
-void do_pong_eventfd(int thread_num);
+void comm_ping_eventfd(int thread_num);
+void comm_pong_eventfd(int thread_num);
 
 int do_send_eventfd(int fd);
 int do_recv_eventfd(int fd);

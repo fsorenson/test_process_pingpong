@@ -77,7 +77,7 @@ int do_pre_signal(int thread_num) {
 	return 0;
 }
 
-inline void __PINGPONG_FN do_ping_signal(int thread_num) {
+inline void __PINGPONG_FN comm_ping_signal(int thread_num) {
         sigset_t signal_mask;
 	(void) thread_num;
 
@@ -98,7 +98,7 @@ inline void __PINGPONG_FN do_ping_signal(int thread_num) {
 	}
 }
 
-inline void __PINGPONG_FN do_pong_signal(int thread_num) {
+inline void __PINGPONG_FN comm_pong_signal(int thread_num) {
 	(void) thread_num;
 
 	while (1) {
@@ -116,11 +116,11 @@ int __CONST cleanup_signal(void) {
 }
 
 static struct comm_mode_ops_struct comm_ops_signal = {
-	.comm_make_pair = make_signal_pair,
-	.comm_pre = do_pre_signal,
-	.comm_do_ping = do_ping_signal,
-	.comm_do_pong = do_pong_signal,
-	.comm_cleanup = cleanup_signal
+	.comm_make_pair		= make_signal_pair,
+	.comm_pre		= do_pre_signal,
+	.comm_ping		= comm_ping_signal,
+	.comm_pong		= comm_pong_signal,
+	.comm_cleanup		= cleanup_signal
 };
 
 ADD_COMM_MODE(signal, "each thread sleeps until receiving a wakeup signal from the other", &comm_ops_signal);

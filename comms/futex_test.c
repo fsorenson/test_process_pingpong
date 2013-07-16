@@ -61,7 +61,7 @@ int make_futex_test_pair(int fd[2]) {
 	return 0;
 }
 
-inline void __PINGPONG_FN do_ping_futex_test(int thread_num) {
+inline void __PINGPONG_FN comm_ping_futex_test(int thread_num) {
 
 	while (1) {
 		run_data->ping_count ++;
@@ -78,7 +78,7 @@ printf("Thread %d, B, value=%d\n", thread_num, *futex_value);
 
 }
 
-inline void __PINGPONG_FN do_pong_futex_test(int thread_num) {
+inline void __PINGPONG_FN comm_pong_futex_test(int thread_num) {
 
 	while (1) {
 
@@ -119,8 +119,8 @@ int cleanup_futex_test(void) {
 
 static struct comm_mode_ops_struct comm_ops_futex_test = {
 	.comm_make_pair = make_futex_test_pair,
-	.comm_do_ping = do_ping_futex_test,
-	.comm_do_pong = do_pong_futex_test,
+	.comm_ping = comm_ping_futex_test,
+	.comm_pong = comm_pong_futex_test,
 	.comm_do_send = do_send_futex_test,
 	.comm_do_recv = do_recv_futex_test
 };

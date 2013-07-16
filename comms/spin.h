@@ -29,8 +29,8 @@ int comm_spin_parse_options(const char *option_string);
 
 int make_spin_pair(int fd[2]);
 
-void do_ping_spin(int thread_num);
-void do_pong_spin(int thread_num);
+void comm_ping_spin(int thread_num);
+void comm_pong_spin(int thread_num);
 
 int cleanup_spin(void);
 

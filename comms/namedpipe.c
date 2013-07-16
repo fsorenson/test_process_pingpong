@@ -99,10 +99,10 @@ int __attribute__((noreturn)) comm_cleanup_namedpipe(void) {
 }
 
 static struct comm_mode_ops_struct comm_ops_namedpipe = {
-	.comm_make_pair = comm_makepair_namedpipe,
-	.comm_do_ping = comm_ping_namedpipe,
-	.comm_do_pong = comm_pong_namedpipe,
-	.comm_cleanup = comm_cleanup_namedpipe
+	.comm_make_pair		= comm_makepair_namedpipe,
+	.comm_ping		= comm_ping_namedpipe,
+	.comm_pong		= comm_pong_namedpipe,
+	.comm_cleanup		= comm_cleanup_namedpipe
 };
 
 ADD_COMM_MODE(namedpipe, "ping/pong over named pipes", &comm_ops_namedpipe);

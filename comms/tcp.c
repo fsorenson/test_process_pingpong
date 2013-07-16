@@ -114,7 +114,7 @@ int make_tcp_pair(int fd[2]) {
 	return 0;
 }
 
-inline void __PINGPONG_FN do_ping_tcp(int thread_num) {
+inline void __PINGPONG_FN comm_ping_tcp(int thread_num) {
 	char dummy = 'X';
 	(void)thread_num;
 
@@ -126,7 +126,7 @@ inline void __PINGPONG_FN do_ping_tcp(int thread_num) {
 	}
 }
 
-inline void __PINGPONG_FN do_pong_tcp(int thread_num) {
+inline void __PINGPONG_FN comm_pong_tcp(int thread_num) {
 	char dummy = 'X';
 	(void)thread_num;
 
@@ -137,9 +137,9 @@ inline void __PINGPONG_FN do_pong_tcp(int thread_num) {
 }
 
 static struct comm_mode_ops_struct comm_ops_tcp = {
-	.comm_make_pair = make_tcp_pair,
-	.comm_do_ping = do_ping_tcp,
-	.comm_do_pong = do_pong_tcp
+	.comm_make_pair		= make_tcp_pair,
+	.comm_ping		= comm_ping_tcp,
+	.comm_pong		= comm_pong_tcp
 };
 
 ADD_COMM_MODE(tcp, "TCP ping/pong", &comm_ops_tcp);

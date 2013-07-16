@@ -26,10 +26,10 @@
 
 int make_yield_pair(int fd[2]);
 
-void do_ping_yield(int thread_num);
-void do_pong_yield(int thread_num);
-void do_ping_yield_nop(int thread_num);
-void do_pong_yield_nop(int thread_num);
+void comm_ping_yield(int thread_num);
+void comm_pong_yield(int thread_num);
+void comm_ping_yield_nop(int thread_num);
+void comm_pong_yield_nop(int thread_num);
 
 //int do_send_yield(int fd);
 //int do_recv_yield(int fd);

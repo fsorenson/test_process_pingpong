@@ -77,8 +77,8 @@ int __attribute__((noreturn)) comm_cleanup_pipe(void) {
 static struct comm_mode_ops_struct comm_ops_pipe = {
 	.comm_make_pair = pipe,
 	.comm_pre = comm_pre_pipe,
-	.comm_do_ping = comm_ping_pipe,
-	.comm_do_pong = comm_pong_pipe,
+	.comm_ping		= comm_ping_pipe,
+	.comm_pong		= comm_pong_pipe,
 	.comm_cleanup = comm_cleanup_pipe
 };
 

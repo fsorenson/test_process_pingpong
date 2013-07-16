@@ -78,7 +78,7 @@ int make_inotify_pair(int fd[2]) {
 	return 0;
 }
 
-inline void __PINGPONG_FN do_ping_inotify(int thread_num) {
+inline void __PINGPONG_FN comm_ping_inotify(int thread_num) {
 	struct inotify_event *ino_event;
 	long long counter;
 	long long length;
@@ -107,7 +107,7 @@ inline void __PINGPONG_FN do_ping_inotify(int thread_num) {
 	}
 }
 
-inline void __PINGPONG_FN do_pong_inotify(int thread_num) {
+inline void __PINGPONG_FN comm_pong_inotify(int thread_num) {
 	struct inotify_event *ino_event;
 	long long counter;
 	long long length;
@@ -144,10 +144,10 @@ int cleanup_inotify(void) {
 }
 
 static struct comm_mode_ops_struct comm_ops_inotify = {
-	.comm_make_pair = make_inotify_pair,
-	.comm_do_ping = do_ping_inotify,
-	.comm_do_pong = do_pong_inotify,
-	.comm_cleanup = cleanup_inotify
+	.comm_make_pair		= make_inotify_pair,
+	.comm_ping		= comm_ping_inotify,
+	.comm_pong		= comm_pong_inotify,
+	.comm_cleanup		= cleanup_inotify
 };
 
 ADD_COMM_MODE(inotify, "use inotify to watch for file modifications", &comm_ops_inotify);
