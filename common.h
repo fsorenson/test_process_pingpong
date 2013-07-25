@@ -36,11 +36,15 @@
 #define __NORETURN	__attribute__((noreturn))
 #define __HOT		__attribute__((hot))
 
-#define __OPTIMIZED0
-#define __OPTIMIZED1	__attribute__((optimize("-Ofast")))
-#define __OPTIMIZED	__OPTIMIZED0
+#ifndef OPTIMIZE_LEVEL
+#define OPTIMIZE_LEVEL 3
+#endif
 
-#define __PINGPONG_FN  __NORETURN __HOT __OPTIMIZED1
+#define OPTIMIZED3(x) #x
+#define OPTIMIZED2(p1,p2) OPTIMIZED3(p1 ## p2)
+#define __OPTIMIZED(OLEV)     __attribute__((optimize(OPTIMIZED2(-O, OLEV ))))
+
+#define __PINGPONG_FN  __NORETURN __HOT __OPTIMIZED(OPTIMIZE_LEVEL)
 
 
 typedef enum { no = 0, false = 0, yes = 1, true = 1 } __PACKED bool;
