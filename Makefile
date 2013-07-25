@@ -14,6 +14,7 @@ LIBS += -lrt
 #LIBS += -lcompat
 
 GCC_COMPAT_004001=y
+GCC_COMPAT_004004=y
 
 
 base_dir = $(CURDIR)
