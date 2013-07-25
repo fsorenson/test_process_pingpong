@@ -13,7 +13,7 @@ LIBS += -lrt
 #CC := diet $(CC)
 #LIBS += -lcompat
 
-GCC_COMPAT_004001=y
+GCC_COMPAT_004001=n
 GCC_COMPAT_004004=y
 
 
@@ -144,10 +144,17 @@ endif
 # -O -OO -O1 -O2 -O3 -Os -Ofast
 # Use '-Ofast' if our gcc is recent enough, otherwise, fall back to '-O3'
 ifeq ($(GCC_COMPAT_004001),y)
- OPTIMIZATIONS = -O3
+ OPTIMIZE_LEVEL = 3
 else
- OPTIMIZATIONS = -Ofast
+ ifeq ($(GCC_COMPAT_004004),y)
+  OPTIMIZE_LEVEL = 3
+ else
+  OPTIMIZE_LEVEL = fast
+ endif
 endif
+
+CFLAGS += -DOPTIMIZE_LEVEL=$(OPTIMIZE_LEVEL)
+OPTIMIZATIONS = -O$(OPTIMIZE_LEVEL)
 
 # may be needed when using valgrind and other tools which want lots of information
 #OPTIMIZATIONS = -O0
