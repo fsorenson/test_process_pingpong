@@ -66,14 +66,14 @@ static void stop_threads(void) {
 	run_data->stop = true;
 	mb();
 
-	send_sig(run_data->thread_info[0].pid, SIGUSR1);
-	send_sig(run_data->thread_info[1].pid, SIGUSR2);
+	send_sig(run_data->thread_info[0].pid, CHILD_INTERRUPT_SIGNAL0);
+	send_sig(run_data->thread_info[1].pid, CHILD_INTERRUPT_SIGNAL1);
 }
 
 static void stop_timer(void) {
 	struct itimerval ntimeout;
 
-	signal(SIGALRM, SIG_IGN); /* ignore the timer if it alarms */
+	signal(STATS_ALARM_SIGNAL, SIG_IGN); /* ignore the timer if it alarms */
 	ntimeout.it_interval.tv_sec = ntimeout.it_interval.tv_usec = 0;
 	ntimeout.it_value.tv_sec  = ntimeout.it_value.tv_usec = 0;
 	setitimer(ITIMER_REAL, &ntimeout, NULL);        /* stop timer */
@@ -146,8 +146,14 @@ static void setup_monitor_timer(void) {
 	sa.sa_flags = 0;
 	sa.sa_handler = &monitor_interrupt;
 
-	sigaction(SIGALRM, &sa, NULL);
-	setitimer(ITIMER_REAL, &timer, 0);
+	if ((ret = sigaction(STATS_ALARM_SIGNAL, &sa, NULL)) == -1) {
+		printf("Error occured in monitor thread attempting to set up periodic timer: %s\n", strerror(errno));
+		exit(-1);
+	}
+	if ((ret = setitimer(ITIMER_REAL, &timer, 0)) == -1) {
+		printf("Error occurred in monitor thread attempting to set periodic timer: %s\n", strerror(errno));
+		exit(-1);
+	}
 
 	return;
 }
@@ -192,7 +198,7 @@ int do_monitor_work(void) {
 
 	sigfillset(&signal_mask);
 	sigdelset(&signal_mask, SIGCHLD);
-	sigdelset(&signal_mask, SIGALRM);
+	sigdelset(&signal_mask, STATS_ALARM_SIGNAL);
 	sigdelset(&signal_mask, SIGINT);
 
 	while ((run_data->ready[0] != true) || (run_data->ready[1] != true)) {

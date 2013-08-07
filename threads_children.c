@@ -87,7 +87,7 @@ static void read_sched_proc(int thread_num) {
 static void interrupt_thread(int signum) {
 	int thread_num;
 
-	if (signum == SIGUSR1) {
+	if (signum == CHILD_INTERRUPT_SIGNAL0) {
 		thread_num = 0;
 	} else {
 		thread_num = 1;
@@ -112,9 +112,9 @@ static int setup_interrupt_signal(int thread_num) {
 	sa.sa_flags = 0;
 	sa.sa_handler = interrupt_thread;
 	if (thread_num == 0)
-		sigaction(SIGUSR1, &sa, NULL);
+		sigaction(CHILD_INTERRUPT_SIGNAL0, &sa, NULL);
 	else
-		sigaction(SIGUSR2, &sa, NULL);
+		sigaction(CHILD_INTERRUPT_SIGNAL1, &sa, NULL);
 
 	return 0;
 }
