@@ -28,6 +28,17 @@
 #include <stdio.h>
 #include <errno.h>
 
+#define DEBUG_SPIN 0
+
+#if DEBUG_SPIN
+#define dprintf(_f, _a...) printf(_f, ## _a)
+
+#else
+
+#define dprintf(_f, _a...) ((void)0)
+
+#endif
+
 int volatile *spin_var;
 static int mem_sync_method_ping = -1;
 static int mem_sync_method_pong = -1;
@@ -142,7 +153,7 @@ int make_spin_pair(int fd[2]) {
 
 #define PING_LOOP_METHOD(val) \
 	PING_LOOP_LABEL_ ## val: \
-		printf("Pinging with %s\n", MEM_SYNC_METHOD_NAME_ ## val); \
+		dprintf("Pinging with %s\n", MEM_SYNC_METHOD_NAME_ ## val); \
 		while (1) { \
 			run_data->ping_count ++; \
 \
@@ -156,7 +167,7 @@ int make_spin_pair(int fd[2]) {
 
 #define PONG_LOOP_METHOD(val) \
 	PONG_LOOP_LABEL_ ## val: \
-		printf("Ponging with %s\n", MEM_SYNC_METHOD_NAME_ ## val); \
+		dprintf("Ponging with %s\n", MEM_SYNC_METHOD_NAME_ ## val); \
 		while (1) { \
 			while (*spin_var != 1) { \
 			} \
