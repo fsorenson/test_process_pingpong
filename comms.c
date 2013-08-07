@@ -210,7 +210,7 @@ inline int comm_do_recv_generic(int fd) {
 int __CONST comm_no_cleanup(void) {
 	return 0;
 }
-int comm_show_no_options(const char *indent_string) {
+int __CONST comm_show_no_options(const char *indent_string) {
 	(void)indent_string;
 	return 0;
 }
