@@ -27,23 +27,23 @@
 #include <stdio.h>
 #include <string.h>
 #include <signal.h>
+#include <sys/wait.h>
+
 
 int gather_periodic_stats(struct interval_stats_struct *i_stats) {
+	int proc_status;
 
 	i_stats->current_count = run_data->ping_count;
 	i_stats->current_time = get_time();
 
-	run_data->rusage_req_in_progress = true;
-	run_data->rusage_req[0] = true;
-	run_data->rusage_req[1] = true;
-	send_sig(run_data->thread_info[0].pid, SIGUSR1);
-	send_sig(run_data->thread_info[1].pid, SIGUSR2);
+	wait4(run_data->thread_info[0].pid, &proc_status, WNOHANG, (struct rusage *)&run_data->thread_stats[0].rusage);
+	wait4(run_data->thread_info[1].pid, &proc_status, WNOHANG, (struct rusage *)&run_data->thread_stats[1].rusage);
 
 	i_stats->run_time = i_stats->current_time - run_data->start_time;
 	i_stats->interval_time = i_stats->current_time - run_data->last_stats_time;
 	i_stats->interval_count = i_stats->current_count - run_data->last_ping_count;
 
-
+/*
 	while (run_data->rusage_req_in_progress == true) {
 		if ((run_data->rusage_req[0] == false) && (run_data->rusage_req[1] == false))
 			run_data->rusage_req_in_progress = false;
@@ -52,7 +52,7 @@ int gather_periodic_stats(struct interval_stats_struct *i_stats) {
 		if (run_data->stop == true)
 			return -1;
 	}
-
+*/
 	i_stats->rusage[0].ru_nvcsw = run_data->thread_stats[0].rusage.ru_nvcsw - run_data->thread_stats[0].last_rusage.ru_nvcsw;
 	i_stats->rusage[0].ru_nivcsw = run_data->thread_stats[0].rusage.ru_nivcsw - run_data->thread_stats[0].last_rusage.ru_nivcsw;
 	i_stats->rusage[1].ru_nvcsw = run_data->thread_stats[1].rusage.ru_nvcsw - run_data->thread_stats[1].last_rusage.ru_nvcsw;
@@ -66,7 +66,7 @@ int gather_periodic_stats(struct interval_stats_struct *i_stats) {
 
 	i_stats->rusage[1].ru_utime = elapsed_time_timeval(run_data->thread_stats[1].last_rusage.ru_utime, run_data->thread_stats[1].rusage.ru_utime);
 	i_stats->rusage[1].ru_stime = elapsed_time_timeval(run_data->thread_stats[1].last_rusage.ru_stime, run_data->thread_stats[1].rusage.ru_stime);
-
+/*
 	if (config.set_affinity == true) {
 		i_stats->interval_tsc[0] = run_data->thread_stats[0].tsc - run_data->thread_stats[0].last_tsc;
 		i_stats->interval_tsc[1] = run_data->thread_stats[1].tsc - run_data->thread_stats[1].last_tsc;
@@ -80,7 +80,7 @@ int gather_periodic_stats(struct interval_stats_struct *i_stats) {
 		i_stats->mhz[0] = i_stats->mhz[1] = 0;
 		i_stats->cpi[0] = i_stats->cpi[1] = 0;
 	}
-
+*/
 	i_stats->iteration_time = i_stats->interval_time / i_stats->interval_count;
 
 	return 0;
@@ -220,6 +220,6 @@ void store_last_stats(struct interval_stats_struct *i_stats) {
 
 	run_data->last_ping_count = i_stats->current_count;
 	run_data->last_stats_time = i_stats->current_time;
-	run_data->thread_stats[0].last_tsc = run_data->thread_stats[0].tsc;
-	run_data->thread_stats[1].last_tsc = run_data->thread_stats[1].tsc;
+//	run_data->thread_stats[0].last_tsc = run_data->thread_stats[0].tsc;
+//	run_data->thread_stats[1].last_tsc = run_data->thread_stats[1].tsc;
 }
