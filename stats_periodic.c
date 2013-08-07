@@ -116,26 +116,26 @@ void show_periodic_stats_header(void) {
 	// 83.000 s - 64962 iterations -> 15.393 us, ping: 40945.64 cycles, pong: 40945.100 cycles
 
 	// header
-	safe_write(1, output_buffer, output_buffer_len,
+	safe_write(config.output_fd, output_buffer, output_buffer_len,
 		"%7s %12s %11s", "", "", "");
-	safe_write(1, output_buffer, output_buffer_len,
+	safe_write(config.output_fd, output_buffer, output_buffer_len,
 		" %s %s",
 		" ___________ PING ___________ ",
 		" ___________ PONG ___________ "
 		);
-	safe_write(1, output_buffer, output_buffer_len, "\n");
-	safe_write(1, output_buffer, output_buffer_len,
+	safe_write(config.output_fd, output_buffer, output_buffer_len, "\n");
+	safe_write(config.output_fd, output_buffer, output_buffer_len,
 		"%7s %12s %11s",
 		"time", "cycles/sec", "cycle time");
 
 	// per-thread header
-	safe_write(1, output_buffer + strlen(output_buffer), output_buffer_len - strlen(output_buffer),
+	safe_write(config.output_fd, output_buffer + strlen(output_buffer), output_buffer_len - strlen(output_buffer),
 		" | %13s  %5s  %5s",
 		" vol/inv csw", "user", "sys");
-	safe_write(1, output_buffer + strlen(output_buffer), output_buffer_len - strlen(output_buffer),
+	safe_write(config.output_fd, output_buffer + strlen(output_buffer), output_buffer_len - strlen(output_buffer),
 		" | %13s  %5s  %5s",
 		" vol/inv csw", "user", "sys");
-	safe_write(1, output_buffer, output_buffer_len, "\n");
+	safe_write(config.output_fd, output_buffer, output_buffer_len, "\n");
 }
 
 void show_periodic_stats_data(struct interval_stats_struct *i_stats) {
@@ -155,35 +155,35 @@ void show_periodic_stats_data(struct interval_stats_struct *i_stats) {
 	memset(temp_string2, 0, temp_string_len);
 
 	// general stats
-	safe_write(1, output_buffer, output_buffer_len, "%7s %12llu %11s",
+	safe_write(config.output_fd, output_buffer, output_buffer_len, "%7s %12llu %11s",
 		subsec_string(temp_string1, i_stats->run_time, 1),
 		(unsigned long long)((long double)i_stats->interval_count / i_stats->interval_time),
 		subsec_string(temp_string2, i_stats->iteration_time, 2));
 
 	// per-thread stats
-	safe_write(1, output_buffer, output_buffer_len, " | %5ld / %5ld",
+	safe_write(config.output_fd, output_buffer, output_buffer_len, " | %5ld / %5ld",
 		i_stats->rusage[0].ru_nvcsw, i_stats->rusage[0].ru_nivcsw);
 
 	int_fp1 = f_to_fp(1, ((i_stats->rusage[0].ru_utime.tv_sec * 100.0L) + (i_stats->rusage[0].ru_utime.tv_usec / 1.0e4L) / i_stats->interval_time));
 	int_fp2 = f_to_fp(1, ((i_stats->rusage[0].ru_stime.tv_sec * 100.0L) + (i_stats->rusage[0].ru_stime.tv_usec / 1.0e4L) / i_stats->interval_time));
 
-	safe_write(1, output_buffer, output_buffer_len, "  %2lu.%01lu%%  %2lu.%01lu%%",
+	safe_write(config.output_fd, output_buffer, output_buffer_len, "  %2lu.%01lu%%  %2lu.%01lu%%",
 		int_fp1.i, int_fp1.dec, int_fp2.i, int_fp2.dec);
 
-	safe_write(1, output_buffer, output_buffer_len, " | %5ld / %5ld",
+	safe_write(config.output_fd, output_buffer, output_buffer_len, " | %5ld / %5ld",
 		i_stats->rusage[1].ru_nvcsw, i_stats->rusage[1].ru_nivcsw);
 
 	int_fp1 = f_to_fp(1, ((i_stats->rusage[1].ru_utime.tv_sec * 100.0L) + (i_stats->rusage[1].ru_utime.tv_usec / 1.0e4L) / i_stats->interval_time));
 	int_fp2 = f_to_fp(2, ((i_stats->rusage[1].ru_stime.tv_sec * 100.0L) + (i_stats->rusage[1].ru_stime.tv_usec / 1.0e4L) / i_stats->interval_time));
 
-	safe_write(1, output_buffer, output_buffer_len, "  %2lu.%01lu%%  %2lu.%01lu%%",
+	safe_write(config.output_fd, output_buffer, output_buffer_len, "  %2lu.%01lu%%  %2lu.%01lu%%",
 		int_fp1.i, int_fp1.dec, int_fp2.i, int_fp2.dec);
 
 /* cpu cycles/pingpong for ping
 	if (config.set_affinity == true) {
-		safe_write(1, output_buffer, output_buffer_len, ", ping: %d.%d cyc.",
+		safe_write(config.output_fd, output_buffer, output_buffer_len, ", ping: %d.%d cyc.",
 			(int)i_stats->cpi[0], (int)(i_stats->cpi[0] * 100.0L) % 100);
-		safe_write(1, output_buffer, output_buffer_len, ", %ld/%ld csw",
+		safe_write(config.output_fd, output_buffer, output_buffer_len, ", %ld/%ld csw",
 			i_stats->rusage[0].ru_nvcsw, i_stats->rusage[0].ru_nivcsw);
 	}
 */
@@ -191,14 +191,14 @@ void show_periodic_stats_data(struct interval_stats_struct *i_stats) {
 /* cpu cycles/pingpong for pong
 	if (config.set_affinity == true) {
 
-		safe_write(1, output_buffer, output_buffer_len, ", pong: %d.%d cyc.",
+		safe_write(config.output_fd, output_buffer, output_buffer_len, ", pong: %d.%d cyc.",
 			(int)i_stats->cpi[1], (int)(i_stats->cpi[1] * 100.0L) & 100);
-		safe_write(1, output_buffer, output_buffer_len, ", %ld csw",
+		safe_write(config.output_fd, output_buffer, output_buffer_len, ", %ld csw",
 			i_stats->csw[1]);
 	}
 */
 
-	safe_write(1, output_buffer, output_buffer_len, "\n");
+	safe_write(config.output_fd, output_buffer, output_buffer_len, "\n");
 }
 
 void store_last_stats(struct interval_stats_struct *i_stats) {
