@@ -158,7 +158,7 @@ struct config_struct {
 	struct timeval stats_interval; /* seconds & microseconds */
 	unsigned long runtime; /* in seconds */
 	int stats_headers_frequency; /* how frequently should the stats header lines be output */
-	char dummy1[4];
+	int output_fd;
 
 	char *argv0;
 

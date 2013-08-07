@@ -115,6 +115,8 @@ int setup_defaults(char *argv0) {
 /* default settings */
 	config.argv0 = argv0;
 
+	config.output_fd	= DEFAULT_OUTPUT_FD;
+
 	config.monitor_check_frequency	= DEFAULT_MONITOR_CHECK_FREQ;
 	config.runtime		= DEFAULT_EXECUTION_TIME;
 	config.stats_interval	= DEFAULT_STATS_INTERVAL;

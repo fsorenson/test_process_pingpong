@@ -30,6 +30,8 @@
 #include <math.h>
 #include <sys/types.h>
 
+#define DEFAULT_OUTPUT_FD 1
+
 #define __CONST		__attribute__((const))
 #define __PURE		__attribute__((pure))
 #define __PACKED	__attribute__((packed))
