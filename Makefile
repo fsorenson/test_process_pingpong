@@ -2,7 +2,7 @@
 CC=gcc
 #CC=gcc
 #CC=g++
-LIBS=-lpthread -lm -lpthread
+LIBS=-lpthread -lm
 
 target = test_process_pingpong
 
