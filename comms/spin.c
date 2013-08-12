@@ -31,6 +31,8 @@
 #define DEBUG_SPIN 0
 
 #if DEBUG_SPIN
+#define DEBUG_BUFFER_LEN 200
+static char debug_buffer[DEBUG_BUFFER_LEN];
 #define dprintf(_f, _a...) printf(_f, ## _a)
 
 #else
