@@ -59,11 +59,11 @@ static int mem_sync_method_pong = -1;
 #define MEM_SYNC_METHOD_1 \
 	mb()
 #define MEM_SYNC_METHOD_2 \
-	msync(local_spin_var, 2, MS_SYNC)
+	msync(local_spin_var, sizeof(int), MS_SYNC)
 #define MEM_SYNC_METHOD_3 \
-	msync(local_spin_var, 3, MS_SYNC)
+	msync(local_spin_var, sizeof(int), MS_INVALIDATE)
 #define MEM_SYNC_METHOD_4 \
-	msync(local_spin_var, 4, MS_SYNC)
+	msync(local_spin_var, sizeof(int), MS_ASYNC)
 #define MEM_SYNC_METHOD_5 \
 	__sync_synchronize()
 #define MEM_SYNC_METHOD_6 \
