@@ -37,6 +37,8 @@
 #define __PACKED	__attribute__((packed))
 #define __NORETURN	__attribute__((noreturn))
 #define __HOT		__attribute__((hot))
+#define __USED		__attribute__((used))
+#define __UNUSED	__attribute__((unused))
 
 #ifndef OPTIMIZE_LEVEL
 #define OPTIMIZE_LEVEL 3
