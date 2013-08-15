@@ -54,7 +54,7 @@ printf(
 "Options:\n"
 
 "    -u, --update=#      seconds between statistics display (0 for no intermediate stats--implies '-s'); default=" DEFAULT_STATS_INTERVAL_STRING "\n"
-"    -r, --runtime=#     number of seconds to run the test (0 to run continuously); default=" xstr(DEFAULT_EXECUTION_TIME) "\n"
+"    -r, --runtime=#     number of seconds to run the test (0 to run continuously); default=" __XSTR(DEFAULT_EXECUTION_TIME) "\n"
 "    -s, --stats         output overall statistics at the end of the run (default)\n"
 "        --nostats       do not output statistics at the end of the run\n"
 "    -l, --latency=#	 set the cpu_dma_latency value; default=none\n"
