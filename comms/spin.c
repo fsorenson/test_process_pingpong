@@ -72,6 +72,18 @@ static int mem_sync_method_pong = -1;
 #define do_mem_sync_method(val) \
 	MEM_SYNC_METHOD_##val
 
+#pragma pack(4)
+struct spin_memsync_struct {
+	const int sequence; /* ordering of the functions */
+	const char *fn_name; /* function name */
+	const char *description;
+	spin_pingpong_method_t ping_fn;
+	spin_pingpong_method_t pong_fn;
+};
+#pragma pack()
+static struct spin_memsync_struct **spin_memsync_info;
+static int spin_memsync_method_count = -1;
+
 static const char *sync_method_string[] = {
 	MEM_SYNC_METHOD_NAME_0,
 	MEM_SYNC_METHOD_NAME_1,
