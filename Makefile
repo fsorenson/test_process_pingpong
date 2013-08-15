@@ -33,7 +33,7 @@ LDFLAGS=
 CFLAGS=
 
 CPPFLAGS = -iquote .
-CPPFLAGS += -fverbose-asm
+CPPFLAGS += -fverbose-asm -fdiagnostics-show-option -fdiagnostics-show-location=every-line
 
 ifeq ($(GCC_COMPAT_004001),y)
  CPPFLAGS += -std=c99
