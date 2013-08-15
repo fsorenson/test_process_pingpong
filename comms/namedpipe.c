@@ -32,7 +32,7 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 
-const char *namedpipe_names[] = { "/tmp/ping_namedpipe", "/tmp/pong_namedpipe" };
+const char *namedpipe_names[] = { "/dev/shm/ping_namedpipe", "/dev/shm/pong_namedpipe" };
 
 static int fds[2];
 
