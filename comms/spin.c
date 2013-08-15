@@ -231,6 +231,12 @@ static int setup_memsync_info(void) {
 	return spin_memsync_method_count;
 }
 
+static void drop_memsync_info(void) {
+	if (spin_memsync_method_count != -1)
+		free(spin_memsync_info);
+	spin_memsync_method_count = -1;
+}
+
 static const char *sync_method_string[] = {
 	MEM_SYNC_METHOD_NAME_0,
 	MEM_SYNC_METHOD_NAME_1,
