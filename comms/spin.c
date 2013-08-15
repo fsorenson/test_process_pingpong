@@ -458,7 +458,6 @@ void __PINGPONG_FN comm_pong_spin(int thread_num) {
 	(void)thread_num;
 
 	mem_sync_method_pong_info->pong_fn();
-
 }
 
 int __CONST cleanup_spin(void) {
