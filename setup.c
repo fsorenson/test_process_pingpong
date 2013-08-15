@@ -145,9 +145,6 @@ int setup_defaults(char *argv0) {
 	config.num_cpus = (short)num_cpus();
 	config.num_online_cpus = (short)num_online_cpus();
 
-	config.cpu_mhz = estimate_cpu_mhz();
-	config.cpu_cycle_time = 1 / config.cpu_mhz / 1e6L;
-
 	config.min_stack = get_min_stack_size();
 
 	config.cpu[0] = -1;
@@ -264,6 +261,9 @@ int do_comm_setup(void) {
 			printf(", with no cpu affinity");
 		printf("\n");
 	}
+
+	config.cpu_mhz = estimate_cpu_mhz();
+	config.cpu_cycle_time = 1 / config.cpu_mhz / 1e6L;
 
 	config.comm_init = comm_mode_info[config.comm_mode_index].comm_init;
 	config.comm_make_pair = comm_mode_info[config.comm_mode_index].comm_make_pair;
