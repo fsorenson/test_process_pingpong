@@ -144,12 +144,41 @@ struct spin_memsync_struct {
 #define SPIN_PING_FUNCTION_DECL(_sym) \
 	spin_pingpong_method_t __USED __NORETURN SPIN_MAKE_PING_NAME(_sym)(void)
 
+#define SPIN_PING_FUNCTION_CODE(_sym,_sync_code)	\
+	while (1) {					\
+		run_data->ping_count ++;		\
+\
+		do {					\
+			*spin_var = 1;			\
+			_sync_code;			\
+		} while (0);				\
+		while (*spin_var != 0) {		\
+		}					\
+	}
+
 #define SPIN_PONG_FUNCTION_DECL(_sym) \
 	spin_pingpong_method_t __USED __NORETURN SPIN_MAKE_PONG_NAME(_sym)(void)
 
+#define SPIN_PONG_FUNCTION_CODE(_sym,_sync_code)	\
+	while (1) { \
+		while (*spin_var != 1) { \
+		} \
+		do { \
+			*spin_var = 0; \
+			_sync_code; \
+		} while (0); \
+	}
+
 #define spin_define_function(_sequence,_sym,_desc,_code)					\
 	SPIN_PING_FUNCTION_DECL(_sym);								\
+	SPIN_PING_FUNCTION_DECL(_sym) {								\
+		SPIN_PING_FUNCTION_CODE(_sym, _code);						\
+	};											\
 	SPIN_PONG_FUNCTION_DECL(_sym);								\
+	SPIN_PONG_FUNCTION_DECL(_sym) {								\
+		SPIN_PONG_FUNCTION_CODE(_sym, _code);						\
+	};											\
+\
 	SPIN_FUNCTION_DESCRIPTION(_sym,_desc);							\
 	SPIN_FUNCTION_SYMBOL_NAME(_sym);							\
 
