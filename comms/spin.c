@@ -84,6 +84,9 @@ struct spin_memsync_struct {
 };
 #pragma pack()
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-macros"
+
 #define SPIN_SECTION				spin
 
 #define SECTION_START(section)			__PASTE(__start_,section)
@@ -140,6 +143,7 @@ struct spin_memsync_struct {
 		SPIN_FUNCTION_SYMBOL_NAME_ATTRIBUTES \
 		= SPIN_MAKE_PONG_NAME(_sym)
 
+#pragma GCC diagnostic pop
 
 #define SPIN_PING_FUNCTION_DECL(_sym) \
 	spin_pingpong_method_t __USED __NORETURN SPIN_MAKE_PING_NAME(_sym)(void)
@@ -463,6 +467,8 @@ void __PINGPONG_FN comm_pong_spin(int thread_num) {
 
 	goto *sync_mem_method_table[mem_sync_method_pong];
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wcast-qual"
 	PONG_LOOP_METHOD(0);
 	PONG_LOOP_METHOD(1);
 	PONG_LOOP_METHOD(2);
@@ -470,10 +476,14 @@ void __PINGPONG_FN comm_pong_spin(int thread_num) {
 	PONG_LOOP_METHOD(4);
 	PONG_LOOP_METHOD(5);
 	PONG_LOOP_METHOD(6);
+#pragma GCC diagnostic pop
 }
 
 int __CONST cleanup_spin(void) {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wcast-qual"
 	munmap((void *)spin_var, sizeof(int));
+#pragma GCC diagnostic pop
 	return 0;
 }
 
