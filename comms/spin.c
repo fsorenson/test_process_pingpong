@@ -286,16 +286,22 @@ static int sync_method_count = sizeof(sync_method_string) / sizeof(sync_method_s
 int comm_spin_show_options(const char *indent_string) {
 	int i;
 
+	setup_memsync_info();
+
 	printf("%s options which may be specified for both ping/pong (use '##') or each (use '##,##'):\n", indent_string);
-	for (i = 0 ; i < sync_method_count ; i ++) {
+
+	for (i = 0 ; i < spin_memsync_method_count ; i ++) {
 		if (! (i % 2) )
 			printf("%s", indent_string);
-		printf(" %d - %-20s", i, sync_method_string[i]);
-		if (i % 2)
+		printf(" %d - %-23s", i, spin_memsync_info[i]->description);
+		if ( i % 2)
 			printf("\n");
 	}
-	if (sync_method_count % 2)
+	if (spin_memsync_method_count % 2)
 		printf("\n");
+
+	drop_memsync_info();
+
 	return 0;
 }
 
