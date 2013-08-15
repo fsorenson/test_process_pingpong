@@ -81,13 +81,14 @@ static void stop_timer(void) {
 
 static void stop_handler(int signum) {
 	static int visited = 0;
-	(void)signum;
 
 	if (visited) {
 		printf("Trying to stop a second time?\n");
 		return;
 	}
 	visited++;
+
+	printf("parent thread received signal %d (%s)\n", signum, strsignal(signum));
 
 	stop_timer();
 	stop_threads();
