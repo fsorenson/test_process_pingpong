@@ -228,6 +228,17 @@ static int setup_memsync_info(void) {
 
 	spin_memsync_info = calloc(spin_memsync_method_count, sizeof(struct spin_memsync_struct *));
 
+	p = (void *)&SPIN_FUNCTION_TABLE_SECTION_START;
+	for (i = 0 ; i < spin_memsync_method_count ; i ++) {
+		spin_memsync_info[i] = (struct spin_memsync_struct *) (p + sizeof(struct spin_memsync_struct) * i);
+	}
+
+#if DEBUG_SPIN
+	for (i = 0 ; i < spin_memsync_method_count ; i ++) {
+		printf("#%d - %s (sequence %d)\n", i, spin_memsync_info[i]->description, spin_memsync_info[i]->sequence);
+
+	}
+#endif
 	return spin_memsync_method_count;
 }
 
