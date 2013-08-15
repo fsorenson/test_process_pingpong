@@ -266,6 +266,7 @@ static int setup_memsync_info(void) {
 
 	}
 #endif
+
 	return spin_memsync_method_count;
 }
 
@@ -402,8 +403,6 @@ int make_spin_pair(int fd[2]) {
 	spin_num ++;
 	return 0;
 }
-
-
 
 #define PING_LOOP_METHOD(val) \
 	PING_LOOP_LABEL_ ## val: \
