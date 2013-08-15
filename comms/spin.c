@@ -45,33 +45,6 @@ int volatile *spin_var;
 static int mem_sync_method_ping = -1;
 static int mem_sync_method_pong = -1;
 
-#define MEM_SYNC_METHOD_NAME_0 "no memory sync"
-#define MEM_SYNC_METHOD_NAME_1 "mb()"
-#define MEM_SYNC_METHOD_NAME_2 "msync( MS_SYNC )"
-#define MEM_SYNC_METHOD_NAME_3 "msync( MS_INVALIDATE )"
-#define MEM_SYNC_METHOD_NAME_4 "msync( MS_ASYNC )"
-#define MEM_SYNC_METHOD_NAME_5 "__sync_synchronize"
-#define MEM_SYNC_METHOD_NAME_6 "asm memory clobber"
-//  = 5  (lock; addl $0,0(%%esp))  ... trying it out
-
-#define MEM_SYNC_METHOD_0 \
-	asm("")
-#define MEM_SYNC_METHOD_1 \
-	mb()
-#define MEM_SYNC_METHOD_2 \
-	msync(spin_var, sizeof(int), MS_SYNC)
-#define MEM_SYNC_METHOD_3 \
-	msync(spin_var, sizeof(int), MS_INVALIDATE)
-#define MEM_SYNC_METHOD_4 \
-	msync(spin_var, sizeof(int), MS_ASYNC)
-#define MEM_SYNC_METHOD_5 \
-	__sync_synchronize()
-#define MEM_SYNC_METHOD_6 \
-	mb2()
-
-#define do_mem_sync_method(val) \
-	MEM_SYNC_METHOD_##val
-
 typedef void (*spin_pingpong_method_t)(void);
 
 #pragma pack(4)
