@@ -140,6 +140,17 @@ struct spin_memsync_struct {
 		SPIN_FUNCTION_SYMBOL_NAME_ATTRIBUTES \
 		= SPIN_MAKE_PONG_NAME(_sym)
 
+
+#define SPIN_PING_FUNCTION_DECL(_sym) \
+	spin_pingpong_method_t __USED __NORETURN SPIN_MAKE_PING_NAME(_sym)(void)
+
+#define SPIN_PONG_FUNCTION_DECL(_sym) \
+	spin_pingpong_method_t __USED __NORETURN SPIN_MAKE_PONG_NAME(_sym)(void)
+
+#define spin_define_function(_sequence,_sym,_desc,_code)					\
+	SPIN_PING_FUNCTION_DECL(_sym);								\
+	SPIN_PONG_FUNCTION_DECL(_sym);								\
+
 static struct spin_memsync_struct **spin_memsync_info;
 static int spin_memsync_method_count = -1;
 
