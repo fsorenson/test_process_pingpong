@@ -150,6 +150,8 @@ struct spin_memsync_struct {
 #define spin_define_function(_sequence,_sym,_desc,_code)					\
 	SPIN_PING_FUNCTION_DECL(_sym);								\
 	SPIN_PONG_FUNCTION_DECL(_sym);								\
+	SPIN_FUNCTION_DESCRIPTION(_sym,_desc);							\
+	SPIN_FUNCTION_SYMBOL_NAME(_sym);							\
 
 static struct spin_memsync_struct **spin_memsync_info;
 static int spin_memsync_method_count = -1;
