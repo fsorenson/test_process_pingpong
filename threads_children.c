@@ -49,6 +49,7 @@ static int send_thread_stats(int thread_num) {
 #ifndef RUSAGE_THREAD
 #define RUSAGE_THREAD 1
 #endif
+
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wcast-qual"
 	if (getrusage(RUSAGE_THREAD, (struct rusage *)&run_data->thread_stats[thread_num].rusage) == -1) {
