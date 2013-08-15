@@ -368,6 +368,22 @@ int make_spin_pair(int fd[2]) {
 	fd[0] = spin_num;
 	fd[1] = spin_num;
 
+#if DEBUG_SPIN
+	printf("ftab goes from 0x%p to 0x%p\n", (void *)&SPIN_FUNCTION_TABLE_SECTION_START, (void *)&SPIN_FUNCTION_TABLE_SECTION_STOP);
+	printf("%lu symbols\n", (((void *)&SPIN_FUNCTION_TABLE_SECTION_STOP) - ((void *)&SPIN_FUNCTION_TABLE_SECTION_START)) / sizeof(struct spin_memsync_struct));
+	printf("struct size is %lu\n", sizeof(struct spin_memsync_struct));
+
+	for ( ; iter < &SPIN_FUNCTION_TABLE_SECTION_STOP ; ++iter) {
+		printf("0x%p: fn=%s, desc='%s', sequence=%d\n", (void *)iter, iter->fn_name, iter->description, iter->sequence);
+	}
+
+	printf("Sorted list:\n");
+	iter = &SPIN_FUNCTION_TABLE_SECTION_START;
+	for (i = 0 ; i < spin_memsync_method_count ; i ++) {
+		iter = spin_memsync_info[i];
+		printf("\t0x%p: fn=%s, desc='%s', sequence=%d\n", (void *)iter, iter->fn_name, iter->description, iter->sequence);
+	}
+#endif
 	spin_num ++;
 	return 0;
 }
