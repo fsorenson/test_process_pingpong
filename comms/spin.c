@@ -83,6 +83,31 @@ struct spin_memsync_struct {
 	spin_pingpong_method_t pong_fn;
 };
 #pragma pack()
+
+#define SPIN_SECTION				spin
+
+#define SECTION_START(section)			__PASTE(__start_,section)
+#define SECTION_STOP(section)			__PASTE(__stop_,section)
+
+#define SPIN_FUNCTION_NAME_SECTION		__PASTE(SPIN_SECTION,_syms)				/* the section where the names of the symbols are stored */
+#define SPIN_FUNCTION_NAME_SECTION_STRING	__STR(SPIN_FUNCTION_NAME_SECTION)			/* the section where the names of the symbols are stored */
+#define SPIN_FUNCTION_NAME_SECTION_START	SECTION_START(SPIN_FUNCTION_NAME_SECTION)
+#define SPIN_FUNCTION_NAME_SECTION_STOP		SECTION_STOP(SPIN_FUNCTION_NAME_SECTION)
+
+#define SPIN_FUNCTION_DESCRIPTION_SECTION	__PASTE(SPIN_SECTION,_descr)				/* the section where function description strings are stored */
+#define SPIN_FUNCTION_DESCRIPTION_SECTION_STRING	__STR(SPIN_FUNCTION_DESCRIPTION_SECTION)		/* the section where function description strings are stored */
+#define SPIN_FUNCTION_DESCRIPTION_SECTION_START		SECTION_START(SPIN_FUNCTION_DESCRIPTION_SECTION)
+#define SPIN_FUNCTION_DESCRIPTION_SECTION_STOP		SECTION_STOP(SPIN_FUNCTION_DESCRIPTION_SECTION)
+
+#define SPIN_FUNCTION_CODE_SECTION		__PASTE(SPIN_SECTION,_text)				/* the section where the executable is stored */
+#define SPIN_FUNCTION_CODE_SECTION_STRING	__STR(SPIN_FUNCTION_CODE_SECTION)
+#define SPIN_FUNCTION_CODE_SECTION_START	SECTION_START(SPIN_FUNCTION_CODE_SECTION)
+#define SPIN_FUNCTION_CODE_SECTION_STOP		SECTION_STOP(SPIN_FUNCTION_CODE_SECTION)
+
+#define SPIN_FUNCTION_TABLE_SECTION		__PASTE(SPIN_SECTION,_ftab)				/* section where function table is stored */
+#define SPIN_FUNCTION_TABLE_SECTION_STRING	__STR(SPIN_FUNCTION_TABLE_SECTION)
+#define SPIN_FUNCTION_TABLE_SECTION_START	SECTION_START(SPIN_FUNCTION_TABLE_SECTION)
+#define SPIN_FUNCTION_TABLE_SECTION_STOP	SECTION_STOP(SPIN_FUNCTION_TABLE_SECTION)
 static struct spin_memsync_struct **spin_memsync_info;
 static int spin_memsync_method_count = -1;
 
