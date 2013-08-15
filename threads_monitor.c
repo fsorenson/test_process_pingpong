@@ -138,6 +138,7 @@ static void monitor_interrupt(int signum) {
 static void setup_monitor_timer(void) {
 	struct sigaction sa;
 	struct itimerval timer;
+	int ret;
 
 	if ((config.stats_interval.tv_sec == 0) && (config.stats_interval.tv_usec == 0)) /* no updates */
 		return;
