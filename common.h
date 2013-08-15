@@ -73,10 +73,15 @@ typedef enum { no = 0, false = 0, yes = 1, true = 1 } __PACKED bool;
 #endif
 
 #define PERIOD .
-#define BUILD_TIME_VAL(a,b,c) str(a) xstr(PERIOD) str(b) str(c)
+#define BUILD_TIME_VAL(a,b,c) __STR(a) __XSTR(PERIOD) __STR(b) __STR(c)
 
-#define xstr(s) str(s)
-#define str(s) #s
+#define ___STR(x...)	#x
+#define __STR(x...)	___STR(x)
+#define __XSTR(s)	__STR(s)
+//#define __STR(s) #s
+
+#define ___PASTE(a,b) a##b
+#define __PASTE(a,b) ___PASTE(a,b)
 
 #if __STDC_VERSION__ == 199901L
 #define asm __asm__
