@@ -375,7 +375,7 @@ int make_spin_pair(int fd[2]) {
 			} while (0); \
 		}
 
-inline void __PINGPONG_FN comm_ping_spin(int thread_num) {
+void __PINGPONG_FN comm_ping_spin(int thread_num) {
 	static void *sync_mem_method_table[] = {
 		&&PING_LOOP_LABEL_0, &&PING_LOOP_LABEL_1,
 		&&PING_LOOP_LABEL_2, &&PING_LOOP_LABEL_3,
@@ -397,7 +397,7 @@ inline void __PINGPONG_FN comm_ping_spin(int thread_num) {
 
 }
 
-inline void __PINGPONG_FN comm_pong_spin(int thread_num) {
+void __PINGPONG_FN comm_pong_spin(int thread_num) {
 	static void *sync_mem_method_table[] = {
 		&&PONG_LOOP_LABEL_0, &&PONG_LOOP_LABEL_1,
 		&&PONG_LOOP_LABEL_2, &&PONG_LOOP_LABEL_3,
