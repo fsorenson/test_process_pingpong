@@ -210,6 +210,9 @@ extern void *SPIN_FUNCTION_DESCRIPTION_SECTION_START;
 extern void *SPIN_FUNCTION_DESCRIPTION_SECTION_STOP;
 
 
+static struct spin_memsync_struct *mem_sync_method_ping_info = 0;
+static struct spin_memsync_struct *mem_sync_method_pong_info = 0;
+
 static int compare_memsync_structs(const void *p1, const void *p2) {
 	struct spin_memsync_struct *s1 = * (struct spin_memsync_struct * const *)p1;
 	struct spin_memsync_struct *s2 = * (struct spin_memsync_struct * const *)p2;
@@ -297,9 +300,13 @@ int comm_spin_show_options(const char *indent_string) {
 }
 
 int comm_spin_parse_options(const char *option_string) {
-	int max_value = sync_method_count - 1;
+	int max_value;
 	long value;
 	char *p_remainder;
+
+	setup_memsync_info();
+
+	max_value = spin_memsync_method_count - 1;
 
 	value = strtol(option_string, &p_remainder, 10);
 	if (((value < 0) || (value > max_value)) || (option_string == p_remainder)) {
@@ -321,8 +328,19 @@ int comm_spin_parse_options(const char *option_string) {
 		mem_sync_method_pong = value;
 	} else {
 		printf("Unrecognized option value specified ('%s').  Pong falling back to use '%s' as with ping\n",
-			p_remainder, sync_method_string[mem_sync_method_ping]);
+			p_remainder, spin_memsync_info[mem_sync_method_ping]->description);
 	}
+
+	if (mem_sync_method_ping == -1) {
+		printf("No memory sync method specified.  Defaulting to '%s'\n", sync_method_string[0]);
+		mem_sync_method_ping = 0;
+		mem_sync_method_pong = 0;
+	}
+	mem_sync_method_ping_info = spin_memsync_info[mem_sync_method_ping];
+	mem_sync_method_pong_info = spin_memsync_info[mem_sync_method_pong];
+
+	drop_memsync_info();
+
 	return 0;
 }
 
@@ -334,9 +352,16 @@ int make_spin_pair(int fd[2]) {
 			PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0);
 		*spin_var = 0;
 		if (mem_sync_method_ping == -1) {
+			setup_memsync_info();
+
 			printf("No memory sync method specified.  Defaulting to '%s'\n", sync_method_string[0]);
 			mem_sync_method_ping = 0;
 			mem_sync_method_pong = 0;
+
+			mem_sync_method_ping_info = spin_memsync_info[mem_sync_method_ping];
+			mem_sync_method_pong_info = spin_memsync_info[mem_sync_method_pong];
+
+			drop_memsync_info();
 		}
 	}
 
