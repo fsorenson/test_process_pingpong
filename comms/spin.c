@@ -348,7 +348,6 @@ inline void __PINGPONG_FN comm_pong_spin(int thread_num) {
 		};
 	(void)thread_num;
 
-	local_spin_var = spin_var;
 
 	goto *sync_mem_method_table[mem_sync_method_pong];
 
