@@ -348,9 +348,6 @@ int make_spin_pair(int fd[2]) {
 	static int spin_num = 0;
 
 	if (spin_num == 0) {
-		spin_var = mmap(NULL, sizeof(int),
-			PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0);
-		*spin_var = 0;
 		if (mem_sync_method_ping == -1) {
 			setup_memsync_info();
 
@@ -363,6 +360,16 @@ int make_spin_pair(int fd[2]) {
 
 			drop_memsync_info();
 		}
+
+		if (mem_sync_method_ping_info == mem_sync_method_pong_info)
+			dprintf("Both ping & pong using memory sync method '%s'\n", mem_sync_method_ping_info->description);
+		else
+			dprintf("ping will sync memory using memory sync method '%s', and pong will use '%s'\n",
+				mem_sync_method_ping_info->description, mem_sync_method_pong_info->description);
+
+		spin_var = mmap(NULL, sizeof(int),
+			PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0);
+		*spin_var = 0;
 	}
 
 	fd[0] = spin_num;
