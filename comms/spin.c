@@ -59,11 +59,11 @@ static int mem_sync_method_pong = -1;
 #define MEM_SYNC_METHOD_1 \
 	mb()
 #define MEM_SYNC_METHOD_2 \
-	msync(local_spin_var, sizeof(int), MS_SYNC)
+	msync(spin_var, sizeof(int), MS_SYNC)
 #define MEM_SYNC_METHOD_3 \
-	msync(local_spin_var, sizeof(int), MS_INVALIDATE)
+	msync(spin_var, sizeof(int), MS_INVALIDATE)
 #define MEM_SYNC_METHOD_4 \
-	msync(local_spin_var, sizeof(int), MS_ASYNC)
+	msync(spin_var, sizeof(int), MS_ASYNC)
 #define MEM_SYNC_METHOD_5 \
 	__sync_synchronize()
 #define MEM_SYNC_METHOD_6 \
@@ -189,7 +189,6 @@ inline void __PINGPONG_FN comm_ping_spin(int thread_num) {
 		};
 	(void)thread_num;
 
-	local_spin_var = spin_var;
 
 	goto *sync_mem_method_table[mem_sync_method_ping];
 
@@ -204,7 +203,6 @@ inline void __PINGPONG_FN comm_ping_spin(int thread_num) {
 }
 
 inline void __PINGPONG_FN comm_pong_spin(int thread_num) {
-	void *local_spin_var;
 	static void *sync_mem_method_table[] = {
 		&&PONG_LOOP_LABEL_0, &&PONG_LOOP_LABEL_1,
 		&&PONG_LOOP_LABEL_2, &&PONG_LOOP_LABEL_3,
