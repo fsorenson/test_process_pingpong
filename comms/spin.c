@@ -213,6 +213,8 @@ static int setup_memsync_info(void) {
 	int i;
 	char *p;
 
+	if (spin_memsync_method_count != -1)
+		return spin_memsync_method_count;
 
 	spin_memsync_method_count =
 		(((void *)&SPIN_FUNCTION_TABLE_SECTION_STOP) - ((void *)&SPIN_FUNCTION_TABLE_SECTION_START))
