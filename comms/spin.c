@@ -209,6 +209,25 @@ extern void *SPIN_FUNCTION_CODE_SECTION_STOP;
 extern void *SPIN_FUNCTION_DESCRIPTION_SECTION_START;
 extern void *SPIN_FUNCTION_DESCRIPTION_SECTION_STOP;
 
+
+static int compare_memsync_structs(const void *p1, const void *p2) {
+	struct spin_memsync_struct *s1 = * (struct spin_memsync_struct * const *)p1;
+	struct spin_memsync_struct *s2 = * (struct spin_memsync_struct * const *)p2;
+	int ret;
+
+	if (s1->sequence < s2->sequence)
+		return -1;
+	if (s1->sequence > s2->sequence)
+		return 1;
+	ret = strcmp(s1->fn_name, s2->fn_name);
+	if (ret != 0)
+		return ret;
+	ret = strcmp(s1->description, s2->description);
+	if (ret != 0)
+		return ret;
+	return (p1 < p2);
+}
+
 static int setup_memsync_info(void) {
 	int i;
 	char *p;
@@ -233,6 +252,7 @@ static int setup_memsync_info(void) {
 		spin_memsync_info[i] = (struct spin_memsync_struct *) (p + sizeof(struct spin_memsync_struct) * i);
 	}
 
+	qsort(spin_memsync_info, spin_memsync_method_count, sizeof(struct spin_memsync_struct *), &compare_memsync_structs);
 #if DEBUG_SPIN
 	for (i = 0 ; i < spin_memsync_method_count ; i ++) {
 		printf("#%d - %s (sequence %d)\n", i, spin_memsync_info[i]->description, spin_memsync_info[i]->sequence);
