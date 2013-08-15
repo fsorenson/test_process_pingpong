@@ -438,6 +438,7 @@ void __PINGPONG_FN comm_ping_spin(int thread_num) {
 		};
 	(void)thread_num;
 
+	mem_sync_method_ping_info->ping_fn();
 
 	goto *sync_mem_method_table[mem_sync_method_ping];
 
@@ -460,6 +461,7 @@ void __PINGPONG_FN comm_pong_spin(int thread_num) {
 		};
 	(void)thread_num;
 
+	mem_sync_method_pong_info->pong_fn();
 
 	goto *sync_mem_method_table[mem_sync_method_pong];
 
