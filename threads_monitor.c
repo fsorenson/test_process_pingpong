@@ -119,15 +119,19 @@ static void setup_stop_handler(void) {
 
 
 static void monitor_interrupt(int signum) {
+	static int in_interrupt = 0;
 	(void)signum;
 
+	if (in_interrupt)
+		return;
+	in_interrupt ++;
 	show_periodic_stats();
 
 	if (run_data->last_stats_time >= run_data->timeout_time) {
 		stop_handler(0);
 		return;
 	}
-
+	in_interrupt --;
 }
 
 static void setup_monitor_timer(void) {
