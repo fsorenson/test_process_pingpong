@@ -120,6 +120,26 @@ struct spin_memsync_struct {
 #define SPIN_FUNCTION_DESCRIPTION_ATTRIBUTES	__USED __attribute__((section(SPIN_FUNCTION_DESCRIPTION_SECTION_STRING), aligned(1) ))
 #define SPIN_FUNCTION_TABLE_ATTRIBUTES		__USED __attribute__((section(SPIN_FUNCTION_TABLE_SECTION_STRING), used, aligned(4)))
 
+#define SPIN_FUNCTION_DESCRIPTION(_sym,_desc)						\
+	static const char SPIN_MAKE_NAME(_sym, _descr)[]				\
+		SPIN_FUNCTION_DESCRIPTION_ATTRIBUTES \
+		= _desc
+
+#define SPIN_FUNCTION_SYMBOL_NAME(_sym) \
+	static const char SPIN_MAKE_NAME(_sym, _name)[]					\
+		SPIN_FUNCTION_SYMBOL_NAME_ATTRIBUTES \
+		= SPIN_MAKE_NAME_STRING(_sym, _name)
+
+#define SPIN_PING_FUNCTION_NAME_STRING(_sym) \
+	static const char SPIN_MAKE_PING_NAME(_sym)[]					\
+		SPIN_FUNCTION_SYMBOL_NAME_ATTRIBUTES \
+		= SPIN_MAKE_PING_NAME(_sym)
+
+#define SPIN_PONG_FUNCTION_NAME_STRING(_sym) \
+	static const char SPIN_MAKE_PONG_NAME(_sym)[]					\
+		SPIN_FUNCTION_SYMBOL_NAME_ATTRIBUTES \
+		= SPIN_MAKE_PONG_NAME(_sym)
+
 static struct spin_memsync_struct **spin_memsync_info;
 static int spin_memsync_method_count = -1;
 
