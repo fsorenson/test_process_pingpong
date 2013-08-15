@@ -359,7 +359,7 @@ int comm_spin_parse_options(const char *option_string) {
 	}
 
 	if (mem_sync_method_ping == -1) {
-		printf("No memory sync method specified.  Defaulting to '%s'\n", sync_method_string[0]);
+		printf("No memory sync method specified.  Defaulting to '%s'\n", spin_memsync_info[0]->description);
 		mem_sync_method_ping = 0;
 		mem_sync_method_pong = 0;
 	}
@@ -378,7 +378,7 @@ int make_spin_pair(int fd[2]) {
 		if (mem_sync_method_ping == -1) {
 			setup_memsync_info();
 
-			printf("No memory sync method specified.  Defaulting to '%s'\n", sync_method_string[0]);
+			printf("No memory sync method specified.  Defaulting to '%s'\n", spin_memsync_info[0]->description);
 			mem_sync_method_ping = 0;
 			mem_sync_method_pong = 0;
 
