@@ -209,6 +209,26 @@ extern void *SPIN_FUNCTION_CODE_SECTION_STOP;
 extern void *SPIN_FUNCTION_DESCRIPTION_SECTION_START;
 extern void *SPIN_FUNCTION_DESCRIPTION_SECTION_STOP;
 
+static int setup_memsync_info(void) {
+	int i;
+	char *p;
+
+
+	spin_memsync_method_count =
+		(((void *)&SPIN_FUNCTION_TABLE_SECTION_STOP) - ((void *)&SPIN_FUNCTION_TABLE_SECTION_START))
+		/ sizeof(struct spin_memsync_struct);
+
+#if DEBUG_SPIN
+	printf("Found %d memsync methods\n", spin_memsync_method_count);
+	printf("size of spin_memsync_struct = %lu\n", sizeof(struct spin_memsync_struct));
+	printf("allocated %d x %lu bytes\n", spin_memsync_method_count, sizeof(struct spin_memsync_struct *));
+#endif
+
+	spin_memsync_info = calloc(spin_memsync_method_count, sizeof(struct spin_memsync_struct *));
+
+	return spin_memsync_method_count;
+}
+
 static const char *sync_method_string[] = {
 	MEM_SYNC_METHOD_NAME_0,
 	MEM_SYNC_METHOD_NAME_1,
