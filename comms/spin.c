@@ -197,6 +197,18 @@ struct spin_memsync_struct {
 static struct spin_memsync_struct **spin_memsync_info;
 static int spin_memsync_method_count = -1;
 
+extern struct spin_memsync_struct SPIN_FUNCTION_TABLE_SECTION_START;
+extern struct spin_memsync_struct SPIN_FUNCTION_TABLE_SECTION_STOP;
+
+extern void *SPIN_FUNCTION_NAME_SECTION_START;
+extern void *SPIN_FUNCTION_NAME_SECTION_STOP;
+
+extern void *SPIN_FUNCTION_CODE_SECTION_START;
+extern void *SPIN_FUNCTION_CODE_SECTION_STOP;
+
+extern void *SPIN_FUNCTION_DESCRIPTION_SECTION_START;
+extern void *SPIN_FUNCTION_DESCRIPTION_SECTION_STOP;
+
 static const char *sync_method_string[] = {
 	MEM_SYNC_METHOD_NAME_0,
 	MEM_SYNC_METHOD_NAME_1,
