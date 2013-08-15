@@ -294,16 +294,6 @@ static void drop_memsync_info(void) {
 	spin_memsync_method_count = -1;
 }
 
-static const char *sync_method_string[] = {
-	MEM_SYNC_METHOD_NAME_0,
-	MEM_SYNC_METHOD_NAME_1,
-	MEM_SYNC_METHOD_NAME_2,
-	MEM_SYNC_METHOD_NAME_3,
-	MEM_SYNC_METHOD_NAME_4,
-	MEM_SYNC_METHOD_NAME_5,
-	MEM_SYNC_METHOD_NAME_6
-};
-
 int comm_spin_show_options(const char *indent_string) {
 	int i;
 
