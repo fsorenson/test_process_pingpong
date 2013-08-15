@@ -281,8 +281,6 @@ static const char *sync_method_string[] = {
 	MEM_SYNC_METHOD_NAME_6
 };
 
-static int sync_method_count = sizeof(sync_method_string) / sizeof(sync_method_string[0]);
-
 int comm_spin_show_options(const char *indent_string) {
 	int i;
 
