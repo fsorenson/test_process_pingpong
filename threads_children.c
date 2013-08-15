@@ -49,11 +49,14 @@ static int send_thread_stats(int thread_num) {
 #ifndef RUSAGE_THREAD
 #define RUSAGE_THREAD 1
 #endif
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wcast-qual"
 	if (getrusage(RUSAGE_THREAD, (struct rusage *)&run_data->thread_stats[thread_num].rusage) == -1) {
 		perror("getting rusage");
 	}
 
 	clock_gettime(CLOCK_THREAD_CPUTIME_ID, (struct timespec *)&run_data->thread_stats[thread_num].thread_time);
+#pragma GCC diagnostic pop
 
 	if (config.set_affinity == true)
 		run_data->thread_stats[thread_num].tsc = rdtsc(NULL);

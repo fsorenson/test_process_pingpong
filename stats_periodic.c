@@ -36,8 +36,11 @@ int gather_periodic_stats(struct interval_stats_struct *i_stats) {
 	i_stats->current_count = run_data->ping_count;
 	i_stats->current_time = get_time();
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wcast-qual"
 	wait4(run_data->thread_info[0].pid, &proc_status, WNOHANG, (struct rusage *)&run_data->thread_stats[0].rusage);
 	wait4(run_data->thread_info[1].pid, &proc_status, WNOHANG, (struct rusage *)&run_data->thread_stats[1].rusage);
+#pragma GCC diagnostic pop
 
 	i_stats->run_time = i_stats->current_time - run_data->start_time;
 	i_stats->interval_time = i_stats->current_time - run_data->last_stats_time;
