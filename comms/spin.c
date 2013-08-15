@@ -72,6 +72,8 @@ static int mem_sync_method_pong = -1;
 #define do_mem_sync_method(val) \
 	MEM_SYNC_METHOD_##val
 
+typedef void (*spin_pingpong_method_t)(void);
+
 #pragma pack(4)
 struct spin_memsync_struct {
 	const int sequence; /* ordering of the functions */
