@@ -169,6 +169,17 @@ struct spin_memsync_struct {
 		} while (0); \
 	}
 
+#define SPIN_FUNCTION_TABLE_ENTRY(_sequence, _sym) \
+	static const struct spin_memsync_struct SPIN_MAKE_NAME(_sym, _ftab_e)			\
+			SPIN_FUNCTION_TABLE_ATTRIBUTES					\
+		= {									\
+			_sequence,							\
+			__STR(_sym),							\
+			SPIN_MAKE_NAME(_sym, _descr),					\
+			(spin_pingpong_method_t)SPIN_MAKE_PING_NAME(_sym),					\
+			(spin_pingpong_method_t)SPIN_MAKE_PONG_NAME(_sym)		\
+		}
+
 #define spin_define_function(_sequence,_sym,_desc,_code)					\
 	SPIN_PING_FUNCTION_DECL(_sym);								\
 	SPIN_PING_FUNCTION_DECL(_sym) {								\
@@ -181,6 +192,7 @@ struct spin_memsync_struct {
 \
 	SPIN_FUNCTION_DESCRIPTION(_sym,_desc);							\
 	SPIN_FUNCTION_SYMBOL_NAME(_sym);							\
+	SPIN_FUNCTION_TABLE_ENTRY(_sequence, _sym);
 
 static struct spin_memsync_struct **spin_memsync_info;
 static int spin_memsync_method_count = -1;
