@@ -449,51 +449,16 @@ int make_spin_pair(int fd[2]) {
 		}
 
 void __PINGPONG_FN comm_ping_spin(int thread_num) {
-	static void *sync_mem_method_table[] = {
-		&&PING_LOOP_LABEL_0, &&PING_LOOP_LABEL_1,
-		&&PING_LOOP_LABEL_2, &&PING_LOOP_LABEL_3,
-		&&PING_LOOP_LABEL_4, &&PING_LOOP_LABEL_5,
-		&&PING_LOOP_LABEL_6
-		};
 	(void)thread_num;
 
 	mem_sync_method_ping_info->ping_fn();
-
-	goto *sync_mem_method_table[mem_sync_method_ping];
-
-	PING_LOOP_METHOD(0);
-	PING_LOOP_METHOD(1);
-	PING_LOOP_METHOD(2);
-	PING_LOOP_METHOD(3);
-	PING_LOOP_METHOD(4);
-	PING_LOOP_METHOD(5);
-	PING_LOOP_METHOD(6);
-
 }
 
 void __PINGPONG_FN comm_pong_spin(int thread_num) {
-	static void *sync_mem_method_table[] = {
-		&&PONG_LOOP_LABEL_0, &&PONG_LOOP_LABEL_1,
-		&&PONG_LOOP_LABEL_2, &&PONG_LOOP_LABEL_3,
-		&&PONG_LOOP_LABEL_4, &&PONG_LOOP_LABEL_5,
-		&&PONG_LOOP_LABEL_6
-		};
 	(void)thread_num;
 
 	mem_sync_method_pong_info->pong_fn();
 
-	goto *sync_mem_method_table[mem_sync_method_pong];
-
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wcast-qual"
-	PONG_LOOP_METHOD(0);
-	PONG_LOOP_METHOD(1);
-	PONG_LOOP_METHOD(2);
-	PONG_LOOP_METHOD(3);
-	PONG_LOOP_METHOD(4);
-	PONG_LOOP_METHOD(5);
-	PONG_LOOP_METHOD(6);
-#pragma GCC diagnostic pop
 }
 
 int __CONST cleanup_spin(void) {
