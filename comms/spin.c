@@ -198,6 +198,24 @@ struct spin_memsync_struct {
 	SPIN_FUNCTION_SYMBOL_NAME(_sym);							\
 	SPIN_FUNCTION_TABLE_ENTRY(_sequence, _sym);
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-function"
+#pragma GCC diagnostic ignored "-Wcast-qual"
+
+// also, see symbol table-related stuff in include/asm-generic/vmlinux.lds.h
+
+spin_define_function(3, none, "no memory sync", asm("") );
+spin_define_function(4, mem_barrier, "mb()", mb() );
+spin_define_function(5, mem_barrier2, "mb2()/memory clobber", mb2() );
+spin_define_function(6, msync_sync, "msync( MS_SYNC )", msync((void *)spin_var, sizeof(int), MS_SYNC); );
+spin_define_function(7, msync_inval, "msync( MS_INVALIDATE )", msync((void *)spin_var, sizeof(int), MS_INVALIDATE) );
+spin_define_function(8, msync_async, "msync( MS_ASYNC )", msync((void *)spin_var, sizeof(int), MS_ASYNC) );
+spin_define_function(9, sync_sync, "__sync_synchronize()", __sync_synchronize() );
+spin_define_function(10, asm_clobber, "asm memory clobber",  );
+//  = 5  (lock; addl $0,0(%%esp))  ... trying it out
+
+#pragma GCC diagnostic pop
+
 static struct spin_memsync_struct **spin_memsync_info;
 static int spin_memsync_method_count = -1;
 
