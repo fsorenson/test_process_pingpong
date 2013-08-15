@@ -422,32 +422,6 @@ int make_spin_pair(int fd[2]) {
 	return 0;
 }
 
-#define PING_LOOP_METHOD(val) \
-	PING_LOOP_LABEL_ ## val: \
-		dprintf("Pinging with %s\n", MEM_SYNC_METHOD_NAME_ ## val); \
-		while (1) { \
-			run_data->ping_count ++; \
-\
-			do { \
-				*spin_var = 1; \
-				do_mem_sync_method(val); \
-			} while (0); \
-			while (*spin_var != 0) { \
-			} \
-		}
-
-#define PONG_LOOP_METHOD(val) \
-	PONG_LOOP_LABEL_ ## val: \
-		dprintf("Ponging with %s\n", MEM_SYNC_METHOD_NAME_ ## val); \
-		while (1) { \
-			while (*spin_var != 1) { \
-			} \
-			do { \
-				*spin_var = 0; \
-				do_mem_sync_method(val); \
-			} while (0); \
-		}
-
 void __PINGPONG_FN comm_ping_spin(int thread_num) {
 	(void)thread_num;
 
