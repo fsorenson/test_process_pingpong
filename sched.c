@@ -66,10 +66,10 @@ int parse_sched(char *arg) {
 
 	arg_copy = strdup(arg);
 	tok = strtok_r(arg_copy, ":", &saveptr);
-	if (! strcmp(tok, "fifo")) {
+	if (strcmp(tok, "fifo") == 0) {
 		config.sched_policy = SCHED_FIFO;
 		config.sched_prio = (int)strtol(saveptr, NULL, 10);
-	} else if (! strcmp(tok, "rr")) {
+	} else if (strcmp(tok, "rr") == 0) {
 		config.sched_policy = SCHED_RR;
 		config.sched_prio = (int)strtol(saveptr, NULL, 10);
 	}

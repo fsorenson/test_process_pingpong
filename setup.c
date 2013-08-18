@@ -92,13 +92,13 @@ printf(
 }
 
 int parse_thread_mode(char *arg) {
-	if (! strcmp(arg, "fork") )
+	if (strcmp(arg, "fork") == 0 )
 		config.thread_mode = thread_mode_fork;
-	else if (! strcmp(arg, "pthread") )
+	else if (strcmp(arg, "pthread") == 0)
 		config.thread_mode = thread_mode_pthread;
-	else if (! strcmp(arg, "clone") )
+	else if (strcmp(arg, "clone") == 0)
 		config.thread_mode = thread_mode_thread;
-	else if (! strcmp(arg, "thread") )
+	else if (strcmp(arg, "thread") == 0)
 		config.thread_mode = thread_mode_thread;
 	else {
 		printf("Unknown threading mode: '%s'\n", arg);

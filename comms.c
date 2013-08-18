@@ -37,7 +37,7 @@ int parse_comm_mode(char *arg) {
 
 	config.comm_mode_index = 0;
 	for (i = 0 ; i < comm_mode_count ; i ++)
-		if (! strcmp(arg, comm_mode_info[i].name)) {
+		if (strcmp(arg, comm_mode_info[i].name) == 0) {
 			config.comm_mode_index = i;
 			return i;
 		}
