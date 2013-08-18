@@ -41,14 +41,10 @@ int comm_makepair_namedpipe(int fd[2]) {
 	int ret;
 
 	if (namedpipe_num == 0) {
-		if ((ret = mkfifo(namedpipe_names[0], 0666)) < 0) {
-			printf("Unable to create a fifo: %s\n", strerror(errno));
-			exit(1);
-		}
-		if ((ret = mkfifo(namedpipe_names[1], 0666)) < 0) {
-			printf("Unable to create a fifo: %s\n", strerror(errno));
-			exit(1);
-		}
+		if ((ret = mkfifo(namedpipe_names[0], 0666)) < 0)
+			exit_fail("Unable to create a fifo: %s\n", strerror(errno));
+		if ((ret = mkfifo(namedpipe_names[1], 0666)) < 0)
+			exit_fail("Unable to create a fifo: %s\n", strerror(errno));
 
 		if ((fds[0] = open(namedpipe_names[0], O_RDWR)) < 0) {
 			printf("Error opening fifo %s: %s\n", namedpipe_names[0], strerror(errno));

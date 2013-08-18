@@ -69,11 +69,9 @@ int comm_nop_parse_options(const char *option_string) {
 	char *p_remainder;
 
 	value = strtol(option_string, &p_remainder, 10);
-	if ((value < 0) || (value > max_value) || (option_string == p_remainder)) {
-		printf("Unable to parse '%s' -- expected an integer from 0-%d\n",
+	if ((value < 0) || (value > max_value) || (option_string == p_remainder))
+		exit_fail("Unable to parse '%s' -- expected an integer from 0-%d\n",
 			option_string, max_value);
-		exit(1);
-	}
 
 	nop_variety = value;
 
@@ -182,7 +180,7 @@ inline void __PINGPONG_FN comm_ping_nop(int thread_num) {
 			}
 		}
 		default:
-			exit(1);
+			exit_fail("Unable to determine which nop() to run\n");
 	}
 }
 

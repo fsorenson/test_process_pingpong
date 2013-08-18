@@ -299,11 +299,9 @@ int comm_spin_parse_options(const char *option_string) {
 	max_value = spin_memsync_method_count - 1;
 
 	value = strtol(option_string, &p_remainder, 10);
-	if (((value < 0) || (value > max_value)) || (option_string == p_remainder)) {
-		printf("Unable to correctly parse '%s'...  expected an integer from 0-%d\n",
+	if (((value < 0) || (value > max_value)) || (option_string == p_remainder))
+		exit_fail("Unable to correctly parse '%s'...  expected an integer from 0-%d\n",
 			option_string, max_value);
-		exit(1);
-	}
 	mem_sync_method_ping = value;
 
 	if (*p_remainder == '\0') {
@@ -311,10 +309,8 @@ int comm_spin_parse_options(const char *option_string) {
 	} else if (*p_remainder == ',') {
 		p_remainder ++;
 		value = strtol(p_remainder, NULL, 10);
-		if ((value < 0) || (value > max_value)) {
-			printf("Option value %ld is outside the appropriate range (0-%d)\n", value, max_value);
-			exit(1);
-		}
+		if ((value < 0) || (value > max_value))
+			exit_fail("Option value %ld is outside the appropriate range (0-%d)\n", value, max_value);
 		mem_sync_method_pong = value;
 	} else {
 		printf("Unrecognized option value specified ('%s').  Pong falling back to use '%s' as with ping\n",

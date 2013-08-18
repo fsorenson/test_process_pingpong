@@ -53,56 +53,36 @@ int make_tcp_pair(int fd[2]) {
 		hints.ai_family = AF_UNSPEC;
 		hints.ai_socktype = SOCK_STREAM;
 		hints.ai_flags = AI_PASSIVE;
-		if ((ret = getaddrinfo("127.0.0.1", "3490", &hints, &res)) != 0) {
-			printf("error with getaddrinfo(): %s\n", gai_strerror(ret));
-			exit(-1);
-		}
+		if ((ret = getaddrinfo("127.0.0.1", "3490", &hints, &res)) != 0)
+			exit_fail("error with getaddrinfo(): %s\n", gai_strerror(ret));
 
 
-		if ((sockfd1 = socket(res->ai_family, res->ai_socktype, res->ai_protocol)) == -1) {
-			printf("Error creating socket: %s\n", strerror(errno));
-			exit(-1);
-		}
-		if (setsockopt(sockfd1, SOL_SOCKET, SO_REUSEADDR, &yes_flag, sizeof(int)) == -1) {
-			printf("Error with setsockopt: %s\n", strerror(errno));
-			exit(-1);
-		}
-		if (bind(sockfd1, res->ai_addr, res->ai_addrlen) == -1) {
-			printf("Error with bind: %s\n", strerror(errno));
-			exit(-1);
-		}
-		if (listen(sockfd1, 1) == -1) {
-			printf("Error with listen: %s\n", strerror(errno));
-			exit(-1);
-		}
+		if ((sockfd1 = socket(res->ai_family, res->ai_socktype, res->ai_protocol)) == -1)
+			exit_fail("Error creating socket: %s\n", strerror(errno));
+		if (setsockopt(sockfd1, SOL_SOCKET, SO_REUSEADDR, &yes_flag, sizeof(int)) == -1)
+			exit_fail("Error with setsockopt: %s\n", strerror(errno));
+		if (bind(sockfd1, res->ai_addr, res->ai_addrlen) == -1)
+			exit_fail("Error with bind: %s\n", strerror(errno));
+		if (listen(sockfd1, 1) == -1)
+			exit_fail("Error with listen: %s\n", strerror(errno));
 
 
 
-		if ((tcp_fds[1] = socket(res->ai_family, res->ai_socktype, res->ai_protocol)) == -1) {
-			printf("Error creating socket: %s\n", strerror(errno));
-			exit(-1);
-		}
-		if (connect(tcp_fds[1], res->ai_addr, res->ai_addrlen) == -1) {
-			printf("Error with connect: %s\n", strerror(errno));
-			exit(-1);
-		}
+		if ((tcp_fds[1] = socket(res->ai_family, res->ai_socktype, res->ai_protocol)) == -1)
+			exit_fail("Error creating socket: %s\n", strerror(errno));
+		if (connect(tcp_fds[1], res->ai_addr, res->ai_addrlen) == -1)
+			exit_fail("Error with connect: %s\n", strerror(errno));
 
 			/* */
 		addr_size = sizeof(remote_addr);
-		if ((tcp_fds[0] = accept(sockfd1, (struct sockaddr *)&remote_addr, &addr_size)) == -1) {
-			printf("Error with accept: %s\n", strerror(errno));
-			exit(-1);
-		}
+		if ((tcp_fds[0] = accept(sockfd1, (struct sockaddr *)&remote_addr, &addr_size)) == -1)
+			exit_fail("Error with accept: %s\n", strerror(errno));
 
 		if (config.uid == 0) {
-			if (setsockopt(tcp_fds[0], SOL_SOCKET, TCP_NODELAY, &yes_flag, sizeof(int)) == -1) {
-				printf("Error with setsockopt(TCP_NODELAY): %s\n", strerror(errno));
-				exit(-1);
-			}
-			if (setsockopt(tcp_fds[0], SOL_SOCKET, TCP_QUICKACK, &yes_flag, sizeof(int)) == -1) {
-				printf("Error with setsockopt (TCP_QUICKACK): %s\n", strerror(errno));
-				exit(-1);
-			}
+			if (setsockopt(tcp_fds[0], SOL_SOCKET, TCP_NODELAY, &yes_flag, sizeof(int)) == -1)
+				exit_fail("Error with setsockopt(TCP_NODELAY): %s\n", strerror(errno));
+			if (setsockopt(tcp_fds[0], SOL_SOCKET, TCP_QUICKACK, &yes_flag, sizeof(int)) == -1)
+				exit_fail("Error with setsockopt (TCP_QUICKACK): %s\n", strerror(errno));
 		}
 	}
 
