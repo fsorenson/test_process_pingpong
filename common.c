@@ -154,7 +154,9 @@ inline void set_affinity(int cpu) {
 	cpu_set_t mask;
 	CPU_ZERO(&mask);
 	CPU_SET((size_t)cpu, &mask);
-	sched_setaffinity(0, sizeof(cpu_set_t), &mask);
+
+	if (sched_setaffinity(0, sizeof(cpu_set_t), &mask) == -1)
+		exit_fail("Error setting affinity: %s\n", strerror(errno));
 }
 
 long double get_time(void) {
