@@ -44,7 +44,7 @@ static int do_fork(void) {
 		pid = fork();
 		if (pid == 0) { /* child proc */ /* pong */
 			do_thread_work(thread_num);
-			exit(0);
+			exit(EXIT_SUCCESS);
 		} else if (pid > 0) {
 			run_data->thread_info[thread_num].pid = pid;
 		} else

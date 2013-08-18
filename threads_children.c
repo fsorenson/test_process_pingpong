@@ -105,7 +105,7 @@ static void interrupt_thread(int signum) {
 		read_sched_proc(thread_num);
 
 		config.comm_cleanup();
-		exit(0);
+		exit(EXIT_SUCCESS);
 	}
 }
 
@@ -207,7 +207,7 @@ void __NORETURN do_thread_work(int thread_num) {
 
 
 	config.comm_cleanup();
-	exit(0);
+	exit(EXIT_SUCCESS);
 }
 
 int __NORETURN thread_function(void *argument) {

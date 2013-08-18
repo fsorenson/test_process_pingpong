@@ -104,7 +104,7 @@ static void stop_handler(int signum) {
 
 	monitor_cleanup();
 
-	exit(0);
+	exit(EXIT_SUCCESS);
 }
 
 static void setup_stop_handler(void) {
