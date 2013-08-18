@@ -107,7 +107,7 @@ struct timeval str_to_timeval(const char *string);
 volatile void *bytecopy(volatile void *const dest, volatile void const *const src, size_t bytes);
 int safe_write(int fd, char *buffer, int buffer_len, const char *fmt, ...)
 	__attribute__((format(printf, 4, 5) )) ;
-void __NORETURN exit_fail(const char *fmt, ...) ;
+void __NORETURN exit_fail(const char *fmt, ...)
 	__attribute__((format(printf, 1, 2) )) ;
 
 int do_sleep(long sec, long nsec);
