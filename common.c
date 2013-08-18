@@ -106,6 +106,20 @@ int safe_write(int fd, char *buffer, int buffer_len, const char *fmt, ...) {
 	return ret;
 }
 
+void exit_fail(const char *fmt, ...) {
+#define OUTPUT_BUFFER_LEN 400
+	static char output_buffer[OUTPUT_BUFFER_LEN];
+	size_t output_buffer_len = OUTPUT_BUFFER_LEN;
+#undef OUTPUT_BUFFER_LEN
+	va_list ap;
+
+	va_start(ap, fmt);
+	safe_write(1, output_buffer, output_buffer_len, fmt, ap);
+	va_end(ap);
+
+	exit(EXIT_FAILURE);
+}
+
 
 int do_sleep(long sec, long nsec) {
 	struct timespec ts;
