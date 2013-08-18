@@ -90,7 +90,7 @@ int safe_write(int fd, char *buffer, int buffer_len, const char *fmt, ...) {
 	str_len = strlen(buffer);
 	if ((ret < 0) || (ret >= buffer_len) || (str_len >= buffer_len) || (ret != str_len)) {
 		char out_buf[100];
-		snprintf(out_buf, 100, "Error with vsnprintf...  snprintf returned %d, but strlen is %d\n",
+		(void)snprintf(out_buf, 100, "Error with vsnprintf...  snprintf returned %d, but strlen is %d\n",
 			ret, str_len);
 		write(1, out_buf, strlen(out_buf));
 	}
@@ -98,9 +98,9 @@ int safe_write(int fd, char *buffer, int buffer_len, const char *fmt, ...) {
 	ret = write(fd, buffer, str_len);
 	if (ret < 0) {
 		char out_buf[200];
-		snprintf(out_buf, 200, "Error with write(%d)...  expected to write %d: %s\n",
+		(void)snprintf(out_buf, 200, "Error with write(%d)...  expected to write %d: %s\n",
 			fd, str_len, strerror(errno));
-		write(1, out_buf, strlen(out_buf));
+		(void)write(1, out_buf, strlen(out_buf));
 	}
 
 	return ret;
