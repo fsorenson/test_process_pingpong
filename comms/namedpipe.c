@@ -91,7 +91,7 @@ int __attribute__((noreturn)) comm_cleanup_namedpipe(void) {
 	close(fds[1]);
 	unlink(namedpipe_names[0]);
 	unlink(namedpipe_names[1]);
-	exit(0);
+	exit(EXIT_SUCCESS);
 }
 
 static struct comm_mode_ops_struct comm_ops_namedpipe = {
