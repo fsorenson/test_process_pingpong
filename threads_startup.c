@@ -140,7 +140,7 @@ static void init_threads(void) {
 
 }
 
-int start_threads(void) {
+void start_threads(void) {
 	printf("parent process is %d\n", getpid());
 
 	init_threads();
@@ -155,6 +155,4 @@ int start_threads(void) {
 		exit_fail("No thread mode specified?\n");
 
 	do_monitor_work();
-
-	return 0;
 }

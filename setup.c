@@ -44,7 +44,7 @@ const char * thread_mode_strings[] = {
 	, [ thread_mode_pthread ] = "pthread"
 };
 
-static int usage(void) {
+static void usage(void) {
 	int i;
 
 	printf(
@@ -87,8 +87,6 @@ printf(
 );
 
 	printf("\n");
-
-	return 0;
 }
 
 int parse_thread_mode(char *arg) {
@@ -111,7 +109,7 @@ int parse_thread_mode(char *arg) {
 	return 0;
 }
 
-int setup_defaults(char *argv0) {
+void setup_defaults(char *argv0) {
 /* default settings */
 	config.argv0 = argv0;
 
@@ -151,11 +149,9 @@ int setup_defaults(char *argv0) {
 	config.cpu[1] = -1;
 	config.pair1 = config.pairs[0];
 	config.pair2 = config.pairs[1];
-
-	return 0;
 }
 
-int parse_opts(int argc, char *argv[]) {
+void parse_opts(int argc, char *argv[]) {
 	int opt = 0, long_index = 0;
 	char *comm_option_string = 0;
 	long double arg_ld;
@@ -232,7 +228,6 @@ int parse_opts(int argc, char *argv[]) {
 		config.cpu[0] = (short)strtol(argv[optind++], NULL, 10);
 		config.cpu[1] = (short)strtol(argv[optind++], NULL, 10);
 	}
-	return 0;
 }
 
 static void make_pairs(void) {
@@ -245,7 +240,7 @@ static void make_pairs(void) {
 	config.ear[1] = config.pairs[0][0];
 }
 
-int do_comm_setup(void) {
+void do_comm_setup(void) {
 	if (config.verbosity >= 0) {
 		printf("Configuring to run ");
 		if (config.runtime > 0)
@@ -280,7 +275,5 @@ int do_comm_setup(void) {
 	make_pairs();
 
 	set_priorities();
-
-	return 0;
 }
 

@@ -24,6 +24,6 @@
 
 #include "test_process_pingpong.h"
 
-int start_threads(void);
+void start_threads(void);
 
 #endif
