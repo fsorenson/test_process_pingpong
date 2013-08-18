@@ -42,7 +42,7 @@ inline int get_min_stack_size(void) {
 #ifdef _SC_THREAD_STACK_MIN
 	if ((minstack = sysconf(_SC_THREAD_STACK_MIN)) == -1) {
 		perror("sysconf(_SC_THREAD_STACK_MIN)");
-		exit(1);
+		exit(EXIT_FAILURE);
 	}
 #else
 	minstack = 16384;
