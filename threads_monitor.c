@@ -152,14 +152,10 @@ static void setup_monitor_timer(void) {
 	sa.sa_flags = 0;
 	sa.sa_handler = &monitor_interrupt;
 
-	if ((ret = sigaction(STATS_ALARM_SIGNAL, &sa, NULL)) == -1) {
-		printf("Error occured in monitor thread attempting to set up periodic timer: %s\n", strerror(errno));
-		exit(-1);
-	}
-	if ((ret = setitimer(ITIMER_REAL, &timer, 0)) == -1) {
-		printf("Error occurred in monitor thread attempting to set periodic timer: %s\n", strerror(errno));
-		exit(-1);
-	}
+	if ((ret = sigaction(STATS_ALARM_SIGNAL, &sa, NULL)) == -1)
+		exit_fail("Error occured in monitor thread attempting to set up periodic timer: %s\n", strerror(errno));
+	if ((ret = setitimer(ITIMER_REAL, &timer, 0)) == -1)
+		exit_fail("Error occurred in monitor thread attempting to set periodic timer: %s\n", strerror(errno));
 
 	return;
 }

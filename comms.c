@@ -75,14 +75,11 @@ void comm_mode_add(const char *comm_name) {
 		ret = realloc(comm_mode_info,
 			(long unsigned int)(comm_mode_count + COMM_MODE_LIST_INCREMENT) *
 			sizeof(struct comm_mode_info_struct));
-		if (ret == NULL) {
-			printf("Unable to reallocate memory\n");
-			exit(-1);
+		if (ret == NULL)
+			exit_fail("Unable to reallocate memory\n");
+		if (errno)
+			exit_fail("errno is nonzero, for some reason: %s\n", strerror(errno));
 
-		}
-		if (errno) {
-			printf("errno is nonzero, for some reason\n");
-		}
 		comm_mode_info = (struct comm_mode_info_struct *)ret;
 
 		offset = sizeof(struct comm_mode_info_struct) * ((long unsigned int)comm_mode_count);

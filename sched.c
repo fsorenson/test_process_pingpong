@@ -92,19 +92,15 @@ int sched_getcpu(void) {
 int num_cpus(void) {
 	int ncpu;
 
-	if ((ncpu = (int)sysconf(_SC_NPROCESSORS_CONF)) == -1) {
-		perror("sysconf(_SC_NPROCESSORS_CONF)");
-		exit(1);
-	}
+	if ((ncpu = (int)sysconf(_SC_NPROCESSORS_CONF)) == -1)
+		exit_fail("sysconf(_SC_NPROCESSORS_CONF): error: %s", strerror(errno));
 	return ncpu;
 }
 int num_online_cpus(void) {
 	int ncpu;
 
-	if ((ncpu = (int)sysconf(_SC_NPROCESSORS_ONLN)) == -1) {
-		perror("sysconf(_SC_NPROCESSORS_ONLN)");
-		exit(1);
-	}
+	if ((ncpu = (int)sysconf(_SC_NPROCESSORS_ONLN)) == -1)
+		exit_fail("sysconf(_SC_NPROCESSORS_ONLN): error: %s", strerror(errno));
 	return ncpu;
 }
 

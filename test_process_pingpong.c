@@ -49,11 +49,8 @@ int main(int argc, char *argv[]) {
 //	printf("looks like we've got %d comm modes\n", comm_mode_count);
 
 	ret = comm_mode_verify_all();
-	if (ret == false) {
-		printf("failed to initialize all modules\n");
-		exit(-1);
-
-	}
+	if (ret == false)
+		exit_fail("failed to initialize all modules\n");
 
 	setup_crash_handler();
 
