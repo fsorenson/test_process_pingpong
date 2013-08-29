@@ -27,7 +27,7 @@ parent_dir := $(shell dirname $(base_dir))
 comms_dir = comms
 objs_dir = objs
 deps_dir = deps
-stab_dir = stabs
+asm_dir = asms
 
 LDFLAGS=
 CFLAGS=
@@ -89,11 +89,11 @@ SRCS =
 
 objs =
 deps =
-stabs =
+asms =
 gcovs =
 
 sub_dirs =
-sub_dirs += $(objs) $(deps) $(stabs)
+sub_dirs += $(objs) $(deps) $(asms)
 
 # some warnings
 WARNINGS =
@@ -261,7 +261,7 @@ SRCS += $(C_SRCS) $(H_SRCS)
 
 objs += $(addprefix $(objs_dir)/, $(addsuffix .o,$(f)))
 deps += $(addprefix $(deps_dir)/, $(addsuffix .d,$(f)))
-stabs += $(addprefix $(stab_dir)/, $(addsuffix .s,$(f)))
+asms += $(addprefix $(asm_dir)/, $(addsuffix .s,$(f)))
 gcovs += $(addprefix $(objs_dir)/, $(addsuffix .gcda,$(f)))
 gcovs += $(addprefix $(objs_dir)/, $(addsuffix .gcno,$(f)))
 
@@ -283,13 +283,13 @@ comms_h_srcs = $(addprefix $(comms_dir)/, $(addsuffix .h,$(comms)))
 comms_srcs = $(comms_c_srcs) $(comms_h_srcs)
 comms_objs = $(addprefix $(objs_dir)/, $(addsuffix .o,$(comms)))
 comms_deps = $(addprefix $(deps_dir)/, $(addsuffix .d,$(comms)))
-comms_stabs += $(addprefix $(stab_dir)/, $(addsuffix .s,$(comms)))
+comms_asms += $(addprefix $(asm_dir)/, $(addsuffix .s,$(comms)))
 
 
 SRCS += $(comms_srcs)
 #objs += $(comms_objs)
 deps += $(comms_deps)
-stabs += $(comms_stabs)
+asms += $(comms_asms)
 gcovs += $(addprefix $(objs_dir)/, $(addsuffix .gcda,$(comms)))
 gcovs += $(addprefix $(objs_dir)/, $(addsuffix .gcno,$(comms)))
 
@@ -301,12 +301,12 @@ comms_glue_h_srcs = $(addsuffix .h,$(comms_glue))
 comms_glue_srcs = $(comms_glue_c_srcs) $(comms_glue_h_srcs)
 comms_glue_objs = $(addprefix $(objs_dir)/, $(addsuffix .o,$(comms_glue)))
 comms_glue_deps = $(addprefix $(deps_dir)/, $(addsuffix .d,$(comms_glue)))
-comms_glue_stabs += $(addprefix $(stab_dir)/,$(addsuffix .s,$(comms_glue)))
+comms_glue_asms += $(addprefix $(asm_dir)/,$(addsuffix .s,$(comms_glue)))
 
 SRCS += $(comms_glue_srcs)
 #objs += $(comms_glue_objs)
 deps += $(comms_glue_deps)
-stabs += $(comms_glue_stabs)
+asms += $(comms_glue_asms)
 gcovs += $(addprefix $(objs_dir)/, $(addsuffix .gcda,$(comms_glue)))
 gcovs += $(addprefix $(objs_dir)/, $(addsuffix .gcno,$(comms_glue)))
 
@@ -331,17 +331,17 @@ $(deps_dir)/%.d: $(comms_dir)/%.c $(comms_dir)/%.h
 
 $(objs_dir)/%.o: %.c  $(deps_dir)/%.d
 	@mkdir -p $(@D)
-	@mkdir -p stabs
+	@mkdir -p asms
 	@$(CC) $(CPPFLAGS) $(CFLAGS) $(WARNINGS) -c $< -o $@ \
-		-Wa,-adhlmns=$(stab_dir)/$(addsuffix .s,$(basename $(notdir $@))) -g -fverbose-asm -masm=att
-#		-Wa,-adhlmns=$(stab_dir)/$(addsuffix .s,$(basename $(notdir $@))) -g -fverbose-asm -masm=intel
+		-Wa,-adhlmns=$(asm_dir)/$(addsuffix .s,$(basename $(notdir $@))) -g -fverbose-asm -masm=att
+#		-Wa,-adhlmns=$(asm_dir)/$(addsuffix .s,$(basename $(notdir $@))) -g -fverbose-asm -masm=intel
 
 $(objs_dir)/%.o: $(comms_dir)/%.c $(deps_dir)/%.d
 	@mkdir -p $(@D)
-	@mkdir -p stabs
+	@mkdir -p asms
 	@$(CC) $(CPPFLAGS) $(CFLAGS) $(WARNINGS) -c $< -o $@ \
-		-Wa,-adhlmns=$(stab_dir)/$(addsuffix .s,$(basename $(notdir $@))) -g -fverbose-asm -masm=att
-#		-Wa,-adhlmns=$(stab_dir)/$(addsuffix .s,$(basename $(notdir $@))) -g -fverbose-asm -masm=intel
+		-Wa,-adhlmns=$(asm_dir)/$(addsuffix .s,$(basename $(notdir $@))) -g -fverbose-asm -masm=att
+#		-Wa,-adhlmns=$(asm_dir)/$(addsuffix .s,$(basename $(notdir $@))) -g -fverbose-asm -masm=intel
 
 
 
@@ -349,19 +349,19 @@ $(target):	$(comms_glue_objs) $(comms_objs) $(objs) $(deps)
 	$(CC) $(comms_glue_objs) $(comms_objs) $(objs) $(CPPFLAGS) $(CFLAGS) $(LIBS) $(WARNINGS) $(LDFLAGS) -o $@
 
 
-$(stab_dir)/%.s: $(comms_dir)/%.c $(deps_dir)/%.d
+$(asm_dir)/%.s: $(comms_dir)/%.c $(deps_dir)/%.d
 	@mkdir -p $(@D)
 	@$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -g -Wa,-ahl=$@ -o /tmp/gcc_out.log
 
 
-$(stab_dir)/%.s: %.c $(deps_dir)/%.d
+$(asm_dir)/%.s: %.c $(deps_dir)/%.d
 	@mkdir -p $(@D)
 	@$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -g -Wa,-ahl=$@ -o /tmp/gcc_out.log
 #	@$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -g -Wa,-ahl=$@ -o /dev/null
-#	$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -gstabs -g -S -Wa,-ahl=$@
-#	$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -gstabs -g -S -asm -Wa,-ahl=$@
+#	$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -gasms -g -S -Wa,-ahl=$@
+#	$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -gasms -g -S -asm -Wa,-ahl=$@
 
-stabs: $(stabs)
+asms: $(asms)
 
 
 src_release: $(SRCS)
@@ -411,7 +411,7 @@ clean:
 	@rm -f $(target) >/dev/null 2>&1
 	@rm -f $(objs) $(comms_objs) $(comms_glue_objs) >/dev/null 2>&1
 	@rm -f $(deps) >/dev/null 2>&1
-	@rm -f $(stabs) >/dev/null 2>&1
+	@rm -f $(asms) >/dev/null 2>&1
 	@rm -f $(gcovs) >/dev/null 2>&1
-	@ -rmdir $(objs_dir) $(deps_dir) $(stab_dir) >/dev/null 2>&1
+	@ -rmdir $(objs_dir) $(deps_dir) $(asm_dir) >/dev/null 2>&1
 
