@@ -180,7 +180,7 @@ int __CONST comm_no_begin(void) {
 }
 
 inline void __PINGPONG_FN comm_ping_generic(int thread_num) {
-	while (1) {
+	while (true) {
 		run_data->ping_count ++;
 
 		while (config.comm_do_send(config.mouth[thread_num]) != 1);
@@ -188,7 +188,7 @@ inline void __PINGPONG_FN comm_ping_generic(int thread_num) {
 	}
 }
 inline void __PINGPONG_FN comm_pong_generic(int thread_num) {
-	while (1) {
+	while (true) {
 		while (config.comm_do_recv(config.ear[thread_num]) != 1);
 		while (config.comm_do_send(config.mouth[thread_num]) != 1);
 	}
