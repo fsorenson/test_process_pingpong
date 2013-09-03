@@ -38,7 +38,7 @@ CPPFLAGS += -fverbose-asm
 ifeq ($(GCC_COMPAT_004001),y)
  CPPFLAGS += -std=c99
 else
- CPPFLAGS += -std=gnu11 -frecord-gcc-switches
+ CPPFLAGS += -std=c99 -frecord-gcc-switches
 endif
 
 # only enable if 'static' is really what we want
@@ -135,8 +135,7 @@ WARNINGS += --all-warnings
 #WARNINGS += -Wc++-compat 
 
 ifneq ($(GCC_COMPAT_004001),y)
- WARNINGS += -Wstrict-overflow -Wlogical-op -Wtrampolines -Wunsuffixed-float-constants -Wdouble-promotion
- WARNINGS += -Wsuggest-attribute=pure -Wsuggest-attribute=const -Wsuggest-attribute=noreturn
+ WARNINGS += -Wstrict-overflow -Wlogical-op
 endif
 
 
@@ -171,7 +170,7 @@ OPTIMIZATIONS += -fvariable-expansion-in-unroller -funswitch-loops
 #OPTIMIZATIONS += 
 
 ifneq ($(GCC_COMPAT_004001),y)
- OPTIMIZATIONS += -finline-small-functions -fstrict-overflow -fdevirtualize
+ OPTIMIZATIONS += -finline-small-functions -fstrict-overflow
 endif
 
 
