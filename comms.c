@@ -105,7 +105,7 @@ void comm_mode_mark_initialized(char *comm_mode_name) {
 	int i;
 
 	for (i = 0 ; i < comm_mode_count ; i ++) {
-		if (!strncmp(comm_mode_info[i].name, comm_mode_name, strlen(comm_mode_info[i].name))) {
+		if (strncmp(comm_mode_info[i].name, comm_mode_name, strlen(comm_mode_info[i].name)) == 0) {
 			comm_mode_info[i].initialized = true;
 			return;
 		}
@@ -120,7 +120,7 @@ void comm_mode_do_initialization(struct comm_mode_init_info_struct *init_info, s
 	for (i = 0 ; i < comm_mode_count ; i ++) {
 		if (strlen(comm_mode_info[i].name) != strlen(init_info->name))
 			continue;
-		if (!strncmp(comm_mode_info[i].name, init_info->name, strlen(comm_mode_info[i].name))) {
+		if (strncmp(comm_mode_info[i].name, init_info->name, strlen(comm_mode_info[i].name)) == 0) {
 			if (init_info->help_text != 0)
 				comm_mode_info[i].help_text = strdup(init_info->help_text);
 
