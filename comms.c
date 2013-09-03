@@ -37,7 +37,7 @@ int parse_comm_mode(char *arg) {
 
 	config.comm_mode_index = 0;
 	for (i = 0 ; i < comm_mode_count ; i ++)
-		if (! strcmp(arg, comm_mode_info[i].name)) {
+		if (strcmp(arg, comm_mode_info[i].name) == 0) {
 			config.comm_mode_index = i;
 			return i;
 		}
@@ -75,14 +75,11 @@ void comm_mode_add(const char *comm_name) {
 		ret = realloc(comm_mode_info,
 			(long unsigned int)(comm_mode_count + COMM_MODE_LIST_INCREMENT) *
 			sizeof(struct comm_mode_info_struct));
-		if (ret == NULL) {
-			printf("Unable to reallocate memory\n");
-			exit(-1);
+		if (ret == NULL)
+			exit_fail("Unable to reallocate memory\n");
+		if (errno)
+			exit_fail("errno is nonzero, for some reason: %s\n", strerror(errno));
 
-		}
-		if (errno) {
-			printf("errno is nonzero, for some reason\n");
-		}
 		comm_mode_info = (struct comm_mode_info_struct *)ret;
 
 		offset = sizeof(struct comm_mode_info_struct) * ((long unsigned int)comm_mode_count);
@@ -210,7 +207,7 @@ inline int comm_do_recv_generic(int fd) {
 int __CONST comm_no_cleanup(void) {
 	return 0;
 }
-int comm_show_no_options(const char *indent_string) {
+int __CONST comm_show_no_options(const char *indent_string) {
 	(void)indent_string;
 	return 0;
 }

@@ -49,11 +49,15 @@ static int send_thread_stats(int thread_num) {
 #ifndef RUSAGE_THREAD
 #define RUSAGE_THREAD 1
 #endif
+
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wcast-qual"
 	if (getrusage(RUSAGE_THREAD, (struct rusage *)&run_data->thread_stats[thread_num].rusage) == -1) {
 		perror("getting rusage");
 	}
 
 	clock_gettime(CLOCK_THREAD_CPUTIME_ID, (struct timespec *)&run_data->thread_stats[thread_num].thread_time);
+#pragma GCC diagnostic pop
 
 	if (config.set_affinity == true)
 		run_data->thread_stats[thread_num].tsc = rdtsc(NULL);
@@ -87,7 +91,7 @@ static void read_sched_proc(int thread_num) {
 static void interrupt_thread(int signum) {
 	int thread_num;
 
-	if (signum == SIGUSR1) {
+	if (signum == CHILD_INTERRUPT_SIGNAL0) {
 		thread_num = 0;
 	} else {
 		thread_num = 1;
@@ -101,7 +105,7 @@ static void interrupt_thread(int signum) {
 		read_sched_proc(thread_num);
 
 		config.comm_cleanup();
-		exit(0);
+		exit(EXIT_SUCCESS);
 	}
 }
 
@@ -112,9 +116,9 @@ static int setup_interrupt_signal(int thread_num) {
 	sa.sa_flags = 0;
 	sa.sa_handler = interrupt_thread;
 	if (thread_num == 0)
-		sigaction(SIGUSR1, &sa, NULL);
+		sigaction(CHILD_INTERRUPT_SIGNAL0, &sa, NULL);
 	else
-		sigaction(SIGUSR2, &sa, NULL);
+		sigaction(CHILD_INTERRUPT_SIGNAL1, &sa, NULL);
 
 	return 0;
 }
@@ -156,13 +160,13 @@ void __NORETURN do_thread_work(int thread_num) {
 	setup_cpu_dma_latency(thread_num);
 //	estimate_cpu_speed(thread_num);
 
-	safe_write(1, output_buffer, output_buffer_len, "%d: %s - thread %d, pid %d, tid %d, sid %d, pgid %d\n",
+	safe_write(config.output_fd, output_buffer, output_buffer_len, "%d: %s - thread %d, pid %d, tid %d, sid %d, pgid %d\n",
 		thread_num, run_data->thread_info[thread_num].thread_name,
 		run_data->thread_info[thread_num].thread_num,
 		run_data->thread_info[thread_num].pid, run_data->thread_info[thread_num].tid,
 		run_data->thread_info[thread_num].sid, run_data->thread_info[thread_num].pgid);
 /*
-	safe_write(1, output_buffer, output_buffer_len, "%d: %s - thread %d, pid %d, tid %d, sid %d, pgid %d, CPU estimated at %.2Lf MHz (%s cycle)\n",
+	safe_write(config.output_fd, output_buffer, output_buffer_len, "%d: %s - thread %d, pid %d, tid %d, sid %d, pgid %d, CPU estimated at %.2Lf MHz (%s cycle)\n",
 		thread_num, run_data->thread_info[thread_num].thread_name,
 		run_data->thread_info[thread_num].thread_num,
 		run_data->thread_info[thread_num].pid, run_data->thread_info[thread_num].tid,
@@ -203,7 +207,7 @@ void __NORETURN do_thread_work(int thread_num) {
 
 
 	config.comm_cleanup();
-	exit(0);
+	exit(EXIT_SUCCESS);
 }
 
 int __NORETURN thread_function(void *argument) {

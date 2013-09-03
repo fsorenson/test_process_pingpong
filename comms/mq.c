@@ -67,10 +67,8 @@ int make_mq_pair(int fd[2]) {
 		asprintf(&mqueue_path[mq_num], "/%spong", basename(config.argv0));
 	}
 
-	if ((ret = mq_open(mqueue_path[mq_num], flags, perms, &attr)) == -1) {
-		printf("Could not create mq '%s': %s\n", mqueue_path[mq_num], strerror(errno));
-		exit(-1);
-	}
+	if ((ret = mq_open(mqueue_path[mq_num], flags, perms, &attr)) == -1)
+		exit_fail("Could not create mq '%s': %s\n", mqueue_path[mq_num], strerror(errno));
 	mqueue[mq_num] = ret;
 
 //	mq_getattr(mqueue[mq_num], &attr);

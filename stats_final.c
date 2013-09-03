@@ -174,26 +174,26 @@ void output_final_stats(void) {
 
 	memset(&i_stats, 0, sizeof(struct interval_stats_struct));
 
-	safe_write(1, output_buffer, output_buffer_len, "\n");
+	safe_write(config.output_fd, output_buffer, output_buffer_len, "\n");
 
 	i_stats.current_count = run_data->ping_count;
 	i_stats.current_time = get_time();
 
 	i_stats.interval_time = i_stats.run_time = i_stats.current_time - run_data->start_time;
-	safe_write(1, output_buffer, output_buffer_len, "Elapsed time: %7s\n",
+	safe_write(config.output_fd, output_buffer, output_buffer_len, "Elapsed time: %7s\n",
 		subsec_string(temp_string1, i_stats.interval_time, 1));
 
 
 	i_stats.interval_count = i_stats.current_count;
-	safe_write(1, output_buffer, output_buffer_len, "Ping/pong count: %llu\n", i_stats.interval_count);
+	safe_write(config.output_fd, output_buffer, output_buffer_len, "Ping/pong count: %llu\n", i_stats.interval_count);
 
 
 	i_stats.iteration_time = i_stats.interval_time / i_stats.interval_count;
-	safe_write(1, output_buffer, output_buffer_len, "Ping/pong time: %s\n",
+	safe_write(config.output_fd, output_buffer, output_buffer_len, "Ping/pong time: %s\n",
 		subsec_string(temp_string2, i_stats.iteration_time, 2));
 
 
-	safe_write(1, output_buffer, output_buffer_len, "Pings/second: %llu\n",
+	safe_write(config.output_fd, output_buffer, output_buffer_len, "Pings/second: %llu\n",
 		(unsigned long long)((long double)i_stats.interval_count / i_stats.interval_time));
 
 

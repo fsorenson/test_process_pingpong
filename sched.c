@@ -25,6 +25,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <errno.h>
 
 int get_priorities(void) {
 	struct sched_param param;
@@ -65,10 +66,10 @@ int parse_sched(char *arg) {
 
 	arg_copy = strdup(arg);
 	tok = strtok_r(arg_copy, ":", &saveptr);
-	if (! strcmp(tok, "fifo")) {
+	if (strcmp(tok, "fifo") == 0) {
 		config.sched_policy = SCHED_FIFO;
 		config.sched_prio = (int)strtol(saveptr, NULL, 10);
-	} else if (! strcmp(tok, "rr")) {
+	} else if (strcmp(tok, "rr") == 0) {
 		config.sched_policy = SCHED_RR;
 		config.sched_prio = (int)strtol(saveptr, NULL, 10);
 	}
@@ -92,19 +93,15 @@ int sched_getcpu(void) {
 int num_cpus(void) {
 	int ncpu;
 
-	if ((ncpu = (int)sysconf(_SC_NPROCESSORS_CONF)) == -1) {
-		perror("sysconf(_SC_NPROCESSORS_CONF)");
-		exit(1);
-	}
+	if ((ncpu = (int)sysconf(_SC_NPROCESSORS_CONF)) == -1)
+		exit_fail("sysconf(_SC_NPROCESSORS_CONF): error: %s", strerror(errno));
 	return ncpu;
 }
 int num_online_cpus(void) {
 	int ncpu;
 
-	if ((ncpu = (int)sysconf(_SC_NPROCESSORS_ONLN)) == -1) {
-		perror("sysconf(_SC_NPROCESSORS_ONLN)");
-		exit(1);
-	}
+	if ((ncpu = (int)sysconf(_SC_NPROCESSORS_ONLN)) == -1)
+		exit_fail("sysconf(_SC_NPROCESSORS_ONLN): error: %s", strerror(errno));
 	return ncpu;
 }
 

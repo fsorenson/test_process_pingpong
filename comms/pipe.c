@@ -71,7 +71,7 @@ inline void __PINGPONG_FN comm_pong_pipe(int thread_num) {
 
 
 int __attribute__((noreturn)) comm_cleanup_pipe(void) {
-	exit(0);
+	exit(EXIT_SUCCESS);
 }
 
 static struct comm_mode_ops_struct comm_ops_pipe = {

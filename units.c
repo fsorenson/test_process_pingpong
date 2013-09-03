@@ -44,6 +44,16 @@ char *subsec_string(char *arg_buffer, long double size, int dec_pts) {
 	if (size <= 0.0L) /* don't do negatives...  I said so. */
 		mult = max_mult;
 
+	if (fpclassify(size) == FP_INFINITE) {
+		//buffer[0] = '∞';
+		buffer[0] = '\342';
+		buffer[1] = '\210';
+		buffer[2] = '\236';
+		buffer[3] = '\0';
+
+		return buffer;
+	}
+
 	int_fp = f_to_fp(dec_pts, size);
 
 	while ((size < 1.0L) && (mult < max_mult)) {

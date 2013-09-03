@@ -64,11 +64,11 @@ void __NORETURN print_backtrace2(int signum) {
 		snprintf(buf, 1024, "gdb -p %d -batch -ex thread apply all bt 2>/dev/null | "
 			"sed '0,/<signal handler/d'", dying_pid);
 		execve("/bin/sh", (char**)argv, NULL);
-		_exit(1);
+		_exit(EXIT_FAILURE);
 	} else {
 		waitpid(child_pid, NULL, 0);
 	}
-	_exit(1);
+	_exit(EXIT_FAILURE);
 }
 #else
 void print_backtrace(int signum) {
@@ -76,14 +76,14 @@ void print_backtrace(int signum) {
 }
 void __NORETURN print_backtrace2(int signum) {
 	(void)signum;
-	_exit(1);
+	_exit(EXIT_FAILURE);
 }
 #endif // ifdef __GLIBC__
 
 void __NORETURN print_backtrace_die(int signum) {
 	print_backtrace(signum);
 
-	exit(-1);
+	exit(EXIT_FAILURE);
 }
 
 void setup_child_signals(void) {

@@ -57,17 +57,13 @@ int make_inotify_pair(int fd[2]) {
 	}
 
 	ino_info[ino_num].ino_fd = inotify_init();
-	if (ino_info[ino_num].ino_fd < 0) {
-		perror("inotify_init");
-		exit(1);
-	}
+	if (ino_info[ino_num].ino_fd < 0)
+		exit_fail("inotify_init: error: %s", strerror(errno));
 
 	ino_info[ino_num].file_fd = open(ino_names[ino_num],
 		O_CREAT | O_TRUNC | O_WRONLY, S_IRUSR | S_IWUSR);
-	if (ino_info[ino_num].file_fd < 0) {
-		printf("Error opening '%s'.  Error was '%s'\n", ino_names[ino_num], strerror(errno));
-		exit(1);
-	}
+	if (ino_info[ino_num].file_fd < 0)
+		exit_fail("Error opening '%s'.  Error was '%s'\n", ino_names[ino_num], strerror(errno));
 
 	ino_info[ino_num].wd = inotify_add_watch(ino_info[ino_num].ino_fd,
 		ino_names[ino_num], IN_ALL_EVENTS);

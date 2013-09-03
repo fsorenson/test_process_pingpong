@@ -30,11 +30,15 @@
 #include <math.h>
 #include <sys/types.h>
 
+#define DEFAULT_OUTPUT_FD 1
+
 #define __CONST		__attribute__((const))
 #define __PURE		__attribute__((pure))
 #define __PACKED	__attribute__((packed))
 #define __NORETURN	__attribute__((noreturn))
 #define __HOT		__attribute__((hot))
+#define __USED		__attribute__((used))
+#define __UNUSED	__attribute__((unused))
 
 #ifndef OPTIMIZE_LEVEL
 #define OPTIMIZE_LEVEL 3
@@ -69,10 +73,15 @@ typedef enum { no = 0, false = 0, yes = 1, true = 1 } __PACKED bool;
 #endif
 
 #define PERIOD .
-#define BUILD_TIME_VAL(a,b,c) str(a) xstr(PERIOD) str(b) str(c)
+#define BUILD_TIME_VAL(a,b,c) __STR(a) __XSTR(PERIOD) __STR(b) __STR(c)
 
-#define xstr(s) str(s)
-#define str(s) #s
+#define ___STR(x...)	#x
+#define __STR(x...)	___STR(x)
+#define __XSTR(s)	__STR(s)
+//#define __STR(s) #s
+
+#define ___PASTE(a,b) a##b
+#define __PASTE(a,b) ___PASTE(a,b)
 
 #if __STDC_VERSION__ == 199901L
 #define asm __asm__
@@ -98,6 +107,8 @@ struct timeval str_to_timeval(const char *string);
 volatile void *bytecopy(volatile void *const dest, volatile void const *const src, size_t bytes);
 int safe_write(int fd, char *buffer, int buffer_len, const char *fmt, ...)
 	__attribute__((format(printf, 4, 5) )) ;
+void __NORETURN exit_fail(const char *fmt, ...)
+	__attribute__((format(printf, 1, 2) )) ;
 
 int do_sleep(long sec, long nsec);
 long double estimate_cpu_mhz(void);

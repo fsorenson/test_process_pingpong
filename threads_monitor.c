@@ -66,14 +66,14 @@ static void stop_threads(void) {
 	run_data->stop = true;
 	mb();
 
-	send_sig(run_data->thread_info[0].pid, SIGUSR1);
-	send_sig(run_data->thread_info[1].pid, SIGUSR2);
+	send_sig(run_data->thread_info[0].pid, CHILD_INTERRUPT_SIGNAL0);
+	send_sig(run_data->thread_info[1].pid, CHILD_INTERRUPT_SIGNAL1);
 }
 
 static void stop_timer(void) {
 	struct itimerval ntimeout;
 
-	signal(SIGALRM, SIG_IGN); /* ignore the timer if it alarms */
+	signal(STATS_ALARM_SIGNAL, SIG_IGN); /* ignore the timer if it alarms */
 	ntimeout.it_interval.tv_sec = ntimeout.it_interval.tv_usec = 0;
 	ntimeout.it_value.tv_sec  = ntimeout.it_value.tv_usec = 0;
 	setitimer(ITIMER_REAL, &ntimeout, NULL);        /* stop timer */
@@ -81,13 +81,14 @@ static void stop_timer(void) {
 
 static void stop_handler(int signum) {
 	static int visited = 0;
-	(void)signum;
 
 	if (visited) {
 		printf("Trying to stop a second time?\n");
 		return;
 	}
 	visited++;
+
+	printf("parent thread received signal %d (%s)\n", signum, strsignal(signum));
 
 	stop_timer();
 	stop_threads();
@@ -103,7 +104,7 @@ static void stop_handler(int signum) {
 
 	monitor_cleanup();
 
-	exit(0);
+	exit(EXIT_SUCCESS);
 }
 
 static void setup_stop_handler(void) {
@@ -119,20 +120,25 @@ static void setup_stop_handler(void) {
 
 
 static void monitor_interrupt(int signum) {
+	static int in_interrupt = 0;
 	(void)signum;
 
+	if (in_interrupt)
+		return;
+	in_interrupt ++;
 	show_periodic_stats();
 
 	if (run_data->last_stats_time >= run_data->timeout_time) {
 		stop_handler(0);
 		return;
 	}
-
+	in_interrupt --;
 }
 
 static void setup_monitor_timer(void) {
 	struct sigaction sa;
 	struct itimerval timer;
+	int ret;
 
 	if ((config.stats_interval.tv_sec == 0) && (config.stats_interval.tv_usec == 0)) /* no updates */
 		return;
@@ -146,8 +152,10 @@ static void setup_monitor_timer(void) {
 	sa.sa_flags = 0;
 	sa.sa_handler = &monitor_interrupt;
 
-	sigaction(SIGALRM, &sa, NULL);
-	setitimer(ITIMER_REAL, &timer, 0);
+	if ((ret = sigaction(STATS_ALARM_SIGNAL, &sa, NULL)) == -1)
+		exit_fail("Error occured in monitor thread attempting to set up periodic timer: %s\n", strerror(errno));
+	if ((ret = setitimer(ITIMER_REAL, &timer, 0)) == -1)
+		exit_fail("Error occurred in monitor thread attempting to set periodic timer: %s\n", strerror(errno));
 
 	return;
 }
@@ -192,7 +200,7 @@ int do_monitor_work(void) {
 
 	sigfillset(&signal_mask);
 	sigdelset(&signal_mask, SIGCHLD);
-	sigdelset(&signal_mask, SIGALRM);
+	sigdelset(&signal_mask, STATS_ALARM_SIGNAL);
 	sigdelset(&signal_mask, SIGINT);
 
 	while ((run_data->ready[0] != true) || (run_data->ready[1] != true)) {

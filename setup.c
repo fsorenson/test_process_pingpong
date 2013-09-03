@@ -44,7 +44,7 @@ const char * thread_mode_strings[] = {
 	, [ thread_mode_pthread ] = "pthread"
 };
 
-static int usage(void) {
+static void usage(void) {
 	int i;
 
 	printf(
@@ -54,7 +54,7 @@ printf(
 "Options:\n"
 
 "    -u, --update=#      seconds between statistics display (0 for no intermediate stats--implies '-s'); default=" DEFAULT_STATS_INTERVAL_STRING "\n"
-"    -r, --runtime=#     number of seconds to run the test (0 to run continuously); default=" xstr(DEFAULT_EXECUTION_TIME) "\n"
+"    -r, --runtime=#     number of seconds to run the test (0 to run continuously); default=" __XSTR(DEFAULT_EXECUTION_TIME) "\n"
 "    -s, --stats         output overall statistics at the end of the run (default)\n"
 "        --nostats       do not output statistics at the end of the run\n"
 "    -l, --latency=#	 set the cpu_dma_latency value; default=none\n"
@@ -87,18 +87,16 @@ printf(
 );
 
 	printf("\n");
-
-	return 0;
 }
 
 int parse_thread_mode(char *arg) {
-	if (! strcmp(arg, "fork") )
+	if (strcmp(arg, "fork") == 0 )
 		config.thread_mode = thread_mode_fork;
-	else if (! strcmp(arg, "pthread") )
+	else if (strcmp(arg, "pthread") == 0)
 		config.thread_mode = thread_mode_pthread;
-	else if (! strcmp(arg, "clone") )
+	else if (strcmp(arg, "clone") == 0)
 		config.thread_mode = thread_mode_thread;
-	else if (! strcmp(arg, "thread") )
+	else if (strcmp(arg, "thread") == 0)
 		config.thread_mode = thread_mode_thread;
 	else {
 		printf("Unknown threading mode: '%s'\n", arg);
@@ -111,9 +109,11 @@ int parse_thread_mode(char *arg) {
 	return 0;
 }
 
-int setup_defaults(char *argv0) {
+void setup_defaults(char *argv0) {
 /* default settings */
 	config.argv0 = argv0;
+
+	config.output_fd	= DEFAULT_OUTPUT_FD;
 
 	config.monitor_check_frequency	= DEFAULT_MONITOR_CHECK_FREQ;
 	config.runtime		= DEFAULT_EXECUTION_TIME;
@@ -143,20 +143,15 @@ int setup_defaults(char *argv0) {
 	config.num_cpus = (short)num_cpus();
 	config.num_online_cpus = (short)num_online_cpus();
 
-	config.cpu_mhz = estimate_cpu_mhz();
-	config.cpu_cycle_time = 1 / config.cpu_mhz / 1e6L;
-
 	config.min_stack = get_min_stack_size();
 
 	config.cpu[0] = -1;
 	config.cpu[1] = -1;
 	config.pair1 = config.pairs[0];
 	config.pair2 = config.pairs[1];
-
-	return 0;
 }
 
-int parse_opts(int argc, char *argv[]) {
+void parse_opts(int argc, char *argv[]) {
 	int opt = 0, long_index = 0;
 	char *comm_option_string = 0;
 	long double arg_ld;
@@ -220,7 +215,7 @@ int parse_opts(int argc, char *argv[]) {
 				break;
 			default:
 				usage();
-				exit(-1);
+				exit(EXIT_FAILURE);
 				break;
 		}
 	}
@@ -233,7 +228,6 @@ int parse_opts(int argc, char *argv[]) {
 		config.cpu[0] = (short)strtol(argv[optind++], NULL, 10);
 		config.cpu[1] = (short)strtol(argv[optind++], NULL, 10);
 	}
-	return 0;
 }
 
 static void make_pairs(void) {
@@ -246,7 +240,7 @@ static void make_pairs(void) {
 	config.ear[1] = config.pairs[0][0];
 }
 
-int do_comm_setup(void) {
+void do_comm_setup(void) {
 	if (config.verbosity >= 0) {
 		printf("Configuring to run ");
 		if (config.runtime > 0)
@@ -263,6 +257,9 @@ int do_comm_setup(void) {
 		printf("\n");
 	}
 
+	config.cpu_mhz = estimate_cpu_mhz();
+	config.cpu_cycle_time = 1 / config.cpu_mhz / 1e6L;
+
 	config.comm_init = comm_mode_info[config.comm_mode_index].comm_init;
 	config.comm_make_pair = comm_mode_info[config.comm_mode_index].comm_make_pair;
 	config.comm_pre = comm_mode_info[config.comm_mode_index].comm_pre;
@@ -278,7 +275,5 @@ int do_comm_setup(void) {
 	make_pairs();
 
 	set_priorities();
-
-	return 0;
 }
 

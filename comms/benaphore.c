@@ -41,10 +41,8 @@ int make_ben_pair(int fd[2]) {
 	sem_t *ret;
 
 	if (ben_num == 0) {
-		if ((ret = sem_open(ben_name, O_CREAT, S_IRUSR | S_IWUSR, 0)) == SEM_FAILED) {
-			printf("Error opening semaphore '%s': %s\n", ben_name, strerror(errno));
-			exit(-1);
-		}
+		if ((ret = sem_open(ben_name, O_CREAT, S_IRUSR | S_IWUSR, 0)) == SEM_FAILED)
+			exit_fail("Error opening semaphore '%s': %s\n", ben_name, strerror(errno));
 		benaphore_atom = mmap(NULL, sizeof(long), PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0);
 		benaphore_sem = ret;
 	}

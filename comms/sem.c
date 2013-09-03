@@ -43,10 +43,8 @@ int make_sem_pair(int fd[2]) {
 	}
 
 
-	if ((ret = sem_open(sem_names[sem_num], O_CREAT, S_IRUSR | S_IWUSR, 0)) == SEM_FAILED) {
-		printf("Error opening semaphore '%s': %s\n", sem_names[sem_num], strerror(errno));
-		exit(-1);
-	}
+	if ((ret = sem_open(sem_names[sem_num], O_CREAT, S_IRUSR | S_IWUSR, 0)) == SEM_FAILED)
+		exit_fail("Error opening semaphore '%s': %s\n", sem_names[sem_num], strerror(errno));
 
 	fd[0] = fd[1] = sem_num;
 	sems[sem_num] = ret;

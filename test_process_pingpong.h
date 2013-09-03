@@ -103,6 +103,11 @@
 
 #define WAIT_SLEEP_NS 5000000
 
+#define STATS_ALARM_SIGNAL SIGALRM
+
+#define CHILD_INTERRUPT_SIGNAL0 (SIGRTMAX-4)
+#define CHILD_INTERRUPT_SIGNAL1 (SIGRTMAX-3)
+
 
 typedef enum {
 	thread_mode_fork, thread_mode_thread, thread_mode_pthread, thread_mode_context
@@ -153,7 +158,7 @@ struct config_struct {
 	struct timeval stats_interval; /* seconds & microseconds */
 	unsigned long runtime; /* in seconds */
 	int stats_headers_frequency; /* how frequently should the stats header lines be output */
-	char dummy1[4];
+	int output_fd;
 
 	char *argv0;
 
