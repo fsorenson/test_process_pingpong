@@ -192,6 +192,9 @@ LDFLAGS += -Wl,--warn-multiple-gp
 # remove symbols for ultra-small binaries--or use strip
 #LDFLAGS += -Wl,-S -Wl,-s
 
+#LDFLAGS += -muclibc
+LDFLAGS += -mglibc
+
 
 
 
