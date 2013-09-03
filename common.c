@@ -252,7 +252,6 @@ unsigned int __CONST page_align_size(unsigned int len, int size_align_flag) {
 	switch (size_align_flag) {
 		case SIZE_ALIGN_NONE:
 			return len;
-			break;
 		case SIZE_ALIGN_NORMAL:
 			page_size = 4096;
 			break;
