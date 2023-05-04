@@ -36,7 +36,7 @@
 #include <stdarg.h>
 
 
-inline int get_min_stack_size(void) {
+int get_min_stack_size(void) {
 	long int minstack;
 
 #ifdef _SC_THREAD_STACK_MIN
